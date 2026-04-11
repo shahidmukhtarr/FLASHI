@@ -65,6 +65,8 @@ export function identifyStore(url) {
     if (hostname.includes('ishopping.pk')) return 'ishopping';
     if (hostname.includes('shophive.com')) return 'shophive';
     if (hostname.includes('homeshopping.pk')) return 'homeshopping';
+    if (hostname.includes('olx.com.pk')) return 'olx';
+    if (hostname.includes('naheed.pk')) return 'naheed';
 
     return null;
   } catch {

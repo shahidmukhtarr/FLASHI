@@ -6,119 +6,57 @@ const STORE_NAME = 'Mega.pk';
 const STORE_URL = 'https://www.mega.pk';
 const STORE_COLOR = '#0071dc';
 
-/**
- * Search products on Mega.pk
- * Mega.pk uses OpenCart with route-based search: index.php?route=product/search&search=...
- * Product data is in the featured items and search results sections
- */
 export async function searchProducts(query, limit = 10) {
   try {
-    const searchUrl = `${STORE_URL}/index.php?route=product/search&search=${encodeURIComponent(query)}`;
+    // Mega.pk uses an AJAX search endpoint that returns HTML results
+    const searchUrl = `${STORE_URL}/ajax.php?key=search&search=${encodeURIComponent(query)}`;
     
     const response = await axios.get(searchUrl, {
-      headers: getRequestHeaders(),
+      headers: {
+        ...getRequestHeaders(),
+        'X-Requested-With': 'XMLHttpRequest',
+        'Referer': STORE_URL,
+      },
       timeout: 15000,
-      maxRedirects: 5,
     });
 
     const $ = cheerio.load(response.data);
     const products = [];
+    const queryWords = query.toLowerCase().split(/\s+/);
 
-    // Mega uses product links with pattern: /category_products/ID/Name.html
-    // Each product appears in featured sections with channelBlurbs
-    // Look for product links with images and prices
-    
-    // Try direct product listing approach
-    $('a[href*="_products/"]').each((i, el) => {
+    $('.srch-result-div').each((i, el) => {
       if (products.length >= limit) return false;
 
       const $el = $(el);
-      const link = $el.attr('href') || '';
-      const img = $el.find('img').attr('src') || $el.find('img').attr('data-src') || '';
-      const alt = $el.find('img').attr('alt') || '';
-      
-      // Only process if this has an image (product card) and alt text
-      if (!alt || !img || alt.length < 3) return;
-      
-      // Check if product name matches query
-      const queryWords = query.toLowerCase().split(/\s+/);
-      const altLower = alt.toLowerCase();
-      const matches = queryWords.some(w => altLower.includes(w));
-      if (!matches) return;
+      const $a = $el.find('a.result-header').first();
+      const link = $a.attr('href') || '';
+      const title = sanitizeText($a.find('h4').text());
+      const img = $a.find('img').attr('src') || '';
+      const priceText = $a.find('.srch-price').text();
+      const price = parsePrice(priceText);
 
-      // Look for price near this element
-      const parent = $el.parent().parent().parent();
-      const parentText = parent.text().replace(/\s+/g, ' ');
-      const priceMatch = parentText.match(/Rs\.?\s*([\d,]+)/i);
-      const price = priceMatch ? parsePrice(priceMatch[0]) : null;
+      // Filter by relevance - must match at least one query word
+      const titleLower = title.toLowerCase();
+      const isRelevant = queryWords.some(w => titleLower.includes(w));
+      if (!isRelevant) return;
 
-      // Avoid duplicates
-      if (products.some(p => p.url === link)) return;
-
-      products.push({
-        title: sanitizeText(alt),
-        price,
-        originalPrice: null,
-        discount: null,
-        image: img.startsWith('http') ? img : `${STORE_URL}/${img}`,
-        url: link.startsWith('http') ? link : `${STORE_URL}/${link}`,
-        rating: 0,
-        reviewCount: 0,
-        store: STORE_NAME,
-        storeUrl: STORE_URL,
-        storeColor: STORE_COLOR,
-        inStock: true,
-      });
-    });
-
-    // Alternative: Also try scraping the category pages for better results
-    if (products.length === 0) {
-      // Try fetching a category page (e.g., mobiles)
-      const categoryUrl = `${STORE_URL}/mobiles`;
-      try {
-        const catResponse = await axios.get(categoryUrl, {
-          headers: getRequestHeaders(),
-          timeout: 10000,
+      if (title && price) {
+        products.push({
+          title,
+          price,
+          originalPrice: null,
+          discount: null,
+          image: img.startsWith('http') ? img : `${STORE_URL}/${img}`,
+          url: link.startsWith('http') ? link : `${STORE_URL}/${link}`,
+          rating: 0,
+          reviewCount: 0,
+          store: STORE_NAME,
+          storeUrl: STORE_URL,
+          storeColor: STORE_COLOR,
+          inStock: true,
         });
-        const $cat = cheerio.load(catResponse.data);
-        
-        $cat('a[href*="_products/"]').each((i, el) => {
-          if (products.length >= limit) return false;
-          const $catEl = $cat(el);
-          const link = $catEl.attr('href') || '';
-          const img = $catEl.find('img').attr('src') || '';
-          const alt = $catEl.find('img').attr('alt') || '';
-          
-          if (!alt || alt.length < 3) return;
-          
-          const queryWords = query.toLowerCase().split(/\s+/);
-          const altLower = alt.toLowerCase();
-          if (!queryWords.some(w => altLower.includes(w))) return;
-          if (products.some(p => p.url === link)) return;
-
-          const parent = $catEl.closest('.row, div');
-          const parentText = parent.text();
-          const priceMatch = parentText.match(/Rs\.?\s*([\d,]+)/i);
-
-          products.push({
-            title: sanitizeText(alt),
-            price: priceMatch ? parsePrice(priceMatch[0]) : null,
-            originalPrice: null,
-            discount: null,
-            image: img.startsWith('http') ? img : `${STORE_URL}/${img}`,
-            url: link.startsWith('http') ? link : `${STORE_URL}/${link}`,
-            rating: 0,
-            reviewCount: 0,
-            store: STORE_NAME,
-            storeUrl: STORE_URL,
-            storeColor: STORE_COLOR,
-            inStock: true,
-          });
-        });
-      } catch (e) {
-        // Category fallback failed, continue
       }
-    }
+    });
 
     console.log(`[${STORE_NAME}] Found ${products.length} products for "${query}"`);
     return products;

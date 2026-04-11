@@ -59,7 +59,7 @@ export function createProductCard(product, index, isCheapest = false) {
           ${product.image 
             ? `<img src="${product.image}" alt="${product.title}" class="product-image" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'200\\' height=\\'200\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'%23666\\' stroke-width=\\'1\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\'><rect x=\\'3\\' y=\\'3\\' width=\\'18\\' height=\\'18\\' rx=\\'2\\' ry=\\'2\\'></rect><circle cx=\\'8.5\\' cy=\\'8.5\\' r=\\'1.5\\'></circle><polyline points=\\'21 15 16 10 5 21\\'></polyline></svg>';">` 
             : `<div class="product-image-placeholder">📱</div>`}
-          ${isCheapest ? `<div class="store-badge" style="background: var(--accent-4)">Best Deal</div>` : ''}
+          ${isCheapest ? `<div class="store-badge" style="background: #588157">Best Deal</div>` : ''}
         </div>
 
       <div class="product-info">
@@ -90,9 +90,6 @@ export function createProductCard(product, index, isCheapest = false) {
             </span>
           </div>
           <div class="product-actions">
-            <button class="product-reviews-btn" onclick="document.getElementById('reviews-section').style.display='block'; document.getElementById('reviews-section').scrollIntoView({behavior: 'smooth'})">
-              Reviews
-            </button>
             <a href="${product.url}" target="_blank" rel="noopener noreferrer" class="product-visit-btn">
               Visit Store
             </a>
@@ -138,7 +135,7 @@ export function createPriceRangeBar(products) {
       <div class="price-range-values">
         <span class="price-range-value price-low">Lowest: ${formatPrice(minPrice)}</span>
         <span class="price-range-value price-high">Highest: ${formatPrice(maxPrice)}</span>
-        ${savings > 0 ? `<span class="price-range-value" style="color: var(--accent-4)">Save up to ${formatPrice(savings)}</span>` : ''}
+        ${savings > 0 ? `<span class="price-range-value" style="color: #588157">Save up to ${formatPrice(savings)}</span>` : ''}
       </div>
     </div>
     <div class="price-bar-track">

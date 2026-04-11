@@ -5,6 +5,8 @@ import * as telemart from '../scrapers/telemart.js';
 import * as ishopping from '../scrapers/ishopping.js';
 import * as shophive from '../scrapers/shophive.js';
 import * as homeshopping from '../scrapers/homeshopping.js';
+import * as olx from '../scrapers/olx.js';
+import * as naheed from '../scrapers/naheed.js';
 import { identifyStore, delay } from '../utils/helpers.js';
 
 const stores = [
@@ -12,9 +14,13 @@ const stores = [
   { adapter: priceoye, name: 'PriceOye', domain: 'priceoye.pk' },
   { adapter: mega, name: 'Mega.pk', domain: 'mega.pk' },
   { adapter: telemart, name: 'Telemart', domain: 'telemart.pk' },
-  { adapter: ishopping, name: 'iShopping', domain: 'ishopping.pk' },
+  // iShopping: disabled - Cloudflare blocks all server-side requests (403)
+  // { adapter: ishopping, name: 'iShopping', domain: 'ishopping.pk' },
   { adapter: shophive, name: 'Shophive', domain: 'shophive.com' },
-  { adapter: homeshopping, name: 'HomeShopping', domain: 'homeshopping.pk' },
+  // HomeShopping: disabled - migrated to VTEX platform, search API returns 500
+  // { adapter: homeshopping, name: 'HomeShopping', domain: 'homeshopping.pk' },
+  { adapter: olx, name: 'OLX', domain: 'olx.com.pk' },
+  { adapter: naheed, name: 'Naheed', domain: 'naheed.pk' },
 ];
 
 const ACCESSORY_KEYWORDS = ['cover', 'case', 'protector', 'glass', 'cable', 'charger', 'adapter', 'strap', 'pouch', 'handsfree', 'earphone', 'battery', 'back', 'skin', 'lens', 'watch', 'smartwatch', 'band', 'earbuds', 'buds', 'airpods', 'trimmer', 'speaker', 'powerbank'];
