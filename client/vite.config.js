@@ -16,7 +16,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    minify: 'terser',
+    minify: 'esbuild',
     rollupOptions: {
       input: './index.html',
     }

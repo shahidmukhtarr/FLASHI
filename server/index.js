@@ -22,9 +22,11 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? false 
-    : ['http://localhost:5173', 'http://127.0.0.1:5173']
+  origin: process.env.VERCEL 
+    ? true 
+    : process.env.NODE_ENV === 'production' 
+      ? false 
+      : ['http://localhost:5173', 'http://127.0.0.1:5173']
 }));
 
 app.use(express.json());
@@ -62,24 +64,26 @@ app.use((err, req, res, next) => {
 });
 
 // Graceful shutdown
-const server = app.listen(PORT, () => {
-  console.log(`
+if (!process.env.VERCEL) {
+  const server = app.listen(PORT, () => {
+    console.log(`
   ╔═══════════════════════════════════════╗
   ║   🇵🇰  PricePK Server Running         ║
   ║   → http://localhost:${PORT}            ║
   ║   → Environment: ${process.env.NODE_ENV || 'development'}    ║
   ╚═══════════════════════════════════════╝
-  `);
-});
+    `);
+  });
 
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received. Shutting down gracefully...');
-  server.close(() => process.exit(0));
-});
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM received. Shutting down gracefully...');
+    server.close(() => process.exit(0));
+  });
 
-process.on('SIGINT', () => {
-  console.log('SIGINT received. Shutting down...');
-  server.close(() => process.exit(0));
-});
+  process.on('SIGINT', () => {
+    console.log('SIGINT received. Shutting down...');
+    server.close(() => process.exit(0));
+  });
+}
 
 export default app;
