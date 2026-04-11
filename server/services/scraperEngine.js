@@ -25,53 +25,22 @@ const stores = [
 
 const ACCESSORY_KEYWORDS = ['cover', 'case', 'protector', 'glass', 'cable', 'charger', 'adapter', 'strap', 'pouch', 'handsfree', 'earphone', 'battery', 'back', 'skin', 'lens', 'watch', 'smartwatch', 'band', 'earbuds', 'buds', 'airpods', 'trimmer', 'speaker', 'powerbank'];
 
+/**
+ * Trust store search ranking. Only filter out accessories
+ * when the user didn't specifically search for one.
+ */
 function isRelevantProduct(title, query) {
   const queryLower = query.toLowerCase().trim();
   const titleLower = title.toLowerCase();
 
+  // Only filter: remove accessories when user didn't search for one
   const isQueryForAccessory = ACCESSORY_KEYWORDS.some(kw => queryLower.includes(kw));
-
   if (!isQueryForAccessory) {
     const hasAccessoryInTitle = ACCESSORY_KEYWORDS.some(kw => {
       const regex = new RegExp(`\\b${kw}\\b`);
       return regex.test(titleLower);
     });
-    if (hasAccessoryInTitle) {
-      return false;
-    }
-  }
-
-  // --- Strict multi-word matching ---
-  // Normalize common variations
-  const normalize = (s) => s
-    .replace(/\+/g, ' plus ')
-    .replace(/[-_/]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const normQuery = normalize(queryLower);
-  const normTitle = normalize(titleLower);
-
-  const queryWords = normQuery.split(' ').filter(w => w.length > 0);
-  // Ignore very short filler words for matching
-  const FILLER = new Set(['the', 'a', 'an', 'for', 'in', 'of', 'and', 'with', 'new', 'pk']);
-  const significantWords = queryWords.filter(w => !FILLER.has(w) && w.length > 1);
-
-  if (significantWords.length === 0) return true;
-
-  // ALL significant query words must appear in the title
-  const missingWords = significantWords.filter(word => {
-    // Try exact substring first
-    if (normTitle.includes(word)) return false;
-    // Try word boundary match for short tokens (e.g. "s24" shouldn't match "s24s")
-    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const re = new RegExp(`\\b${escaped}`, 'i');
-    if (re.test(normTitle)) return false;
-    return true;
-  });
-
-  if (missingWords.length > 0) {
-    return false;
+    if (hasAccessoryInTitle) return false;
   }
 
   return true;
@@ -198,7 +167,8 @@ export async function searchAllStores(query, limit = 40) {
     }
 
     if (storeProducts && storeProducts.length > 0) {
-      const validProducts = storeProducts.filter(p => p.price != null && p.price > 0 && p.inStock !== false && isRelevantProduct(p.title, query));
+      const validProducts = storeProducts
+        .filter(p => p.price != null && p.price > 0 && p.inStock !== false && isRelevantProduct(p.title, query));
       if (validProducts.length > 0) {
         allProducts.push(...validProducts);
         storesSearched.push(storeName);
@@ -220,7 +190,7 @@ export async function searchAllStores(query, limit = 40) {
     console.log('[ScraperEngine] All scrapers failed to find valid products');
   }
 
-  // Sort by price (cheapest first), handle null prices
+  // Sort by price (cheapest first) — stores already handle relevance ranking
   allProducts.sort((a, b) => {
     if (a.price == null) return 1;
     if (b.price == null) return -1;

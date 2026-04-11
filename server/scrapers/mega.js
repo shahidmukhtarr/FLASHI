@@ -22,7 +22,6 @@ export async function searchProducts(query, limit = 10) {
 
     const $ = cheerio.load(response.data);
     const products = [];
-    const queryWords = query.toLowerCase().split(/\s+/);
 
     $('.srch-result-div').each((i, el) => {
       if (products.length >= limit) return false;
@@ -35,12 +34,7 @@ export async function searchProducts(query, limit = 10) {
       const priceText = $a.find('.srch-price').text();
       const price = parsePrice(priceText);
 
-      // Filter by relevance - all significant query words must be in title
-      const titleLower = title.toLowerCase();
-      const FILLER = new Set(['the', 'a', 'an', 'for', 'in', 'of', 'and', 'with', 'new', 'pk']);
-      const significantWords = queryWords.filter(w => !FILLER.has(w) && w.length > 1);
-      const isRelevant = significantWords.length === 0 || significantWords.every(w => titleLower.includes(w));
-      if (!isRelevant) return;
+      // Trust Mega.pk's search ranking — no local word filtering
 
       if (title && price) {
         products.push({
