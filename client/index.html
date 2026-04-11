@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PricePK — Pakistan's Smartest Price Comparison Engine</title>
+  <meta name="description"
+    content="Compare prices across Daraz, PriceOye, Mega.pk, Telemart and more Pakistani stores. Find the cheapest deals instantly." />
+  <meta property="og:title" content="PricePK — Find the Cheapest Prices in Pakistan" />
+  <meta property="og:description" content="Compare prices across all major Pakistani online stores in one search." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0a0a1a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+  <!-- Animated background -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-glow bg-glow-3"></div>
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="container">
+      <a href="/" class="logo" id="logo">
+        <span class="logo-icon">🇵🇰</span>
+        <span class="logo-text">Price<span class="logo-accent">PK</span></span>
+      </a>
+      <nav class="nav">
+        <span class="nav-badge" id="stores-badge">7 Stores</span>
+        <a href="#how-it-works" class="nav-link">How it works</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main>
+    <section class="hero" id="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-badge">⚡ Pakistan's #1 Price Comparison Engine</div>
+          <h1 class="hero-title">
+            Find the <span class="gradient-text">Cheapest Prices</span><br />Across Pakistan
+          </h1>
+          <p class="hero-subtitle">
+            Search any product or paste a URL
+          </p>
+
+          <!-- Search Box -->
+          <div class="search-container" id="search-container">
+            <div class="search-box" id="search-box">
+              <div class="search-icon" id="search-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
+              <input type="text" id="search-input" class="search-input"
+                placeholder="Search product or paste URL (e.g. iPhone 16, Samsung Galaxy S25...)" autocomplete="off"
+                spellcheck="false" />
+              <button class="search-btn" id="search-btn" type="button">
+                <span class="search-btn-text">Compare Prices</span>
+                <svg class="search-btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button>
+            </div>
+            <div class="search-hints">
+              <span class="search-hint-label">Popular:</span>
+              <button class="search-hint" data-query="iPhone 16 Pro Max">iPhone 16 Pro Max</button>
+              <button class="search-hint" data-query="Samsung Galaxy S25 Ultra">Galaxy S25 Ultra</button>
+              <button class="search-hint" data-query="PlayStation 5">PS5</button>
+              <button class="search-hint" data-query="MacBook Air M3">MacBook Air</button>
+              <button class="search-hint" data-query="Air Conditioner Inverter 1.5 Ton">AC 1.5 Ton</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Store Logos -->
+        <div class="stores-bar" id="stores-bar">
+          <div class="stores-label">Comparing across</div>
+          <div class="stores-list">
+            <div class="store-tag" style="--store-color: #f85606">
+              <span class="store-dot"></span> Daraz
+            </div>
+            <div class="store-tag" style="--store-color: #e21b70">
+              <span class="store-dot"></span> PriceOye
+            </div>
+            <div class="store-tag" style="--store-color: #0071dc">
+              <span class="store-dot"></span> Mega.pk
+            </div>
+            <div class="store-tag" style="--store-color: #00b300">
+              <span class="store-dot"></span> Telemart
+            </div>
+            <div class="store-tag" style="--store-color: #f26522">
+              <span class="store-dot"></span> iShopping
+            </div>
+            <div class="store-tag" style="--store-color: #ee2e24">
+              <span class="store-dot"></span> Shophive
+            </div>
+            <div class="store-tag" style="--store-color: #000000">
+              <span class="store-dot"></span> HomeShopping
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section hidden" id="results-section">
+      <div class="container">
+        <!-- Results Header -->
+        <div class="results-header" id="results-header">
+          <div class="results-info">
+            <h2 class="results-title" id="results-title">Results</h2>
+            <p class="results-meta" id="results-meta"></p>
+          </div>
+          <div class="results-controls">
+            <div class="sort-group">
+              <label class="sort-label">Sort by</label>
+              <select class="sort-select" id="sort-select">
+                <option value="price-asc">Price: Low → High</option>
+                <option value="price-desc">Price: High → Low</option>
+                <option value="rating">Best Rating</option>
+                <option value="reviews">Most Reviews</option>
+              </select>
+            </div>
+            <div class="view-toggle">
+              <button class="view-btn active" id="view-grid" data-view="grid" title="Grid View">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                </svg>
+              </button>
+              <button class="view-btn" id="view-list" data-view="list" title="List View">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Price Range Bar -->
+        <div class="price-range-bar" id="price-range-bar"></div>
+
+        <!-- Products Grid -->
+        <div class="products-grid" id="products-grid"></div>
+
+        <!-- Reviews Section -->
+        <div class="reviews-section" id="reviews-section">
+          <h3 class="reviews-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Customer Reviews
+          </h3>
+          <div class="reviews-summary" id="reviews-summary"></div>
+          <div class="reviews-list" id="reviews-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading State -->
+    <section class="loading-section hidden" id="loading-section">
+      <div class="container">
+        <div class="loading-content">
+          <div class="loading-spinner">
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+          </div>
+          <h3 class="loading-title">Searching across stores...</h3>
+          <p class="loading-subtitle" id="loading-status">Comparing prices on Daraz, PriceOye, Mega.pk & Telemart</p>
+          <div class="loading-stores" id="loading-stores">
+            <div class="loading-store" style="--store-color: #f85606" data-store="daraz">
+              <span class="loading-store-dot"></span> Daraz
+            </div>
+            <div class="loading-store" style="--store-color: #e21b70" data-store="priceoye">
+              <span class="loading-store-dot"></span> PriceOye
+            </div>
+            <div class="loading-store" style="--store-color: #0071dc" data-store="mega">
+              <span class="loading-store-dot"></span> Mega.pk
+            </div>
+            <div class="loading-store" style="--store-color: #00b300" data-store="telemart">
+              <span class="loading-store-dot"></span> Telemart
+            </div>
+            <div class="loading-store" style="--store-color: #f26522" data-store="ishopping">
+              <span class="loading-store-dot"></span> iShopping
+            </div>
+            <div class="loading-store" style="--store-color: #ee2e24" data-store="shophive">
+              <span class="loading-store-dot"></span> Shophive
+            </div>
+            <div class="loading-store" style="--store-color: #000000" data-store="homeshopping">
+              <span class="loading-store-dot"></span> HomeShopping
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-section" id="how-it-works">
+      <div class="container">
+        <h2 class="section-title">How <span class="gradient-text">PricePK</span> Works</h2>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">01</div>
+            <div class="step-icon">🔍</div>
+            <h3>Search or Paste URL</h3>
+            <p>Enter any product name or paste a direct product URL from any Pakistani store.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">02</div>
+            <div class="step-icon">⚡</div>
+            <h3>Instant Comparison</h3>
+            <p>We search across Different Stores simultaneously in seconds.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">03</div>
+            <div class="step-icon">💰</div>
+            <h3>Find Best Deal</h3>
+            <p>See prices sorted from cheapest to expensive with ratings and reviews from real buyers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <span class="logo-icon">🇵🇰</span>
+          <span class="logo-text">Price<span class="logo-accent">PK</span></span>
+          <p class="footer-tagline">Pakistan's smartest price comparison engine</p>
+        </div>
+        <div class="footer-links">
+          <span>Supported Stores:</span>
+          <a href="https://www.daraz.pk" target="_blank" rel="noopener">Daraz</a>
+          <a href="https://priceoye.pk" target="_blank" rel="noopener">PriceOye</a>
+          <a href="https://www.mega.pk" target="_blank" rel="noopener">Mega.pk</a>
+          <a href="https://www.telemart.pk" target="_blank" rel="noopener">Telemart</a>
+          <a href="https://www.ishopping.pk" target="_blank" rel="noopener">iShopping</a>
+          <a href="https://www.shophive.com" target="_blank" rel="noopener">Shophive</a>
+          <a href="https://homeshopping.pk" target="_blank" rel="noopener">HomeShopping</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 PricePK. Prices are fetched in real-time and may vary.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+
+</html>

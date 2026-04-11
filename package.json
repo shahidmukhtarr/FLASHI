@@ -1,0 +1,28 @@
+{
+  "name": "pricepk",
+  "version": "1.0.0",
+  "description": "Pakistan's smartest price comparison engine — find the cheapest prices across Daraz, PriceOye, Mega.pk & more",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "server:dev": "node --watch server/index.js",
+    "client:dev": "cd client && npx vite --port 5173",
+    "build": "cd client && npx vite build",
+    "start": "node server/index.js",
+    "preview": "npm run build && npm run start"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
+    "helmet": "^8.0.0",
+    "node-cache": "^5.1.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "vite": "^6.0.6"
+  }
+}
