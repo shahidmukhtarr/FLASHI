@@ -90,22 +90,26 @@ function isRelevantProduct(title, query) {
     });
   };
 
-  // First significant word MUST match (or its synonym)
+  const GENERIC_DESCRIPTORS = new Set([
+    'lightweight', 'wireless', 'portable', 'soft', 'comfortable', 'casual', 'stylish',
+    'cheap', 'new', 'best', 'premium', 'budget', 'smart', 'gaming', 'compact',
+    'small', 'large', 'waterproof', 'durable', 'fashion', 'running', 'sports', 'gym', 'travel'
+  ]);
+
   const brandWord = significantWords[0];
   const brandVariants = getWordVariants(brandWord);
-  if (!isMatchFound(brandVariants, normTitle)) {
+  const isGenericDescriptor = GENERIC_DESCRIPTORS.has(brandWord);
+
+  // If the first word is a generic descriptor, don't require it as a brand match;
+  // instead, rely on the rest of the query for relevance.
+  if (!isGenericDescriptor && !isMatchFound(brandVariants, normTitle)) {
     return false;
   }
 
-  // For single-word queries, brand match is enough
+  // For single-word queries, brand/descriptor match is enough
   if (significantWords.length === 1) return true;
 
   // For multi-word queries, at least one MORE word (or its synonym) must also match
-  // (Lower threshold for beauty/fashion/skincare)
-  const isBroadCategory = queryLower.includes('wash') || queryLower.includes('serum') || 
-                          queryLower.includes('bag') || queryLower.includes('dress') ||
-                          queryLower.includes('shoe') || queryLower.includes('cream');
-
   const restWords = significantWords.slice(1);
   const restMatchedCount = restWords.filter(w => {
     const variants = getWordVariants(w);
@@ -119,7 +123,12 @@ function isRelevantProduct(title, query) {
       return false; // Stricter for tech
   }
 
-  return isBroadCategory ? restMatchedCount >= 0 : restMatchedCount >= 1;
+  // For generic descriptors like "lightweight", require at least one other query word match
+  if (isGenericDescriptor && restMatchedCount === 0) {
+    return false;
+  }
+
+  return restMatchedCount >= 1;
 }
 
 function generateDemoReviews(query) {
