@@ -178,17 +178,17 @@ export default function HomePage() {
         <div className="container">
           <div className="hero-layout">
             <div className="hero-content">
-              <div className="hero-badge">→ The smartest way to shop Online</div>
+              <div className="hero-badge">Search smarter, shop better</div>
               <h1 className="hero-title">
-                Find the <span className="highlight-text">lowest price</span> across Pakistan's top stores
+                FLASHI - Find The Best Lowest Prices Across Pakistan.
               </h1>
               <p className="hero-subtitle">
-                Compare prices from Daraz, PriceOye, Highfy & many more — all in one place.
+                Search any product and instantly compare prices from Pakistan's top stores in one place.
               </p>
 
               <div className="search-container" id="search-container">
                 <div className="search-box" id="search-box">
-                  <div className="search-icon" id="search-icon">🔍</div>
+                  <div className="search-icon" id="search-icon">🔎</div>
                   <input
                     type="text"
                     id="search-input"
@@ -378,20 +378,14 @@ export default function HomePage() {
             <div className="step-card">
               <div className="step-number">01</div>
               <div className="step-icon">🔍</div>
-              <h3>Search Any Product</h3>
-              <p>Enter a product name or paste a store URL to find price details instantly.</p>
+              <h3>Search any product</h3>
+              <p>Type a product name or paste a URL to instantly find price matches.</p>
             </div>
             <div className="step-card">
               <div className="step-number">02</div>
               <div className="step-icon">⚡</div>
-              <h3>Compare Prices</h3>
-              <p>FLASHI reads stored product data from Supabase and shows matched items fast.</p>
-            </div>
-            <div className="step-card">
-              <div className="step-number">03</div>
-              <div className="step-icon">💾</div>
-              <h3>Background Scraper</h3>
-              <p>Scraper jobs run in the background and keep the database updated with fresh products.</p>
+              <h3>Compare prices</h3>
+              <p>See the best prices from multiple stores and choose the lowest offer.</p>
             </div>
           </div>
         </div>
@@ -403,11 +397,11 @@ export default function HomePage() {
             <div className="footer-brand">
               <span className="logo-icon">⚡</span>
               <span className="logo-text">FLASHI</span>
-              <p className="footer-tagline">The smartest way to shop online in Pakistan.</p>
+              <p className="footer-tagline">Smarter price comparison for every shopper in Pakistan.</p>
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; {new Date().getFullYear()} FLASHI. Prices are saved in Supabase and refreshed by the scheduler.</p>
+            <p>&copy; {new Date().getFullYear()} FLASHI. Compare prices with confidence.</p>
           </div>
         </div>
       </footer>

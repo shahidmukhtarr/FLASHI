@@ -1,12 +1,4 @@
-import { initDb } from './services/db.js';
-import { startScheduler } from './services/scheduler.js';
+// This file is deprecated. Services are now initialized in app/layout.js
+// Keep this file for backward compatibility if needed.
 
-initDb().catch(err => {
-  console.error('[Bootstrap] Supabase initialization failed:', err.message);
-});
-
-if (!process.env.VERCEL) {
-  startScheduler();
-} else {
-  console.log('[Bootstrap] Scheduler disabled in Vercel environment.');
-}
+console.warn('[DEPRECATED] server/bootstrap.js should no longer be imported. Services are initialized in app/layout.js');
