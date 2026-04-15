@@ -41,6 +41,12 @@ export async function searchProducts(query, limit = 20) {
       const price = parsePrice(priceText);
       const inStock = !$el.find('.out-of-stock').length;
 
+      // Strict relevance: all query words must appear in the title
+      const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 1);
+      const titleLower = title.toLowerCase();
+      const allMatch = queryWords.every(w => titleLower.includes(w));
+      if (!allMatch) return true;
+
       if (title && price) {
         products.push({
           title,

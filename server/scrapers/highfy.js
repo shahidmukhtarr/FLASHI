@@ -4,7 +4,7 @@ import { getRequestHeaders, parsePrice, sanitizeText, truncate } from '../utils/
 
 const STORE_NAME = 'Highfy';
 const STORE_URL = 'https://highfy.pk';
-const STORE_COLOR = '#000000'; // Sleek black for beauty/lifestyle
+const STORE_COLOR = '#000000';
 
 export async function searchProducts(query, limit = 20) {
   try {
@@ -17,21 +17,35 @@ export async function searchProducts(query, limit = 20) {
     const $ = cheerio.load(response.data);
     const products = [];
 
-    $('li.grid__item').each((i, el) => {
-      if (i >= limit) return false;
+    $('.grid__item').each((i, el) => {
+      if (products.length >= limit) return false;
 
-      const titleEl = $(el).find('h3.card__heading').text();
-      const title = sanitizeText(titleEl);
-      
-      const priceEl = $(el).find('.price-item--sale, .price-item--regular').first().text();
-      const price = parsePrice(priceEl);
+      const $el = $(el);
 
-      const linkEl = $(el).find('a.full-unstyled-link').attr('href');
+      // Title: h3.card__heading or .card__heading a — grab only the link text to avoid duplication
+      const titleEl = $el.find('h3.card__heading a, .card__heading a').first();
+      const title = sanitizeText(titleEl.text() || $el.find('h3.card__heading').first().clone().children().remove().end().text());
+      if (!title) return;
+
+      const priceEl = $el.find('.price-item--sale, .price-item--regular').first();
+      const price = parsePrice(priceEl.text());
+
+      const linkEl = $el.find('a[href*="/products/"], a.full-unstyled-link, a.card__heading').first().attr('href');
       const url = linkEl ? (linkEl.startsWith('http') ? linkEl : `${STORE_URL}${linkEl}`) : STORE_URL;
 
-      const imgEl = $(el).find('.card__media img').attr('src') || $(el).find('img').attr('src');
-      let image = imgEl ? (imgEl.startsWith('http') ? imgEl : `https:${imgEl}`) : '';
-      if (image.includes('?')) image = image.split('?')[0]; // Clean Shopify resize params
+      // Image: srcset contains multiple sizes; grab first URL from src or srcset
+      const imgEl = $el.find('.card__media img, img').first();
+      const imgSrc = imgEl.attr('src') || imgEl.attr('data-src') || '';
+      // Shopify images may start with // — add https:
+      let image = imgSrc.startsWith('//') ? `https:${imgSrc}` : imgSrc;
+      // Trim Shopify resize params (keep clean URL)
+      if (image.includes('?')) image = image.split('?')[0];
+
+      // Strict relevance: all significant query words must appear in title
+      const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 1);
+      const titleLower = title.toLowerCase();
+      const allMatch = queryWords.every(w => titleLower.includes(w));
+      if (!allMatch) return;
 
       if (title && price) {
         products.push({
@@ -42,7 +56,7 @@ export async function searchProducts(query, limit = 20) {
           store: STORE_NAME,
           storeUrl: STORE_URL,
           storeColor: STORE_COLOR,
-          inStock: !$(el).find('.badge--bottom-left').text().toLowerCase().includes('sold out'),
+          inStock: !$el.find('.badge--bottom-left').text().toLowerCase().includes('sold out'),
         });
       }
     });
@@ -64,15 +78,18 @@ export async function getProductDetails(url) {
 
     const $ = cheerio.load(response.data);
 
-    // Shopify stores usually have JSON-LD or meta tags
-    const title = $('meta[property="og:title"]').attr('content') || $('title').text();
+    const title = sanitizeText(
+      $('meta[property="og:title"]').attr('content') ||
+      $('h1.product__title, h1').first().text()
+    );
     const image = $('meta[property="og:image"]').attr('content') || '';
-    const priceText = $('meta[property="og:price:amount"]').attr('content') || $('.price-item--sale, .price-item--regular').first().text();
+    const priceText = $('meta[property="og:price:amount"]').attr('content') ||
+                      $('.price-item--sale, .price-item--regular').first().text();
     const price = parsePrice(priceText);
 
     if (title) {
       return {
-        title: sanitizeText(title),
+        title,
         price,
         image,
         url,

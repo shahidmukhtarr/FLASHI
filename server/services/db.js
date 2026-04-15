@@ -1,19 +1,21 @@
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const TABLE_NAME = 'products';
 
 let supabase = null;
 
 function getSupabaseClient() {
   if (!supabase) {
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-      throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_KEY in environment.');
+    const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!url || !key) {
+      console.warn('[DB] Missing SUPABASE_URL or SUPABASE_SERVICE_KEY in environment. DB functionality disabled.');
+      return null;
     }
 
-    supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+    supabase = createClient(url, key, {
       auth: { persistSession: false },
     });
   }
@@ -101,7 +103,6 @@ export async function saveProducts(products = [], sourceQuery = '') {
     return { newCount: 0, updatedCount: 0 };
   }
 
-  const client = getSupabaseClient();
   const normalizedProducts = [];
 
   for (const rawProduct of products) {
@@ -110,6 +111,11 @@ export async function saveProducts(products = [], sourceQuery = '') {
   }
 
   if (normalizedProducts.length === 0) {
+    return { newCount: 0, updatedCount: 0 };
+  }
+
+  const client = getSupabaseClient();
+  if (!client) {
     return { newCount: 0, updatedCount: 0 };
   }
 
@@ -123,12 +129,22 @@ export async function saveProducts(products = [], sourceQuery = '') {
     throw fetchError;
   }
 
-  const existingMap = new Map(existingRows?.map(row => [row.id, new Date(row.scraped_at)] || []));
+  const existingMap = new Map(existingRows?.map(row => [row.id, new Date(row.scraped_at)]) || []);
+
   const toUpsert = [];
   let newCount = 0;
   let updatedCount = 0;
 
+  // Deduplicate products by ID before generating upsert payload to prevent
+  // "ON CONFLICT DO UPDATE command cannot affect row a second time"
+  const dedupedProducts = new Map();
   for (const product of normalizedProducts) {
+    if (!dedupedProducts.has(product.id)) {
+        dedupedProducts.set(product.id, product);
+    }
+  }
+
+  for (const product of dedupedProducts.values()) {
     const existingScrapedAt = existingMap.get(product.id);
     if (!existingScrapedAt) {
       newCount += 1;
@@ -163,17 +179,42 @@ export async function queryStoredProducts(options = {}) {
     limit = 50,
   } = options;
 
-  const client = getSupabaseClient();
   const safeLimit = Number(limit) || 50;
   const safePage = Number(page) || 1;
   const start = (safePage - 1) * safeLimit;
   const end = start + safeLimit - 1;
 
+  const client = getSupabaseClient();
+  if (!client) {
+    return {
+      total: 0,
+      page: safePage,
+      limit: safeLimit,
+      products: [],
+    };
+  }
+
   let query = client.from(TABLE_NAME).select('*', { count: 'exact' });
 
   if (q.trim().length > 0) {
-    const searchValue = `%${q.trim().replace(/%/g, '%')}%`;
-    query = query.or(`title.ilike.${searchValue},store.ilike.${searchValue},url.ilike.${searchValue},source_query.ilike.${searchValue}`);
+    // Split into meaningful words, ignoring very short filler words
+    const stopwords = new Set(['a', 'an', 'the', 'for', 'of', 'in', 'on', 'at', 'to', 'by']);
+    const words = q.trim().split(/\s+/).filter(w => w.length > 1 && !stopwords.has(w.toLowerCase()));
+
+    if (words.length === 0) {
+      // Fallback: use original query as single phrase
+      const searchValue = `%${q.trim().replace(/%/g, '\\%')}%`;
+      query = query.ilike('title', searchValue);
+    } else if (words.length === 1) {
+      const searchValue = `%${words[0].replace(/%/g, '\\%')}%`;
+      query = query.or(`title.ilike.${searchValue},store.ilike.${searchValue},source_query.ilike.${searchValue}`);
+    } else {
+      // AND logic: every word must appear in the title (chaining .ilike() applies AND in Supabase)
+      for (const word of words) {
+        const v = `%${word.replace(/%/g, '\\%')}%`;
+        query = query.ilike('title', v);
+      }
+    }
   }
 
   if (store.trim().length > 0) {
@@ -205,18 +246,31 @@ export async function queryStoredProducts(options = {}) {
       break;
   }
 
-  const { data, error, count } = await query.range(start, end);
+  let data, error, count;
+  try {
+    ({ data, error, count } = await query.range(start, end));
+  } catch (e) {
+    throw e;
+  }
 
   if (error) {
     console.log('[DB] Query error:', error.message);
     throw error;
   }
 
+  // Deduplicate by URL — same product scraped multiple times should appear once
+  const seen = new Set();
+  const dedupedData = (data || []).filter(row => {
+    if (!row.url || seen.has(row.url)) return false;
+    seen.add(row.url);
+    return true;
+  });
+
   return {
-    total: count ?? (data?.length ?? 0),
+    total: dedupedData.length,
     page: safePage,
     limit: safeLimit,
-    products: (data || []).map(fromDbRow),
+    products: dedupedData.map(fromDbRow),
   };
 }
 
@@ -232,15 +286,18 @@ export async function getDbStats() {
     throw totalError;
   }
 
+  // Get unique stores by selecting all, then deduplicating in JS
+  // (Supabase JS SDK doesn't support .distinct() as a chained method)
   const { data: storeRows, error: storeError } = await client
     .from(TABLE_NAME)
-    .select('store', { count: 'exact' })
-    .distinct('store')
+    .select('store')
     .order('store', { ascending: true });
 
   if (storeError) {
     throw storeError;
   }
+
+  const uniqueStores = [...new Set((storeRows || []).map(r => r.store).filter(Boolean))].sort();
 
   const { data: latestRows, error: latestError } = await client
     .from(TABLE_NAME)
@@ -256,8 +313,8 @@ export async function getDbStats() {
 
   return {
     totalProducts: totalCount ?? (totalData?.length ?? 0),
-    totalStores: storeRows?.length || 0,
-    stores: (storeRows || []).map(row => row.store).filter(Boolean),
+    totalStores: uniqueStores.length,
+    stores: uniqueStores,
     latestScrape: latestScrape ? new Date(latestScrape).toISOString() : null,
   };
 }

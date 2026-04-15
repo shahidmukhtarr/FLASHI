@@ -6,22 +6,33 @@ const STORE_NAME = 'Mega.pk';
 const STORE_URL = 'https://www.mega.pk';
 const STORE_COLOR = '#0071dc';
 
+/**
+ * Mega.pk AJAX search endpoint returns the full product catalog (2000+ items).
+ * We fetch it and filter down to items whose title contains ALL query words.
+ * Structure of each .srch-result-div:
+ *   a.result-header[href]
+ *     img[src]
+ *     h4  → title
+ *     .srch-price → price (e.g. "404,999")
+ */
 export async function searchProducts(query, limit = 20) {
   try {
-    // Mega.pk uses an AJAX search endpoint that returns HTML results
     const searchUrl = `${STORE_URL}/ajax.php?key=search&search=${encodeURIComponent(query)}`;
-    
+
     const response = await axios.get(searchUrl, {
       headers: {
         ...getRequestHeaders(),
         'X-Requested-With': 'XMLHttpRequest',
         'Referer': STORE_URL,
       },
-      timeout: 15000,
+      timeout: 20000,
     });
 
     const $ = cheerio.load(response.data);
     const products = [];
+
+    // Pre-compute query words for relevance filtering
+    const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 1);
 
     $('.srch-result-div').each((i, el) => {
       if (products.length >= limit) return false;
@@ -34,27 +45,30 @@ export async function searchProducts(query, limit = 20) {
       const priceText = $a.find('.srch-price').text();
       const price = parsePrice(priceText);
 
-      // Trust Mega.pk's search ranking — no local word filtering
+      if (!title || !price) return;
 
-      if (title && price) {
-        products.push({
-          title,
-          price,
-          originalPrice: null,
-          discount: null,
-          image: img.startsWith('http') ? img : `${STORE_URL}/${img}`,
-          url: link.startsWith('http') ? link : `${STORE_URL}/${link}`,
-          rating: 0,
-          reviewCount: 0,
-          store: STORE_NAME,
-          storeUrl: STORE_URL,
-          storeColor: STORE_COLOR,
-          inStock: true,
-        });
-      }
+      // ── Relevance filter: ALL query words must appear in the title ──
+      const titleLower = title.toLowerCase();
+      const allMatch = queryWords.every(word => titleLower.includes(word));
+      if (!allMatch) return;
+
+      products.push({
+        title,
+        price,
+        originalPrice: null,
+        discount: null,
+        image: img.startsWith('http') ? img : img ? `${STORE_URL}/${img}` : '',
+        url: link.startsWith('http') ? link : link ? `${STORE_URL}/${link}` : STORE_URL,
+        rating: 0,
+        reviewCount: 0,
+        store: STORE_NAME,
+        storeUrl: STORE_URL,
+        storeColor: STORE_COLOR,
+        inStock: true,
+      });
     });
 
-    console.log(`[${STORE_NAME}] Found ${products.length} products for "${query}"`);
+    console.log(`[${STORE_NAME}] Found ${products.length} relevant products for "${query}"`);
     return products;
   } catch (error) {
     console.error(`[${STORE_NAME}] Search error:`, error.message);
@@ -81,7 +95,7 @@ export async function getProductDetails(url) {
     const fullText = $('body').text();
     const priceMatch = fullText.match(/Rs\.?\s*([\d,]+)/i);
     const price = priceMatch ? parsePrice(priceMatch[0]) : null;
-    
+
     const description = sanitizeText($('meta[property="og:description"]').attr('content') || '');
 
     // Try JSON-LD

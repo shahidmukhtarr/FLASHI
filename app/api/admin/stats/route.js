@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getDbStats } from '../../../../../server/services/db.js';
+import { getDbStats } from '../../../../server/services/db.js';
 
 export async function GET() {
   try {

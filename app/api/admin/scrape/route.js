@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { searchAllStores } from '../../../../../server/services/scraperEngine.js';
+import { searchAllStores } from '../../../../server/services/scraperEngine.js';
 
 export async function POST(request) {
   try {

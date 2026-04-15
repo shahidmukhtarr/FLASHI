@@ -7,13 +7,20 @@ const STORE_URL = 'https://priceoye.pk';
 const STORE_COLOR = '#e21b70';
 
 /**
- * Search products on PriceOye.pk using HTML scraping
- * PriceOye uses server-side rendered HTML with .productBox containers
+ * Search products on PriceOye.pk
+ * PriceOye renders product cards as <a class="product-card"> with:
+ *   - data-product-name   → title
+ *   - href                → product URL
+ *   - amp-img[src]        → image
+ *   - .price-box.p1       → current price  ("Rs  266,999")
+ *   - .price-diff-retail  → original price ("Rs  284,000")
+ *   - .h6.bold            → rating value
+ *   - .rating-h7.bold:first → review count
  */
 export async function searchProducts(query, limit = 20) {
   try {
     const searchUrl = `${STORE_URL}/search?q=${encodeURIComponent(query)}`;
-    
+
     const response = await axios.get(searchUrl, {
       headers: getRequestHeaders(),
       timeout: 15000,
@@ -22,46 +29,50 @@ export async function searchProducts(query, limit = 20) {
     const $ = cheerio.load(response.data);
     const products = [];
 
-    // Modern PriceOye selectors: .product-card (search) or a.ga-dataset (listing)
-    const productItems = $('.product-card, a.ga-dataset');
-    
-    productItems.each((i, el) => {
+    $('a.productBox, a.product-card').each((i, el) => {
       if (products.length >= limit) return false;
 
       const $el = $(el);
-      // Try specific selectors for PriceOye
-      const name = $el.attr('data-product-name') || 
-                   $el.find('.product-card-title').text().trim() || 
-                   $el.find('h4').first().text().trim() || 
-                   $el.find('.card-name').text().trim() || '';
-      
-      const link = $el.attr('href') || $el.find('a').attr('href') || '';
-      
-      // Image extraction
-      const image = $el.find('img').attr('src') || 
-                     $el.find('amp-img').attr('src') || 
-                     $el.find('img').attr('data-src') || '';
-      
-      // Price extraction
-      const priceText = $el.find('.price-box, .product-card-price, .price, .product-card-price-container').text();
-      const price = parsePrice(priceText) || parsePrice($el.text());
-      
-      const oldPriceText = $el.find('.product-card-price-old, .old-price').text();
-      const originalPrice = parsePrice(oldPriceText);
+
+      // Title is stored directly in data attribute
+      const name = $el.attr('data-product-name') || $el.find('.p-title').text().trim();
+      if (!name) return;
+
+      // URL
+      const href = $el.attr('href') || '';
+      const url = href.startsWith('http') ? href : `${STORE_URL}${href}`;
+
+      // Image: PriceOye uses <amp-img> — grab the src from it
+      const imgEl = $el.find('amp-img').first();
+      const image = imgEl.attr('src') || imgEl.attr('data-src') || '';
+
+      // Price: ".price-box.p1" contains "Rs  266,999"
+      const priceText = $el.find('.price-box.p1, .price-box').first().text();
+      const price = parsePrice(priceText);
+
+      // Original price: ".price-diff-retail" contains "Rs  284,000"
+      const origText = $el.find('.price-diff-retail').first().text();
+      const originalPrice = parsePrice(origText);
+
+      // Rating & reviews
+      const ratingText = $el.find('.user-rating-content .h6').text().trim();
+      const rating = parseFloat(ratingText) || 0;
+      const reviewCountText = $el.find('.user-rating-content .rating-h7').first().text().trim();
+      const reviewCount = parseInt(reviewCountText) || 0;
 
       if (name && price) {
         products.push({
           title: sanitizeText(name),
           price,
-          originalPrice,
-          image: image.startsWith('http') ? image : `${STORE_URL}${image}`,
-          url: link.startsWith('http') ? link : `${STORE_URL}${link}`,
-          rating: 0,
-          reviewCount: 0,
+          originalPrice: originalPrice && originalPrice > price ? originalPrice : null,
+          image: image.startsWith('http') ? image : '',
+          url,
+          rating,
+          reviewCount,
           store: STORE_NAME,
           storeUrl: STORE_URL,
           storeColor: STORE_COLOR,
-          inStock: !$el.find('.out-of-stock, .outOfStock, .sold-out').length,
+          inStock: true,
         });
       }
     });
@@ -85,14 +96,14 @@ export async function getProductDetails(url) {
     });
 
     const $ = cheerio.load(response.data);
-    
+
     // 1. Try JSON-LD (most reliable)
     const jsonLdScripts = $('script[type="application/ld+json"]');
     for (let i = 0; i < jsonLdScripts.length; i++) {
       try {
         const data = JSON.parse($(jsonLdScripts[i]).html());
         const product = Array.isArray(data) ? data.find(item => item['@type'] === 'Product') : (data['@type'] === 'Product' ? data : null);
-        
+
         if (product) {
           return {
             title: sanitizeText(product.name),
@@ -112,35 +123,29 @@ export async function getProductDetails(url) {
       } catch (e) { /* ignore parse errors */ }
     }
 
-    // 2. Fallback to Meta Tags & Selectors
-    const title = sanitizeText($('meta[property="og:title"]').attr('content') || $('h1').first().text() || $('title').text());
-    const image = $('meta[property="og:image"]').attr('content') || 
-                  $('amp-img.product-thumbnail').first().attr('src') ||
-                  $('img.product-thumbnail').first().attr('src') || '';
-    
-    const fullText = $('body').text();
-    // Try to find price in meta or body
-    const metaPrice = $('meta[property="product:price:amount"]').attr('content');
-    const priceText = metaPrice || fullText.match(/Rs\s*([\d,]+)/)?.[0] || fullText.match(/PKR\s*([\d,]+)/)?.[0];
-    const price = parsePrice(priceText);
-    
-    const ratingAttr = $('[itemprop="ratingValue"]').attr('content') || '0';
-    const reviewCountAttr = $('[itemprop="reviewCount"]').attr('content') || '0';
-    const description = sanitizeText($('meta[name="description"]').attr('content') || $('[itemprop="description"], .product-description').first().text());
+    // 2. Fallback: use same selectors as search
+    const title = $('[data-product-name]').attr('data-product-name') ||
+                  sanitizeText($('meta[property="og:title"]').attr('content') || $('h1').first().text());
+    const image = $('meta[property="og:image"]').attr('content') || '';
+    const priceText = $('.price-box.p1, .price-box').first().text();
+    const price = parsePrice(priceText) || parsePrice($('meta[property="product:price:amount"]').attr('content'));
+    const origText = $('.price-diff-retail').first().text();
+    const originalPrice = parsePrice(origText);
 
     if (title && price) {
       return {
         title,
         price,
-        image: image.startsWith('http') ? image : (image ? `${STORE_URL}${image}` : ''),
+        originalPrice: originalPrice && originalPrice > price ? originalPrice : null,
+        image,
         url,
-        rating: parseFloat(ratingAttr) || 0,
-        reviewCount: parseInt(reviewCountAttr) || 0,
+        rating: parseFloat($('.h6.bold').first().text()) || 0,
+        reviewCount: 0,
         store: STORE_NAME,
         storeUrl: STORE_URL,
         storeColor: STORE_COLOR,
-        description: truncate(description, 300),
-        inStock: !$('body').text().toLowerCase().includes('out of stock'),
+        description: truncate(sanitizeText($('meta[name="description"]').attr('content') || ''), 300),
+        inStock: true,
       };
     }
 

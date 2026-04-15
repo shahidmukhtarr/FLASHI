@@ -44,6 +44,8 @@ export default function AdminPage() {
   const [stats, setStats] = useState(null);
   const [scheduler, setScheduler] = useState(null);
   const [scrapeQuery, setScrapeQuery] = useState('');
+  const [categoryUrls, setCategoryUrls] = useState('');
+  const [seedStatus, setSeedStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
 
@@ -135,6 +137,75 @@ export default function AdminPage() {
       showToast(error.message, 'error');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleCategoryScrape() {
+    const urls = categoryUrls
+      .split(/\r?\n|,/) 
+      .map((url) => url.trim())
+      .filter(Boolean);
+
+    if (urls.length === 0) {
+      showToast('Enter at least one category page URL.', 'warning');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const data = await fetchJson('/api/admin/scrape-category', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ urls, limitPerUrl: 25 }),
+      });
+      const saved = data.totalSaved || 0;
+      const valid = data.totalValidProducts || 0;
+      showToast(`Category scrape complete: ${valid} products found, ${saved} saved.`, 'success');
+      setCategoryUrls('');
+      loadProducts();
+      loadStats();
+    } catch (error) {
+      console.error(error);
+      showToast(error.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleSeedAllCategories() {
+    setLoading(true);
+    try {
+      const data = await fetchJson('/api/admin/seed-categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ limitPerCategory: 30 }),
+      });
+      showToast(`✅ ${data.message}`, 'success');
+      setSeedStatus({ running: true, startedAt: data.timestamp });
+    } catch (error) {
+      console.error(error);
+      showToast(error.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleCheckSeedStatus() {
+    try {
+      const data = await fetchJson('/api/admin/seed-categories');
+      setSeedStatus(data);
+      if (data.status === 'idle' && data.lastResult) {
+        showToast(`Seed done: ${data.lastResult.totalProducts || 0} products from ${data.lastResult.successCount || 0}/${data.lastResult.total || 0} categories`, 'success');
+        loadProducts();
+        loadStats();
+      } else if (data.status === 'running') {
+        showToast('Seed still running in background…', 'info');
+      } else {
+        showToast('No seed has been run yet.', 'info');
+      }
+    } catch (error) {
+      console.error(error);
+      showToast(error.message, 'error');
     }
   }
 
@@ -258,6 +329,47 @@ export default function AdminPage() {
                   Scrape now
                 </button>
               </div>
+            </div>
+            <div className="admin-card admin-scrape-card">
+              <label htmlFor="admin-category-urls">Custom category page URLs</label>
+              <textarea
+                id="admin-category-urls"
+                className="input-field"
+                rows="4"
+                value={categoryUrls}
+                onChange={(event) => setCategoryUrls(event.target.value)}
+                placeholder="Paste one or more category URLs, one per line"
+              />
+              <button className="button button-primary" type="button" onClick={handleCategoryScrape} disabled={loading}>
+                Scrape custom URLs
+              </button>
+            </div>
+            <div className="admin-card admin-scrape-card" style={{ borderLeft: '4px solid #6366f1' }}>
+              <label>🚀 Bulk Seed All Category Links</label>
+              <p style={{ fontSize: '13px', color: 'var(--color-text-muted, #888)', margin: '6px 0 12px' }}>
+                Scrapes all <strong>59 pre-configured category URLs</strong> (Daraz, PriceOye, Highfy, Naheed, OLX, Shophive) into the database. Runs in the background — check status after.
+              </p>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <button className="button button-primary" type="button" onClick={handleSeedAllCategories} disabled={loading}>
+                  ⚡ Seed All Categories
+                </button>
+                <button className="button button-secondary" type="button" onClick={handleCheckSeedStatus} disabled={loading}>
+                  Check Status
+                </button>
+              </div>
+              {seedStatus && (
+                <div style={{ marginTop: '10px', fontSize: '13px', background: 'rgba(99,102,241,0.08)', borderRadius: '8px', padding: '10px' }}>
+                  <div><strong>Status:</strong> {seedStatus.status || (seedStatus.running ? 'running' : 'idle')}</div>
+                  {seedStatus.lastResult && (
+                    <>
+                      <div><strong>Categories scraped:</strong> {seedStatus.lastResult.successCount}/{seedStatus.lastResult.total}</div>
+                      <div><strong>Products found:</strong> {seedStatus.lastResult.totalProducts}</div>
+                      <div><strong>Saved to DB:</strong> {seedStatus.lastResult.totalSaved}</div>
+                      <div><strong>Completed:</strong> {new Date(seedStatus.lastResult.timestamp).toLocaleString()}</div>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
             <div className="admin-card admin-scheduler-card">
               <label>Scheduler status</label>

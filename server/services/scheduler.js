@@ -1,4 +1,4 @@
-import { searchAllStores } from './scraperEngine.js';
+import { searchAllStores, scrapeAllCategoryLinks } from './scraperEngine.js';
 import { delay } from '../utils/helpers.js';
 
 const defaultQueries = [
@@ -36,8 +36,11 @@ export function getSchedulerStatus() {
   };
 }
 
+let runCount = 0;
+
 async function runQueryList() {
   const results = [];
+  runCount++;
 
   for (const query of JOB_QUERIES) {
     try {
@@ -63,6 +66,19 @@ async function runQueryList() {
 
     // Pause between query runs to avoid bursts
     await delay(3000);
+  }
+
+  // Every 5 scheduler runs, also do a full category seed to keep DB fresh
+  const seedEvery = parseInt(process.env.SCRAPER_SEED_CATEGORIES_EVERY, 10) || 5;
+  if (runCount % seedEvery === 0 || runCount === 1) {
+    console.log(`[Scheduler] Run #${runCount}: Triggering full category seed (every ${seedEvery} runs)`);
+    try {
+      const seedResult = await scrapeAllCategoryLinks({ limitPerCategory: 20 });
+      console.log(`[Scheduler] Category seed done: ${seedResult.successCount}/${seedResult.total} categories, ${seedResult.totalSaved} new products`);
+      results.push({ type: 'category_seed', successCount: seedResult.successCount, totalSaved: seedResult.totalSaved });
+    } catch (err) {
+      console.log(`[Scheduler] Category seed failed: ${err.message}`);
+    }
   }
 
   return results;

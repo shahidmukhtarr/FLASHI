@@ -89,6 +89,12 @@ export async function searchProducts(query, limit = 20) {
         discount = `-${pct}%`;
       }
 
+      // Strict relevance: all query words must appear in the title
+      const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 1);
+      const titleLower = (name || '').toLowerCase();
+      const allMatch = queryWords.every(w => titleLower.includes(w));
+      if (!allMatch) return true;
+
       if (name && price) {
         products.push({
           title: sanitizeText(name),
@@ -119,6 +125,12 @@ export async function searchProducts(query, limit = 20) {
             if (product['@type'] === 'Product' && product.name) {
               const price = parsePrice(product.offers?.price || product.offers?.lowPrice);
               if (!price) continue;
+
+              const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 1);
+              const titleLower = (product.name || '').toLowerCase();
+              const allMatch = queryWords.every(w => titleLower.includes(w));
+              if (!allMatch) continue;
+
               products.push({
                 title: sanitizeText(product.name),
                 price,
@@ -184,6 +196,12 @@ export async function searchProducts(query, limit = 20) {
           if (!price) continue;
 
           const discountPct = priceInfo?.discount?.percent_off;
+
+          const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 1);
+          const titleLower = (item.name || '').toLowerCase();
+          const allMatch = queryWords.every(w => titleLower.includes(w));
+          if (!allMatch) continue;
+
           products.push({
             title: sanitizeText(item.name || ''),
             price,

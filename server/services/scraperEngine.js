@@ -7,13 +7,16 @@ import * as shophive from '../scrapers/shophive.js';
 import * as homeshopping from '../scrapers/homeshopping.js';
 import * as olx from '../scrapers/olx.js';
 import * as naheed from '../scrapers/naheed.js';
-import { identifyStore, delay, sanitizeText } from '../utils/helpers.js';
+import { identifyStore, delay, sanitizeText, getRequestHeaders } from '../utils/helpers.js';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { saveProducts } from './db.js';
+import { getRelevantCategoryUrls, CATEGORY_PAGE_CONFIG } from './categoryLinks.js';
 
 const stores = [
-  { adapter: daraz, name: 'Daraz', domain: 'daraz.pk' },
+  // Daraz: disabled - Alibaba bot-protection (_____tmd_____/punish) blocks ALL server-side requests
+  // regardless of User-Agent, headers, or endpoint variant. Re-enable if a workaround is found.
+  // { adapter: daraz, name: 'Daraz', domain: 'daraz.pk' },
   { adapter: priceoye, name: 'PriceOye', domain: 'priceoye.pk' },
   { adapter: mega, name: 'Mega.pk', domain: 'mega.pk' },
   { adapter: highfy, name: 'Highfy', domain: 'highfy.pk' },
@@ -28,6 +31,42 @@ const stores = [
 
 const ACCESSORY_KEYWORDS = ['cover', 'case', 'protector', 'screen protector', 'tempered glass', 'cable', 'charger', 'adapter', 'strap', 'pouch', 'handsfree', 'earphone', 'skin', 'lens', 'smartwatch', 'earbuds', 'buds', 'trimmer', 'speaker', 'powerbank', 'power bank', 'holder', 'stand', 'ring light', 'selfie stick'];
 
+function normalizeUrl(url, baseUrl) {
+  try {
+    return new URL(url, baseUrl).href;
+  } catch {
+    return null;
+  }
+}
+
+function isLikelyProductLink(url, baseHost) {
+  if (!url || typeof url !== 'string') return false;
+  if (url.startsWith('javascript:') || url.startsWith('#')) return false;
+
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname !== baseHost) return false;
+
+    const pathname = parsed.pathname.toLowerCase();
+    const forbidden = ['/login', '/cart', '/checkout', '/account', '/help', '/faq', '/terms', '/privacy', '/policy', '/contact', '/wishlist', '/compare', '/blog', '/news', '/offers', '/events'];
+    if (forbidden.some((token) => pathname.includes(token))) return false;
+    if (pathname.length < 5) return false;
+    if (pathname === '/') return false;
+
+    const productIndicators = ['/product', '/products', '/item', '/p/', '/detail', '/details', '/view', '/shop/', '/catalog/'];
+    if (productIndicators.some((token) => pathname.includes(token))) return true;
+
+    const segments = pathname.split('/').filter(Boolean);
+    if (segments.length >= 3 && segments.some((segment) => /(product|item|mobile|phone|laptop|watch|camera|camera|tv|console|tablet|accessory)/.test(segment))) {
+      return true;
+    }
+
+    return segments.some((segment) => segment.length > 6 && /[a-z]/.test(segment) && /\d/.test(segment));
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Relevance filter:
  * 1. Remove accessories (unless user searched for one)
@@ -37,6 +76,20 @@ const ACCESSORY_KEYWORDS = ['cover', 'case', 'protector', 'screen protector', 't
 function isRelevantProduct(title, query) {
   const queryLower = query.toLowerCase().trim();
   const titleLower = title.toLowerCase();
+
+  // Prevent deceptive listings (e.g., Earbuds stuffing "Power Bank" in title)
+  const DECEPTIVE_KEYWORDS = {
+    'power bank': ['earbuds', 'buds', 'tws', 'earphone', 'headphone', 'm10', 'm19', 'm90', 'airpods', 'headset', 'm88', 'i7s'],
+  };
+  
+  for (const [targetKey, avoidWords] of Object.entries(DECEPTIVE_KEYWORDS)) {
+    if (queryLower.includes(targetKey) && !avoidWords.some(w => queryLower.includes(w))) {
+      // User searched for targetKey but NOT the avoidWords. If title has avoidWords, reject.
+      if (avoidWords.some(w => new RegExp(`\\b${w}\\b`).test(titleLower))) {
+        return false;
+      }
+    }
+  }
 
   // Filter out accessories when user didn't search for one
   const isQueryForAccessory = ACCESSORY_KEYWORDS.some(kw => queryLower.includes(kw));
@@ -293,6 +346,107 @@ export async function searchAllStores(query, limit = 150) {
   };
 }
 
+export async function scrapeCategoryUrl(url, limit = 20) {
+  const validUrl = String(url || '').trim();
+  if (!validUrl || !identifyStore(validUrl)) {
+    throw new Error('Please provide a valid store category page URL.');
+  }
+
+  const storeKey = identifyStore(validUrl);
+  const store = stores.find((s) => s.domain.includes(storeKey));
+  if (!store) {
+    throw new Error('Unsupported store for category scraping.');
+  }
+
+  const response = await axios.get(validUrl, {
+    headers: getRequestHeaders(),
+    timeout: 30000,
+  });
+
+  const $ = cheerio.load(response.data);
+  const baseHost = new URL(validUrl).hostname;
+  const discoveredUrls = new Set();
+
+  $('a[href]').each((_, el) => {
+    const href = String($(el).attr('href') || '').trim();
+    const absoluteUrl = normalizeUrl(href, validUrl);
+    if (!absoluteUrl) return;
+    if (absoluteUrl === validUrl) return;
+    if (isLikelyProductLink(absoluteUrl, baseHost)) {
+      discoveredUrls.add(absoluteUrl);
+    }
+  });
+
+  const productUrls = Array.from(discoveredUrls).slice(0, limit * 3);
+  const products = [];
+
+  for (const productUrl of productUrls) {
+    if (products.length >= limit) break;
+    try {
+      const item = await store.adapter.getProductDetails(productUrl);
+      if (item && item.title && item.price && item.url) {
+        products.push(item);
+      }
+    } catch (error) {
+      // ignore individual product URL failures
+    }
+    await delay(250);
+  }
+
+  const saveResult = await saveProducts(products, `category:${validUrl}`);
+
+  return {
+    url: validUrl,
+    scannedLinks: productUrls.length,
+    validProducts: products.length,
+    savedCount: saveResult.newCount,
+    updatedCount: saveResult.updatedCount,
+    products,
+    timestamp: new Date().toISOString(),
+  };
+}
+
+export async function scrapeRelevantCategoryPages(query, limitPerCategory = 8) {
+  const urls = getRelevantCategoryUrls(query);
+  if (urls.length === 0) {
+    return {
+      query,
+      urlCount: 0,
+      scannedUrls: [],
+      savedCount: 0,
+      updatedCount: 0,
+      pages: [],
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  const pages = [];
+  let savedCount = 0;
+  let updatedCount = 0;
+
+  for (const url of urls.slice(0, 6)) {
+    try {
+      const result = await scrapeCategoryUrl(url, limitPerCategory);
+      pages.push({ url, status: 'success', ...result });
+      savedCount += result.savedCount || 0;
+      updatedCount += result.updatedCount || 0;
+    } catch (error) {
+      pages.push({ url, status: 'failed', error: error?.message || 'Category scrape failed' });
+    }
+    await delay(250);
+  }
+
+  return {
+    query,
+    urlCount: urls.length,
+    scannedUrls: urls.slice(0, 6),
+    savedCount,
+    updatedCount,
+    pages,
+    timestamp: new Date().toISOString(),
+  };
+}
+
 /**
  * Get product details from a specific URL
  */
@@ -472,4 +626,91 @@ export function getSupportedStores() {
   }));
 }
 
-export default { searchAllStores, getProductFromUrl, getReviews, getSupportedStores };
+/**
+ * Seed ALL category products into the DB by running keyword searches
+ * through each store's native adapter (not HTML link crawling).
+ *
+ * For each entry in CATEGORY_PAGE_CONFIG:
+ *   - Determine which store adapter matches (by store name)
+ *   - Run `adapter.searchProducts(categoryTitle, limitPerCategory)`
+ *   - Save results to DB tagged with the category title
+ *
+ * @param {object} options
+ * @param {number} options.limitPerCategory - Max products per category search (default 30)
+ * @param {function} options.onProgress - Optional callback(current, total, entry)
+ */
+export async function scrapeAllCategoryLinks({ limitPerCategory = 30, onProgress } = {}) {
+  const total = CATEGORY_PAGE_CONFIG.length;
+  let totalSaved = 0;
+  let totalUpdated = 0;
+  let totalProducts = 0;
+  let successCount = 0;
+  let failCount = 0;
+  const results = [];
+
+  console.log(`[CategorySeed] Starting keyword-based category seed: ${total} categories, up to ${limitPerCategory} products each`);
+
+  // Build a store name → adapter mapping
+  const storeAdapterMap = {};
+  for (const s of stores) {
+    storeAdapterMap[s.name.toLowerCase()] = s;
+  }
+
+  for (let i = 0; i < CATEGORY_PAGE_CONFIG.length; i++) {
+    const entry = CATEGORY_PAGE_CONFIG[i];
+    if (onProgress) onProgress(i + 1, total, entry);
+
+    const storeKey = entry.store.toLowerCase();
+    const storeEntry = storeAdapterMap[storeKey];
+
+    if (!storeEntry) {
+      results.push({ url: entry.url, store: entry.store, title: entry.title, status: 'skipped', reason: 'No matching adapter' });
+      console.log(`[CategorySeed] [${i + 1}/${total}] ${entry.store} / ${entry.title}: SKIPPED (no adapter)`);
+      continue;
+    }
+
+    // Use the category title as the primary search keyword
+    const searchQuery = entry.title;
+
+    try {
+      const products = await storeEntry.adapter.searchProducts(searchQuery, limitPerCategory);
+      const validProducts = products.filter(p => p && p.title && p.price && p.price > 0 && p.url);
+
+      if (validProducts.length > 0) {
+        const saveResult = await saveProducts(validProducts, `category:${entry.title}`);
+        totalSaved += saveResult.newCount || 0;
+        totalUpdated += saveResult.updatedCount || 0;
+        totalProducts += validProducts.length;
+        successCount++;
+        results.push({ url: entry.url, store: entry.store, title: entry.title, status: 'success', validProducts: validProducts.length, savedCount: saveResult.newCount });
+        console.log(`[CategorySeed] [${i + 1}/${total}] ${entry.store} / ${entry.title}: ${validProducts.length} products, ${saveResult.newCount} saved`);
+      } else {
+        failCount++;
+        results.push({ url: entry.url, store: entry.store, title: entry.title, status: 'empty', validProducts: 0, savedCount: 0 });
+        console.log(`[CategorySeed] [${i + 1}/${total}] ${entry.store} / ${entry.title}: 0 valid products`);
+      }
+    } catch (err) {
+      failCount++;
+      results.push({ url: entry.url, store: entry.store, title: entry.title, status: 'failed', error: err?.message || 'Scrape error' });
+      console.log(`[CategorySeed] [${i + 1}/${total}] ${entry.store} / ${entry.title}: FAILED — ${err?.message}`);
+    }
+
+    // Polite delay between category requests
+    await delay(800);
+  }
+
+  console.log(`[CategorySeed] Done. ${successCount}/${total} succeeded, ${totalProducts} products, ${totalSaved} saved, ${totalUpdated} updated.`);
+
+  return {
+    total,
+    successCount,
+    failCount,
+    totalProducts,
+    totalSaved,
+    totalUpdated,
+    results,
+    timestamp: new Date().toISOString(),
+  };
+}
+
+export default { searchAllStores, getProductFromUrl, getReviews, getSupportedStores, scrapeAllCategoryLinks };

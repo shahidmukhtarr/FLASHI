@@ -4,11 +4,11 @@ import { useEffect, useMemo, useState } from 'react';
 
 const API_BASE = '/api';
 const popularQueries = [
-  'iPhone 15',
-  'Samsung Galaxy S24',
-  'AirPods Pro',
-  'MacBook Air',
-  'PlayStation 5',
+  'iPhone 15 Pro Max',
+  'Samsung S24 Ultra',
+  'Infinix Note 40',
+  'Redmi Note 13',
+  'Power Bank',
 ];
 
 function formatPrice(value) {
@@ -170,7 +170,18 @@ export default function HomePage() {
       <header className="header">
         <div className="container">
           <a href="/" className="logo">
-            <span className="logo-icon">⚡</span>
+            <span className="logo-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="30" height="30">
+                <path d="M 5 35 L 35 35 L 30 39 L 5 39 Z" fill="#222"/>
+                <path d="M 12 50 L 42 50 L 35 54 L 12 54 Z" fill="#222"/>
+                <path d="M 18 65 L 35 65 L 30 69 L 18 69 Z" fill="#222"/>
+                <path d="M 35 20 L 60 20 L 50 40 L 75 40 Q 82 40 80 50 L 70 70 L 40 70 Q 35 70 38 60 L 45 40 L 35 40 Z" fill="#369632"/>
+                <circle cx="48" cy="80" r="7" fill="#222"/>
+                <circle cx="48" cy="80" r="3" fill="#fff"/>
+                <circle cx="68" cy="80" r="7" fill="#222"/>
+                <circle cx="68" cy="80" r="3" fill="#fff"/>
+              </svg>
+            </span>
             <span className="logo-text">FLASHI</span>
           </a>
           <nav className={`nav ${menuOpen ? 'open' : ''}`}>
@@ -381,7 +392,18 @@ export default function HomePage() {
         <div className="container">
           <div className="footer-content">
             <div className="footer-brand">
-              <span className="logo-icon">⚡</span>
+              <span className="logo-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="30" height="30">
+                  <path d="M 5 35 L 35 35 L 30 39 L 5 39 Z" fill="#222"/>
+                  <path d="M 12 50 L 42 50 L 35 54 L 12 54 Z" fill="#222"/>
+                  <path d="M 18 65 L 35 65 L 30 69 L 18 69 Z" fill="#222"/>
+                  <path d="M 35 20 L 60 20 L 50 40 L 75 40 Q 82 40 80 50 L 70 70 L 40 70 Q 35 70 38 60 L 45 40 L 35 40 Z" fill="#369632"/>
+                  <circle cx="48" cy="80" r="7" fill="#222"/>
+                  <circle cx="48" cy="80" r="3" fill="#fff"/>
+                  <circle cx="68" cy="80" r="7" fill="#222"/>
+                  <circle cx="68" cy="80" r="3" fill="#fff"/>
+                </svg>
+              </span>
               <span className="logo-text">FLASHI</span>
               <p className="footer-tagline">Smarter price comparison for every shopper in Pakistan.</p>
             </div>

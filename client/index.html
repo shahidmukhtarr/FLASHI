@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FLASHI — Find the Lowest Price Across Pakistan's Top Stores</title>
+  <link rel="icon" type="image/png" href="/flashi.png" />
   <meta name="description"
     content="Compare prices from Daraz, PriceOye, Highfy & Mega — all in one search. Save money on smartphones, laptops, and more." />
   <meta property="og:title" content="FLASHI — Find the Lowest Price Across Pakistan" />
@@ -25,7 +26,22 @@
   <header class="header" id="header">
     <div class="container">
       <a href="/" class="logo" id="logo">
-        <span class="logo-icon">⚡</span>
+        <span class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="30" height="30">
+            <!-- Speed Lines -->
+            <path d="M 5 35 L 35 35 L 30 39 L 5 39 Z" fill="#222" />
+            <path d="M 12 50 L 42 50 L 35 54 L 12 54 Z" fill="#222" />
+            <path d="M 18 65 L 35 65 L 30 69 L 18 69 Z" fill="#222" />
+            <!-- Z Cart Body -->
+            <path d="M 35 20 L 60 20 L 50 40 L 75 40 Q 82 40 80 50 L 70 70 L 40 70 Q 35 70 38 60 L 45 40 L 35 40 Z"
+              fill="#3C9C3E" />
+            <!-- Wheels -->
+            <circle cx="48" cy="80" r="7" fill="#222" />
+            <circle cx="48" cy="80" r="3" fill="#fff" />
+            <circle cx="68" cy="80" r="7" fill="#222" />
+            <circle cx="68" cy="80" r="3" fill="#fff" />
+          </svg>
+        </span>
         <span class="logo-text">FLASHI</span>
       </a>
       <nav class="nav" id="nav">
@@ -196,7 +212,8 @@
           <div class="admin-card admin-scheduler-card">
             <label>Scheduler status</label>
             <div class="admin-scheduler-row">
-              <button class="button button-secondary" id="admin-scheduler-refresh-btn" type="button">Refresh status</button>
+              <button class="button button-secondary" id="admin-scheduler-refresh-btn" type="button">Refresh
+                status</button>
               <button class="button button-primary" id="admin-scheduler-run-btn" type="button">Run scheduler</button>
             </div>
             <div class="admin-scheduler-summary" id="admin-scheduler-status">No scheduler data loaded yet.</div>
@@ -264,7 +281,19 @@
     <div class="container">
       <div class="footer-content">
         <div class="footer-brand">
-          <span class="logo-icon">⚡</span>
+          <span class="logo-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="30" height="30">
+              <path d="M 5 35 L 35 35 L 30 39 L 5 39 Z" fill="#222" />
+              <path d="M 12 50 L 42 50 L 35 54 L 12 54 Z" fill="#222" />
+              <path d="M 18 65 L 35 65 L 30 69 L 18 69 Z" fill="#222" />
+              <path d="M 35 20 L 60 20 L 50 40 L 75 40 Q 82 40 80 50 L 70 70 L 40 70 Q 35 70 38 60 L 45 40 L 35 40 Z"
+                fill="#3C9C3E" />
+              <circle cx="48" cy="80" r="7" fill="#222" />
+              <circle cx="48" cy="80" r="3" fill="#fff" />
+              <circle cx="68" cy="80" r="7" fill="#222" />
+              <circle cx="68" cy="80" r="3" fill="#fff" />
+            </svg>
+          </span>
           <span class="logo-text">FLASHI</span>
           <p class="footer-tagline">The smartest way to shop Online in Pakistan</p>
         </div>
