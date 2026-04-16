@@ -89,11 +89,12 @@ export async function searchProducts(query, limit = 20) {
         discount = `-${pct}%`;
       }
 
-      // Strict relevance: all query words must appear in the title
-      const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 1);
+      // Relaxed relevance: majority of query words must appear in the title
+      const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 2);
       const titleLower = (name || '').toLowerCase();
-      const allMatch = queryWords.every(w => titleLower.includes(w));
-      if (!allMatch) return true;
+      const matchCount = queryWords.filter(w => titleLower.includes(w)).length;
+      const threshold = Math.max(1, Math.ceil(queryWords.length / 2));
+      if (queryWords.length > 0 && matchCount < threshold) return true;
 
       if (name && price) {
         products.push({
@@ -126,10 +127,11 @@ export async function searchProducts(query, limit = 20) {
               const price = parsePrice(product.offers?.price || product.offers?.lowPrice);
               if (!price) continue;
 
-              const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 1);
+              const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 2);
               const titleLower = (product.name || '').toLowerCase();
-              const allMatch = queryWords.every(w => titleLower.includes(w));
-              if (!allMatch) continue;
+              const matchCount = queryWords.filter(w => titleLower.includes(w)).length;
+              const threshold = Math.max(1, Math.ceil(queryWords.length / 2));
+              if (queryWords.length > 0 && matchCount < threshold) continue;
 
               products.push({
                 title: sanitizeText(product.name),
@@ -197,10 +199,11 @@ export async function searchProducts(query, limit = 20) {
 
           const discountPct = priceInfo?.discount?.percent_off;
 
-          const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 1);
+          const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 2);
           const titleLower = (item.name || '').toLowerCase();
-          const allMatch = queryWords.every(w => titleLower.includes(w));
-          if (!allMatch) continue;
+          const matchCount = queryWords.filter(w => titleLower.includes(w)).length;
+          const threshold = Math.max(1, Math.ceil(queryWords.length / 2));
+          if (queryWords.length > 0 && matchCount < threshold) continue;
 
           products.push({
             title: sanitizeText(item.name || ''),

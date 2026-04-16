@@ -47,10 +47,11 @@ export async function searchProducts(query, limit = 20) {
 
       if (!title || !price) return;
 
-      // ── Relevance filter: ALL query words must appear in the title ──
+      // ── Relevance filter: majority of query words must appear in the title ──
       const titleLower = title.toLowerCase();
-      const allMatch = queryWords.every(word => titleLower.includes(word));
-      if (!allMatch) return;
+      const matchCount = queryWords.filter(word => titleLower.includes(word)).length;
+      const threshold = Math.max(1, Math.ceil(queryWords.length / 2));
+      if (queryWords.length > 0 && matchCount < threshold) return;
 
       products.push({
         title,

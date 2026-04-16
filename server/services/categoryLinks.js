@@ -188,36 +188,6 @@ export const CATEGORY_PAGE_CONFIG = [
     keywords: ['personal care', 'beauty', 'skincare', 'health'],
   },
   {
-    store: 'Highfy',
-    url: 'https://highfy.pk/collections/skin-care-new-main-menu',
-    title: 'Skin Care',
-    keywords: ['skin care', 'skincare', 'beauty', 'face'],
-  },
-  {
-    store: 'Highfy',
-    url: 'https://highfy.pk/collections/makeup-new-main-menu',
-    title: 'Makeup',
-    keywords: ['makeup', 'cosmetics', 'beauty'],
-  },
-  {
-    store: 'Highfy',
-    url: 'https://highfy.pk/collections/hair-care-new-main-menu',
-    title: 'Hair Care',
-    keywords: ['hair care', 'shampoo', 'conditioner', 'hair'],
-  },
-  {
-    store: 'Highfy',
-    url: 'https://highfy.pk/collections/fragrance-new-main-menu',
-    title: 'Fragrance',
-    keywords: ['fragrance', 'perfume', 'cologne'],
-  },
-  {
-    store: 'Highfy',
-    url: 'https://highfy.pk/collections/personal-care-new-main-menu',
-    title: 'Personal Care',
-    keywords: ['personal care', 'beauty', 'health'],
-  },
-  {
     store: 'Naheed',
     url: 'https://www.naheed.pk/groceries-pets',
     title: 'Groceries & Pets',

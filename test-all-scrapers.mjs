@@ -1,7 +1,6 @@
 import * as daraz from './server/scrapers/daraz.js';
 import * as priceoye from './server/scrapers/priceoye.js';
 import * as mega from './server/scrapers/mega.js';
-import * as highfy from './server/scrapers/highfy.js';
 import * as shophive from './server/scrapers/shophive.js';
 import * as olx from './server/scrapers/olx.js';
 import * as naheed from './server/scrapers/naheed.js';
@@ -14,7 +13,6 @@ const scrapers = [
   { name: 'Daraz', adapter: daraz },
   { name: 'PriceOye', adapter: priceoye },
   { name: 'Mega.pk', adapter: mega },
-  { name: 'Highfy', adapter: highfy },
   { name: 'Shophive', adapter: shophive },
   { name: 'OLX', adapter: olx },
   { name: 'Naheed', adapter: naheed },

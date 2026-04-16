@@ -57,6 +57,8 @@ export default function HomePage() {
   const [searchMode, setSearchMode] = useState('db');
   const [menuOpen, setMenuOpen] = useState(false);
   const [liveLoading, setLiveLoading] = useState(false);
+  const [contactForm, setContactForm] = useState({ name: '', email: '', subject: 'General Inquiry', message: '' });
+  const [submitting, setSubmitting] = useState(false);
 
   const sortedProducts = useMemo(() => sortProducts(products, sortKey), [products, sortKey]);
   const priceStats = useMemo(() => getPriceStats(sortedProducts), [sortedProducts]);
@@ -155,6 +157,25 @@ export default function HomePage() {
       showToast(error.message || 'Search failed. Please try again.', 'error');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleContactSubmit(e) {
+    e.preventDefault();
+    if (!contactForm.name || !contactForm.email || !contactForm.message) {
+      showToast('Please fill in all required fields', 'warning');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      // Mock API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      showToast('Thank you for your message! We will get back to you soon.', 'success');
+      setContactForm({ name: '', email: '', subject: 'General Inquiry', message: '' });
+    } catch (error) {
+      showToast('Failed to send message. Please try again.', 'error');
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -383,6 +404,92 @@ export default function HomePage() {
               <div className="step-icon">⚡</div>
               <h3>Compare prices</h3>
               <p>See the best prices from multiple stores and choose the lowest offer.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="contact-section" id="contact">
+        <div className="container">
+          <div className="contact-layout">
+            <div className="contact-info-plus">
+              <div className="hero-badge">Get in touch</div>
+              <h2 className="section-title" style={{ textAlign: 'left', margin: '0 0 var(--spacing-md) 0' }}>
+                We'd love to hear <span className="highlight-text">your feedback</span>
+              </h2>
+              <p className="contact-desc">
+                Have a question about FLASHI? Want to suggest a new store or report a bug? 
+                Our team is here to help you get the best out of your shopping experience.
+              </p>
+              <div className="contact-features">
+                <div className="contact-feature">
+                  <div className="cf-icon">📮</div>
+                  <div className="cf-text">
+                    <h4>Direct Feedback</h4>
+                    <p>Your suggestions help us improve FLASHI every day.</p>
+                  </div>
+                </div>
+                <div className="contact-feature">
+                  <div className="cf-icon">⚡</div>
+                  <div className="cf-text">
+                    <h4>Fast Response</h4>
+                    <p>We typically reply within 24 hours of receiving your message.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="contact-form-container">
+              <form className="contact-form" onSubmit={handleContactSubmit}>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Your Name</label>
+                    <input 
+                      type="text" 
+                      placeholder="John Doe" 
+                      required 
+                      value={contactForm.name}
+                      onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Email Address</label>
+                    <input 
+                      type="email" 
+                      placeholder="john@example.com" 
+                      required 
+                      value={contactForm.email}
+                      onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Subject</label>
+                  <select 
+                    value={contactForm.subject}
+                    onChange={(e) => setContactForm({...contactForm, subject: e.target.value})}
+                  >
+                    <option>General Inquiry</option>
+                    <option>Store Suggestion</option>
+                    <option>Bug Report</option>
+                    <option>Feedback</option>
+                    <option>Partnership</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Message</label>
+                  <textarea 
+                    rows="4" 
+                    placeholder="Tell us what's on your mind..." 
+                    required
+                    value={contactForm.message}
+                    onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
+                  ></textarea>
+                </div>
+                <button className="submit-btn" type="submit" disabled={submitting}>
+                  {submitting ? 'Sending...' : 'Send Message'}
+                </button>
+              </form>
             </div>
           </div>
         </div>

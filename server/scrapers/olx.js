@@ -6,50 +6,7 @@ const STORE_URL = 'https://www.olx.com.pk';
 const STORE_COLOR = '#002f34';
 const OLX_IMAGE_BASE = 'https://images.olx.com.pk/thumbnails';
 
-/**
- * Extract listing items from the window.state JSON embedded in OLX HTML.
- * Items have: title, price (number), slug, coverPhoto.id, location, etc.
- */
-function extractItemsFromHtml(html) {
-  const items = [];
-
-  // OLX embeds all data in window.state = {...};
-  // The items are nested deep, but we can extract them by regex-matching
-  // individual item objects that contain "title", "slug", "coverPhoto"
-  
-  // Match item-like objects: they have "slug":"some-product-slug" and "title":"..."
-  // We use a robust regex to extract each item block
-  const itemRegex = /"coverPhoto":\{[^}]*"id":(\d+)[^}]*\}[^]*?"price":(\d+)[^]*?"slug":"([^"]+)"[^]*?"title":"([^"]+)"/g;
-  
-  let match;
-  while ((match = itemRegex.exec(html)) !== null) {
-    const [, photoId, price, slug, title] = match;
-    const priceNum = parseInt(price);
-    if (!title || priceNum <= 0) continue;
-
-    // Extract location from nearby context
-    const contextStart = Math.max(0, match.index - 50);
-    const contextEnd = Math.min(html.length, match.index + match[0].length + 500);
-    const context = html.substring(contextStart, contextEnd);
-    const locMatch = context.match(/"location\.lvl\d+":\{[^}]*"name":"([^"]+)"/);
-
-    items.push({
-      title: title.replace(/\\u002F/g, '/').replace(/\\"/g, '"'),
-      price: priceNum,
-      slug,
-      imageId: photoId,
-      location: locMatch ? locMatch[1] : '',
-    });
-  }
-
-  return items;
-}
-
-/**
- * Search for products on OLX.com.pk
- * OLX is a classifieds marketplace — products are user-listed, often second-hand.
- */
-export async function searchProducts(query, limit = 10) {
+export async function searchProducts(query, limit = 20) {
   try {
     const slug = query.trim().replace(/\s+/g, '-');
     const searchUrl = `${STORE_URL}/items/q-${slug}`;
@@ -58,38 +15,70 @@ export async function searchProducts(query, limit = 10) {
       headers: {
         ...getRequestHeaders(),
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Referer': STORE_URL,
       },
       timeout: 15000,
-      maxRedirects: 5,
     });
 
     const html = response.data;
     const products = [];
 
-    // Extract items from the embedded window.state JSON
-    const items = extractItemsFromHtml(html);
+    // Extract window.state string
+    const stateMatch = html.match(/window\.state\s*=\s*(\{[\s\S]+?\});/);
+    if (!stateMatch) {
+       console.log(`[${STORE_NAME}] Could not find window.state`);
+       return [];
+    }
 
-    const seen = new Set();
-    for (const item of items) {
+    const stateJsonStr = stateMatch[1];
+    let state;
+    try {
+      state = JSON.parse(stateJsonStr);
+    } catch (e) {
+      console.log(`[${STORE_NAME}] JSON parse error:`, e.message);
+      return [];
+    }
+
+    const hits = state?.algolia?.content?.hits || [];
+    
+    for (const hit of hits) {
       if (products.length >= limit) break;
-      if (seen.has(item.slug)) continue;
-      seen.add(item.slug);
+      
+      const title = hit.title || hit.name || '';
+      const slug = hit.slug || '';
+      const externalId = hit.externalID || '';
+      
+      // Price can be in price.value.value or extraFields.price
+      let price = hit.extraFields?.price;
+      if (!price && hit.price) {
+          price = hit.price.value?.value || hit.price.value;
+      }
+      
+      if (!title || !price) continue;
+      
+      // Relevance check: check if it matches query words roughly
+      const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 2);
+      const titleLower = title.toLowerCase();
+      const matchCount = queryWords.filter(w => titleLower.includes(w)).length;
+      const threshold = Math.max(1, Math.ceil(queryWords.length / 2));
+      
+      if (queryWords.length > 0 && matchCount < threshold) continue;
+
+      const coverPhotoId = hit.coverPhoto?.externalID || (hit.photos?.[0]?.externalID) || '';
+      const image = coverPhotoId ? `${OLX_IMAGE_BASE}/${coverPhotoId}-400x300.webp` : '';
 
       products.push({
-        title: sanitizeText(item.title),
-        price: item.price,
+        title: sanitizeText(title),
+        price: parseFloat(price),
         originalPrice: null,
         discount: null,
-        image: `${OLX_IMAGE_BASE}/${item.imageId}-400x300.webp`,
-        url: `${STORE_URL}/item/${item.slug}`,
+        image,
+        url: `${STORE_URL}/item/${slug}`,
         rating: 0,
         reviewCount: 0,
         store: STORE_NAME,
         storeUrl: STORE_URL,
         storeColor: STORE_COLOR,
         inStock: true,
-        location: item.location,
       });
     }
 
@@ -101,9 +90,6 @@ export async function searchProducts(query, limit = 10) {
   }
 }
 
-/**
- * Get product details from an OLX URL
- */
 export async function getProductDetails(url) {
   try {
     const response = await axios.get(url, {
@@ -113,58 +99,41 @@ export async function getProductDetails(url) {
 
     const html = response.data;
 
-    // Extract from embedded state data
-    const titleMatch = html.match(/"title":"([^"]+)"/);
-    const priceMatch = html.match(/"price":(\d+)/);
-    const coverMatch = html.match(/"coverPhoto":\{[^}]*"id":(\d+)/);
-    const descMatch = html.match(/"description":"([^"]{0,500})"/);
+    // Use meta tags to extract OLX individual details
+    const titleMatch = html.match(/property="og:title"\s+content="([^"]+)"/i);
+    const descMatch = html.match(/property="og:description"\s+content="([^"]+)"/i);
+    const imgMatch = html.match(/property="og:image"\s+content="([^"]+)"/i);
+    
+    const title = titleMatch ? titleMatch[1] : '';
+    const description = descMatch ? sanitizeText(descMatch[1]) : '';
+    let image = imgMatch ? imgMatch[1] : '';
+    
+    // Find price in HTML text
+    const priceRegex = /"price":\{"value":\{"display":"[^"]+","value":([\d.]+)\}/;
+    const priceMatch = html.match(priceRegex);
+    const price = priceMatch ? parseFloat(priceMatch[1]) : null;
 
-    const title = titleMatch ? titleMatch[1].replace(/\\u002F/g, '/') : null;
-    const price = priceMatch ? parseInt(priceMatch[1]) : null;
-
-    if (title && price && price > 0) {
+    if (title && price) {
       return {
         title: sanitizeText(title),
         price,
         originalPrice: null,
-        image: coverMatch ? `${OLX_IMAGE_BASE}/${coverMatch[1]}-400x300.webp` : '',
+        image,
         url,
         rating: 0,
         reviewCount: 0,
         store: STORE_NAME,
         storeUrl: STORE_URL,
         storeColor: STORE_COLOR,
-        description: descMatch ? sanitizeText(descMatch[1].replace(/\\u002F/g, '/')) : '',
+        description,
         inStock: true,
       };
     }
-
-    // Fallback: meta tags
-    const ogTitle = html.match(/property="og:title"\s+content="([^"]+)"/)?.[1];
-    const ogImage = html.match(/property="og:image"\s+content="([^"]+)"/)?.[1] || '';
-    const ogDesc = html.match(/property="og:description"\s+content="([^"]+)"/)?.[1] || '';
-    const bodyPrice = html.match(/Rs\.?\s*([\d,]+)/i);
-
-    if (ogTitle && bodyPrice) {
-      return {
-        title: sanitizeText(ogTitle),
-        price: parsePrice(bodyPrice[0]),
-        originalPrice: null,
-        image: ogImage,
-        url,
-        rating: 0,
-        reviewCount: 0,
-        store: STORE_NAME,
-        storeUrl: STORE_URL,
-        storeColor: STORE_COLOR,
-        description: sanitizeText(ogDesc),
-        inStock: true,
-      };
-    }
-
     return null;
   } catch (error) {
     console.error(`[${STORE_NAME}] Product details error:`, error.message);
     return null;
   }
 }
+
+export default { searchProducts, getProductDetails, storeName: STORE_NAME };
