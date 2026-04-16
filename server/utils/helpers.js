@@ -68,8 +68,8 @@ export function identifyStore(url) {
     if (hostname.includes('priceoye.pk')) return 'priceoye';
     if (hostname.includes('mega.pk')) return 'mega';
     if (hostname.includes('shophive.com')) return 'shophive';
-    if (hostname.includes('olx.com.pk')) return 'olx';
     if (hostname.includes('naheed.pk')) return 'naheed';
+    if (hostname.includes('highfy.pk')) return 'highfy';
 
     return null;
   } catch {

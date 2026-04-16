@@ -2,16 +2,47 @@ import { searchAllStores, scrapeAllCategoryLinks } from './scraperEngine.js';
 import { delay } from '../utils/helpers.js';
 
 const defaultQueries = [
+  // Smartphones
   'iPhone 15',
+  'iPhone 16',
   'Samsung Galaxy S24',
-  'MacBook Air',
-  'AirPods Pro',
-  'PlayStation 5',
-  'Smartwatch',
+  'Infinix Note',
+  'Redmi Note',
+  // Mobile Accessories
   'Power bank',
-  'Gaming laptop',
+  'Fast charger',
+  'Air case cover',
+  // Smartwatches
+  'Apple Watch',
+  'Samsung Galaxy Watch',
+  'Zero Lifestyle smartwatch',
+  'itel Smartwatch',
+  // Audio
+  'AirPods',
+  'Audionic Airbud',
+  'Sony WH-1000XM5',
+  'Mi True Wireless',
+  // TVs
+  'TCL 4K LED TV',
+  'Haier Smart TV',
+  'Samsung Crystal UHD',
+  'Sony Bravia',
+  // Gaming
+  'PlayStation 5',
+  'Xbox Series X',
+  'Nintendo Switch',
+  // Laptops
+  'HP Pavilion',
+  'HP Victus',
+  'Dell Latitude',
+  'MacBook Air M3',
+  // PC Peripherals
+  'Mechanical keyboard',
+  'Gaming mouse Logitech',
+  'Gaming monitor',
+  // Legacy
   'Wireless headphones',
-  'Canon DSLR'
+  'Canon DSLR',
 ];
 
 const QUERY_CSV = process.env.SCRAPER_QUERIES || defaultQueries.join(',');

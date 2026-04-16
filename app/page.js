@@ -485,6 +485,7 @@ export default function HomePage() {
                     <option>Bug Report</option>
                     <option>Feedback</option>
                     <option>Partnership</option>
+                    <option>Services</option>
                   </select>
                 </div>
                 <div className="form-group">

@@ -2,8 +2,8 @@ import * as daraz from '../scrapers/daraz.js';
 import * as priceoye from '../scrapers/priceoye.js';
 import * as mega from '../scrapers/mega.js';
 import * as shophive from '../scrapers/shophive.js';
-import * as olx from '../scrapers/olx.js';
 import * as naheed from '../scrapers/naheed.js';
+import * as highfy from '../scrapers/highfy.js';
 import { identifyStore, delay, sanitizeText, getRequestHeaders } from '../utils/helpers.js';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
@@ -15,8 +15,8 @@ const stores = [
   { adapter: priceoye, name: 'PriceOye', domain: 'priceoye.pk' },
   { adapter: mega, name: 'Mega.pk', domain: 'mega.pk' },
   { adapter: shophive, name: 'Shophive', domain: 'shophive.com' },
-  { adapter: olx, name: 'OLX', domain: 'olx.com.pk' },
   { adapter: naheed, name: 'Naheed', domain: 'naheed.pk' },
+  { adapter: highfy, name: 'Highfy', domain: 'highfy.pk' },
 ];
 
 const ACCESSORY_KEYWORDS = ['cover', 'case', 'protector', 'screen protector', 'tempered glass', 'cable', 'charger', 'adapter', 'strap', 'pouch', 'handsfree', 'earphone', 'skin', 'lens', 'smartwatch', 'earbuds', 'buds', 'trimmer', 'speaker', 'powerbank', 'power bank', 'holder', 'stand', 'ring light', 'selfie stick'];
