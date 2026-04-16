@@ -1,11 +1,16 @@
 import axios from 'axios';
-import { getRequestHeaders, parsePrice, sanitizeText } from '../utils/helpers.js';
+import * as cheerio from 'cheerio';
+import { getRequestHeaders, sanitizeText } from '../utils/helpers.js';
 
 const STORE_NAME = 'OLX';
 const STORE_URL = 'https://www.olx.com.pk';
 const STORE_COLOR = '#002f34';
 const OLX_IMAGE_BASE = 'https://images.olx.com.pk/thumbnails';
 
+/**
+ * Search for products on OLX.com.pk
+ * Uses window.state JSON extraction for better reliability than HTML scraping.
+ */
 export async function searchProducts(query, limit = 20) {
   try {
     const slug = query.trim().replace(/\s+/g, '-');
@@ -45,7 +50,6 @@ export async function searchProducts(query, limit = 20) {
       
       const title = hit.title || hit.name || '';
       const slug = hit.slug || '';
-      const externalId = hit.externalID || '';
       
       // Price can be in price.value.value or extraFields.price
       let price = hit.extraFields?.price;
@@ -90,6 +94,9 @@ export async function searchProducts(query, limit = 20) {
   }
 }
 
+/**
+ * Get details for a specific OLX product URL
+ */
 export async function getProductDetails(url) {
   try {
     const response = await axios.get(url, {
@@ -99,7 +106,7 @@ export async function getProductDetails(url) {
 
     const html = response.data;
 
-    // Use meta tags to extract OLX individual details
+    // Use meta tags and regex for details
     const titleMatch = html.match(/property="og:title"\s+content="([^"]+)"/i);
     const descMatch = html.match(/property="og:description"\s+content="([^"]+)"/i);
     const imgMatch = html.match(/property="og:image"\s+content="([^"]+)"/i);
@@ -108,7 +115,7 @@ export async function getProductDetails(url) {
     const description = descMatch ? sanitizeText(descMatch[1]) : '';
     let image = imgMatch ? imgMatch[1] : '';
     
-    // Find price in HTML text
+    // Find price in JSON within script tags or regex
     const priceRegex = /"price":\{"value":\{"display":"[^"]+","value":([\d.]+)\}/;
     const priceMatch = html.match(priceRegex);
     const price = priceMatch ? parseFloat(priceMatch[1]) : null;
