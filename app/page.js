@@ -267,6 +267,28 @@ export default function HomePage() {
                     </button>
                   ))}
                 </div>
+
+                <div className="trust-section">
+                  <div className="trust-label"><h2>Most Popular Stores</h2></div>
+                  <div className="trust-logos">
+                    <div className="trust-logo-card">
+                      <img src="https://www.google.com/s2/favicons?domain=daraz.pk&sz=128" alt="Daraz" className="brand-logo-img" />
+                      <span className="brand-logo-name">Daraz</span>
+                    </div>
+                    <div className="trust-logo-card">
+                      <img src="https://www.google.com/s2/favicons?domain=priceoye.pk&sz=128" alt="PriceOye" className="brand-logo-img" />
+                      <span className="brand-logo-name">PriceOye</span>
+                    </div>
+                    <div className="trust-logo-card">
+                      <img src="https://www.google.com/s2/favicons?domain=mega.pk&sz=128" alt="Mega.pk" className="brand-logo-img" />
+                      <span className="brand-logo-name">Mega.pk</span>
+                    </div>
+                    <div className="trust-logo-card">
+                      <img src="https://www.google.com/s2/favicons?domain=highfy.pk&sz=128" alt="Highfy" className="brand-logo-img" />
+                      <span className="brand-logo-name">Highfy</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

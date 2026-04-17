@@ -418,6 +418,113 @@ input:focus, select:focus, textarea:focus {
   margin-top: var(--spacing-lg);
 }
 
+.trust-section {
+  margin-top: var(--spacing-xl);
+  text-align: center;
+}
+
+.trust-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: var(--spacing-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.trust-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2xl);
+  flex-wrap: wrap;
+  padding: var(--spacing-xl) 0;
+}
+
+.trust-section {
+  margin-top: var(--spacing-2xl);
+  text-align: center;
+}
+
+.trust-label {
+  margin-bottom: var(--spacing-md);
+}
+
+.trust-label h2 {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: var(--light-text);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.trust-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xl);
+  flex-wrap: wrap;
+  padding: var(--spacing-xl) 0;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.trust-logo-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: rgba(45, 52, 54, 0.4);
+  backdrop-filter: blur(8px);
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all var(--transition-normal);
+  cursor: default;
+}
+
+.trust-logo-card:hover {
+  transform: translateY(-5px);
+  background: rgba(45, 52, 54, 0.8);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.brand-logo-img {
+  height: 28px;
+  width: 28px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.brand-logo-name {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--light-text);
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 576px) {
+  .trust-logos {
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) 0;
+  }
+  
+  .trust-logo-card {
+    padding: 8px 16px;
+  }
+  
+  .brand-logo-img {
+    height: 24px;
+    width: 24px;
+  }
+  
+  .brand-logo-name {
+    font-size: var(--font-size-base);
+  }
+}
+
 
 .steps-grid {
   display: grid;
@@ -681,6 +788,19 @@ input:focus, select:focus, textarea:focus {
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-2xl);
+}
+
+@media (max-width: 576px) {
+  .products-grid:not(.list-view) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 360px) {
+  .products-grid:not(.list-view) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .products-grid.list-view {
