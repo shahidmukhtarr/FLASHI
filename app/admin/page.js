@@ -347,7 +347,7 @@ export default function AdminPage() {
             <div className="admin-card admin-scrape-card" style={{ borderLeft: '4px solid #6366f1' }}>
               <label>🚀 Bulk Seed All Category Links</label>
               <p style={{ fontSize: '13px', color: 'var(--color-text-muted, #888)', margin: '6px 0 12px' }}>
-                Scrapes all <strong>59 pre-configured category URLs</strong> (Daraz, PriceOye, Highfy, Naheed, OLX, Shophive) into the database. Runs in the background — check status after.
+                Scrapes all <strong>59 pre-configured category URLs</strong> (Daraz, PriceOye, Highfy, Naheed, Shophive) into the database. Runs in the background — check status after.
               </p>
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 <button className="button button-primary" type="button" onClick={handleSeedAllCategories} disabled={loading}>

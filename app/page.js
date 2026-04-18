@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const API_BASE = '/api';
 const popularQueries = [
@@ -10,6 +11,9 @@ const popularQueries = [
   'Redmi Note 13',
   'Power Bank',
 ];
+
+const LIVE_WAIT_MESSAGE = 'Please wait 5 to 10 seconds for accurate results while we scrape live products.';
+const DB_WAIT_MESSAGE = 'Searching products... please wait a few seconds.';
 
 function formatPrice(value) {
   if (value == null || Number.isNaN(Number(value))) return 'N/A';
@@ -57,6 +61,7 @@ export default function HomePage() {
   const [searchMode, setSearchMode] = useState('db');
   const [menuOpen, setMenuOpen] = useState(false);
   const [liveLoading, setLiveLoading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
   const [contactForm, setContactForm] = useState({ name: '', email: '', subject: 'General Inquiry', message: '' });
   const [submitting, setSubmitting] = useState(false);
 
@@ -110,6 +115,8 @@ export default function HomePage() {
 
     const isUrl = searchTerm.startsWith('http://') || searchTerm.startsWith('https://');
     setLoading(true);
+    setLiveLoading(false);
+    setStatusMessage(isUrl ? 'Fetching product details...' : DB_WAIT_MESSAGE);
     setProducts([]);
     setMeta('');
 
@@ -135,6 +142,7 @@ export default function HomePage() {
         
         if (data.needsLiveScrape) {
           setLiveLoading(true);
+          setStatusMessage(LIVE_WAIT_MESSAGE);
           // Fire and forget live scrape, then refetch
           fetch(`${API_BASE}/products/live?q=${encodeURIComponent(searchTerm)}&limit=50`)
             .then(res => res.json())
@@ -147,7 +155,10 @@ export default function HomePage() {
               }
             })
             .catch(console.error)
-            .finally(() => setLiveLoading(false));
+            .finally(() => {
+              setLiveLoading(false);
+              setStatusMessage('');
+            });
         }
       }
 
@@ -155,6 +166,7 @@ export default function HomePage() {
     } catch (error) {
       console.error('Search error:', error);
       showToast(error.message || 'Search failed. Please try again.', 'error');
+      setStatusMessage('');
     } finally {
       setLoading(false);
     }
@@ -268,6 +280,25 @@ export default function HomePage() {
                   ))}
                 </div>
 
+                <AnimatePresence>
+                  {liveLoading && (
+                    <motion.div
+                      className="live-search-banner"
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                    >
+                      <motion.span
+                        className="live-dot"
+                        animate={{ scale: [1, 1.3, 1] }}
+                        transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
+                      />
+                      {LIVE_WAIT_MESSAGE}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 <div className="trust-section">
                   <div className="trust-label"><h2>Most Popular Stores</h2></div>
                   <div className="trust-logos">
@@ -325,12 +356,24 @@ export default function HomePage() {
                   <h2 className="results-title">Results for "{query}"</h2>
                   <p className="results-meta">
                     {meta}
-                    {liveLoading && (
-                      <span className="live-loading-indicator">
-                        <span className="live-dot"></span>
-                        Scanning for more live deals...
-                      </span>
-                    )}
+                    <AnimatePresence>
+                      {(loading || liveLoading) && statusMessage && (
+                        <motion.span
+                          className="live-loading-indicator"
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 4 }}
+                          transition={{ duration: 0.2, ease: 'easeOut' }}
+                        >
+                          <motion.span
+                            className="live-dot"
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
+                          ></motion.span>
+                          {statusMessage}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
                   </p>
                 </div>
                 <div className="results-controls">
