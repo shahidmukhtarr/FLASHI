@@ -196,6 +196,9 @@ export async function queryStoredProducts(options = {}) {
 
   let query = client.from(TABLE_NAME).select('*', { count: 'exact' });
 
+  // OLX was removed from supported stores; keep legacy rows hidden from all product queries.
+  query = query.not('store', 'ilike', 'olx');
+
   if (q.trim().length > 0) {
     // Split into meaningful words, ignoring very short filler words
     const stopwords = new Set(['a', 'an', 'the', 'for', 'of', 'in', 'on', 'at', 'to', 'by']);
@@ -261,6 +264,7 @@ export async function queryStoredProducts(options = {}) {
   // Deduplicate by URL — same product scraped multiple times should appear once
   const seen = new Set();
   const dedupedData = (data || []).filter(row => {
+    if (String(row?.store || '').toLowerCase() === 'olx') return false;
     if (!row.url || seen.has(row.url)) return false;
     seen.add(row.url);
     return true;
