@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "node clean.js",
-    "build": "next build",
+    "build": "node clean.js && next build",
     "start": "next start",
     "preview": "next start",
     "lint": "next lint"
