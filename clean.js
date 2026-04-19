@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const dirsToClean = ['.next'];
+const dirsToClean = ['.next', 'pages'];
 
 dirsToClean.forEach((dir) => {
   const dirPath = path.resolve(process.cwd(), dir);
