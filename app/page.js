@@ -64,6 +64,10 @@ export default function HomePage() {
   const [contactForm, setContactForm] = useState({ name: '', email: '', subject: 'General Inquiry', message: '' });
   const [submitting, setSubmitting] = useState(false);
   const [showPremiumPopup, setShowPremiumPopup] = useState(false);
+  const [user, setUser] = useState(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginForm, setLoginForm] = useState({ name: '', email: '' });
+  const [loginLoading, setLoginLoading] = useState(false);
 
   const sortedProducts = useMemo(() => sortProducts(products, sortKey), [products, sortKey]);
   const priceStats = useMemo(() => getPriceStats(sortedProducts), [sortedProducts]);
@@ -73,6 +77,18 @@ export default function HomePage() {
     if (!hasSeen) {
       const timer = setTimeout(() => setShowPremiumPopup(true), 1500);
       return () => clearTimeout(timer);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Check local storage for user
+    const storedUser = localStorage.getItem('flashi_user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        console.error('Failed to parse stored user', e);
+      }
     }
   }, []);
 
@@ -215,6 +231,41 @@ export default function HomePage() {
     }
   }
 
+  async function handleLoginSubmit(e) {
+    e.preventDefault();
+    if (!loginForm.name || !loginForm.email) return;
+    
+    setLoginLoading(true);
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginForm),
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        const userData = { full_name: loginForm.name, email: loginForm.email };
+        setUser(userData);
+        localStorage.setItem('flashi_user', JSON.stringify(userData));
+        setShowLoginModal(false);
+        showToast(`Welcome back, ${userData.full_name}!`, 'success');
+      } else {
+        throw new Error(data.error || 'Login failed');
+      }
+    } catch (error) {
+      showToast(error.message, 'error');
+    } finally {
+      setLoginLoading(false);
+    }
+  }
+
+  function signOut() {
+    setUser(null);
+    localStorage.removeItem('flashi_user');
+    showToast('Logged out successfully', 'success');
+  }
+
 
 
 
@@ -249,9 +300,40 @@ export default function HomePage() {
             <a href="/subscribe" className="nav-link" onClick={() => setMenuOpen(false)} style={{color: 'var(--primary)', fontWeight: 'bold'}}>Premium</a>
             <a href="/about" className="nav-link" onClick={() => setMenuOpen(false)}>About Us</a>
             <a href="/contact" className="nav-link contact-nav-link" onClick={() => setMenuOpen(false)}>Contact Us</a>
+            
+            {user ? (
+              <div className="user-menu-mobile">
+                <div className="user-info-mobile">
+                  <div className="user-avatar-mobile-fallback">{user.full_name?.charAt(0).toUpperCase() || 'U'}</div>
+                  <span>{user.full_name || user.email}</span>
+                </div>
+                <button className="nav-link" onClick={() => { signOut(); setMenuOpen(false); }}>Log Out</button>
+              </div>
+            ) : (
+              <button className="nav-link google-login-mobile" onClick={() => { setShowLoginModal(true); setMenuOpen(false); }}>
+                Login / Register
+              </button>
+            )}
           </nav>
 
           <div className="header-actions">
+            {user ? (
+              <div className="user-profile-dropdown">
+                <div className="user-avatar-fallback" title={user.full_name || user.email}>{user.full_name?.charAt(0).toUpperCase() || 'U'}</div>
+                <div className="dropdown-content">
+                  <div className="dropdown-user-info">
+                    <strong>{user.full_name || 'User'}</strong>
+                    <span>{user.email}</span>
+                  </div>
+                  <a href="/subscribe">My Subscription</a>
+                  <button onClick={signOut}>Log Out</button>
+                </div>
+              </div>
+            ) : (
+              <button className="google-login-btn" onClick={() => setShowLoginModal(true)}>
+                Login
+              </button>
+            )}
             <a href="/contact" className="contact-btn">Contact Us</a>
           </div>
           <button className={`hamburger ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}>
@@ -647,6 +729,41 @@ export default function HomePage() {
                 Skip for now
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showLoginModal && (
+        <div className="modal-overlay" onClick={() => setShowLoginModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowLoginModal(false)}>×</button>
+            <h3>Login to FLASHI</h3>
+            <p>Save your favorite deals and get premium features.</p>
+            <form onSubmit={handleLoginSubmit}>
+              <div className="form-group" style={{ marginBottom: '16px' }}>
+                <label>Full Name</label>
+                <input 
+                  type="text" 
+                  placeholder="Your Name" 
+                  required 
+                  value={loginForm.name}
+                  onChange={(e) => setLoginForm({...loginForm, name: e.target.value})}
+                />
+              </div>
+              <div className="form-group" style={{ marginBottom: '24px' }}>
+                <label>Email Address</label>
+                <input 
+                  type="email" 
+                  placeholder="your@email.com" 
+                  required 
+                  value={loginForm.email}
+                  onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+                />
+              </div>
+              <button className="submit-btn" type="submit" disabled={loginLoading} style={{ width: '100%', marginTop: 0 }}>
+                {loginLoading ? 'Logging in...' : 'Login / Register'}
+              </button>
+            </form>
           </div>
         </div>
       )}
