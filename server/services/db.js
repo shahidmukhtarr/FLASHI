@@ -460,3 +460,21 @@ export async function saveContactMessage(messageData) {
 
   return { success: true, data };
 }
+
+export async function getSubscriptionStatus(email) {
+  const client = getSupabaseClient();
+  if (!client) return null;
+
+  const { data, error } = await client
+    .from('subscribers')
+    .select('status')
+    .eq('email', email)
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  if (error || !data || data.length === 0) {
+    return null;
+  }
+
+  return data[0].status;
+}

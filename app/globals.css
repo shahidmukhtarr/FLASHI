@@ -2478,3 +2478,36 @@ textarea:focus-visible {
 .user-avatar-mobile-fallback {
   width: 40px; height: 40px;
 }
+
+/* ---------- Mobile Layout Adjustments ---------- */
+@media (max-width: 768px) {
+  /* Premium Page Cards */
+  .sub-pricing-card, .sub-form-card, .sub-bank-card {
+    padding: var(--spacing-md);
+  }
+  
+  .sub-hero-title {
+    font-size: 2.2rem;
+  }
+  
+  .sub-price-amount {
+    font-size: 2.5rem;
+  }
+  
+  .sub-feature-item {
+    gap: var(--spacing-sm);
+  }
+
+  /* Contact Page Cards */
+  .contact-form-container, .contact-info {
+    padding: var(--spacing-md);
+  }
+  
+  .contact-title {
+    font-size: 2rem;
+  }
+  
+  .contact-info h3 {
+    font-size: var(--font-size-xl);
+  }
+}

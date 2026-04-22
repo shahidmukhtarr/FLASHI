@@ -12,6 +12,7 @@ export default function SubscribePage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginForm, setLoginForm] = useState({ name: '', email: '' });
   const [loginLoading, setLoginLoading] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('flashi_user');
@@ -24,6 +25,16 @@ export default function SubscribePage() {
           name: prev.name || parsed.full_name || '',
           email: prev.email || parsed.email || ''
         }));
+
+          
+          // Fetch subscription status
+          fetch(`/api/subscription?email=${encodeURIComponent(parsed.email)}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) setSubscriptionStatus(data.status);
+            })
+            .catch(console.error);
+
       } catch (e) {
         console.error('Failed to parse stored user', e);
       }
@@ -49,6 +60,13 @@ export default function SubscribePage() {
         localStorage.setItem('flashi_user', JSON.stringify(userData));
         setFormData(prev => ({ ...prev, name: userData.full_name, email: userData.email }));
         setShowLoginModal(false);
+
+        // Fetch subscription status
+        const statusRes = await fetch(`/api/subscription?email=${encodeURIComponent(userData.email)}`);
+        const statusData = await statusRes.json();
+        if (statusData.success) {
+          setSubscriptionStatus(statusData.status);
+        }
       } else {
         throw new Error(data.error || 'Login failed');
       }
@@ -61,6 +79,7 @@ export default function SubscribePage() {
 
   function signOut() {
     setUser(null);
+    setSubscriptionStatus(null);
     localStorage.removeItem('flashi_user');
     setFormData(prev => ({ ...prev, name: '', email: '' }));
   }
@@ -80,6 +99,7 @@ export default function SubscribePage() {
       if (data.success) {
         setResult({ type: 'success', message: data.message });
         setFormData({ name: '', email: '', phone: '', paymentRef: '' });
+        setSubscriptionStatus('pending'); // Optimistically update status
       } else {
         setResult({ type: 'error', message: data.error || 'Something went wrong' });
       }
@@ -159,8 +179,53 @@ export default function SubscribePage() {
         </div>
       </section>
 
-      {/* Pricing Card */}
-      <section className="sub-pricing">
+      {subscriptionStatus ? (
+        <section className="sub-dashboard" style={{ padding: '60px 0', minHeight: '60vh' }}>
+          <div className="container">
+            <div className="sub-form-card" style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
+              <div style={{ fontSize: '48px', marginBottom: '20px' }}>
+                {subscriptionStatus === 'active' ? '✨' : '⏳'}
+              </div>
+              <h2 style={{ marginBottom: '10px', fontSize: '2rem' }}>
+                {subscriptionStatus === 'active' ? 'You are a Premium Member!' : 'Verification Pending'}
+              </h2>
+              <p style={{ color: 'var(--secondary-text)', lineHeight: '1.6', marginBottom: '30px', fontSize: '1.1rem' }}>
+                {subscriptionStatus === 'active' 
+                  ? 'Your subscription is active. You will now receive exclusive sale alerts, price drops, and early access notifications directly!'
+                  : 'We have received your request and are currently verifying your bank transfer. Please allow up to 24 hours for activation.'}
+              </p>
+              
+              <div style={{ background: 'var(--bg-secondary)', padding: '20px', borderRadius: 'var(--radius-lg)', textAlign: 'left', marginBottom: '20px' }}>
+                <h4 style={{ marginBottom: '15px' }}>Subscription Details</h4>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <span style={{ color: 'var(--secondary-text)' }}>Account:</span>
+                  <strong>{user?.email}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <span style={{ color: 'var(--secondary-text)' }}>Status:</span>
+                  <strong style={{ 
+                    color: subscriptionStatus === 'active' ? 'var(--accent-success)' : '#eab308',
+                    textTransform: 'capitalize'
+                  }}>
+                    {subscriptionStatus}
+                  </strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--secondary-text)' }}>Plan:</span>
+                  <strong>FLASHI Premium (Rs. 500/mo)</strong>
+                </div>
+              </div>
+
+              <a href="/" className="submit-btn" style={{ display: 'inline-block', textDecoration: 'none' }}>
+                Back to Search
+              </a>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <>
+          {/* Pricing Card */}
+          <section className="sub-pricing">
         <div className="container">
           <div className="sub-pricing-card">
             <div className="sub-pricing-header">
@@ -353,6 +418,8 @@ export default function SubscribePage() {
           </div>
         </div>
       </footer>
+      </>
+      )}
 
       {showLoginModal && (
         <div className="modal-overlay" onClick={() => setShowLoginModal(false)}>
