@@ -21,8 +21,10 @@ if (typeof window === 'undefined' && !isBuild) {
 }
 
 export const metadata = {
-  title: 'FLASHI — Price Comparison',
-  description: "Search Pakistan's top stores, view saved product data, and manage scraper runs.",
+  title: 'Flashi PK',
+  description: "Find The Best Lowest Prices Across Pakistan. Search any product and instantly compare prices from Pakistan's top stores in one place.",
+  keywords: 'price comparison website pakistanflashi pakistancheap products find online in pakistan',
+  robots: 'index, follow',
   other: {
     'google-adsense-account': 'ca-pub-6296239062398160'
   }
@@ -32,6 +34,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="language" content="English" />
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6296239062398160" crossOrigin="anonymous"></script>
       </head>
       <body suppressHydrationWarning>{children}</body>
