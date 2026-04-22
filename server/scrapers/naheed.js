@@ -89,13 +89,6 @@ export async function searchProducts(query, limit = 20) {
         discount = `-${pct}%`;
       }
 
-      // Relaxed relevance: majority of query words must appear in the title
-      const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 2);
-      const titleLower = (name || '').toLowerCase();
-      const matchCount = queryWords.filter(w => titleLower.includes(w)).length;
-      const threshold = Math.max(1, Math.ceil(queryWords.length / 2));
-      if (queryWords.length > 0 && matchCount < threshold) return true;
-
       if (name && price) {
         products.push({
           title: sanitizeText(name),
@@ -126,12 +119,6 @@ export async function searchProducts(query, limit = 20) {
             if (product['@type'] === 'Product' && product.name) {
               const price = parsePrice(product.offers?.price || product.offers?.lowPrice);
               if (!price) continue;
-
-              const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 2);
-              const titleLower = (product.name || '').toLowerCase();
-              const matchCount = queryWords.filter(w => titleLower.includes(w)).length;
-              const threshold = Math.max(1, Math.ceil(queryWords.length / 2));
-              if (queryWords.length > 0 && matchCount < threshold) continue;
 
               products.push({
                 title: sanitizeText(product.name),
@@ -198,12 +185,6 @@ export async function searchProducts(query, limit = 20) {
           if (!price) continue;
 
           const discountPct = priceInfo?.discount?.percent_off;
-
-          const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 2);
-          const titleLower = (item.name || '').toLowerCase();
-          const matchCount = queryWords.filter(w => titleLower.includes(w)).length;
-          const threshold = Math.max(1, Math.ceil(queryWords.length / 2));
-          if (queryWords.length > 0 && matchCount < threshold) continue;
 
           products.push({
             title: sanitizeText(item.name || ''),

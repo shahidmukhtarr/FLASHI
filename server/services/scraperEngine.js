@@ -4,6 +4,9 @@ import * as mega from '../scrapers/mega.js';
 import * as shophive from '../scrapers/shophive.js';
 import * as naheed from '../scrapers/naheed.js';
 import * as highfy from '../scrapers/highfy.js';
+import * as limelight from '../scrapers/limelight.js';
+import * as sapphire from '../scrapers/sapphire.js';
+import * as stationers from '../scrapers/stationers.js';
 import { identifyStore, delay, sanitizeText, getRequestHeaders } from '../utils/helpers.js';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
@@ -17,6 +20,9 @@ const stores = [
   { adapter: shophive, name: 'Shophive', domain: 'shophive.com' },
   { adapter: naheed, name: 'Naheed', domain: 'naheed.pk' },
   { adapter: highfy, name: 'Highfy', domain: 'highfy.pk' },
+  { adapter: limelight, name: 'Limelight', domain: 'limelight.pk' },
+  { adapter: sapphire, name: 'Sapphire', domain: 'sapphireonline.pk' },
+  { adapter: stationers, name: 'Stationers.pk', domain: 'stationers.pk' },
 ];
 
 const ACCESSORY_KEYWORDS = ['cover', 'case', 'protector', 'screen protector', 'tempered glass', 'cable', 'charger', 'adapter', 'strap', 'pouch', 'handsfree', 'earphone', 'skin', 'lens', 'smartwatch', 'earbuds', 'buds', 'trimmer', 'speaker', 'powerbank', 'power bank', 'holder', 'stand', 'ring light', 'selfie stick'];
@@ -106,9 +112,9 @@ function isRelevantProduct(title, query) {
   if (significantWords.length === 0) return true;
 
   const SYNONYMS = {
-    'women': ['ladies', 'girl', 'female', 'woman', 'lady'],
+    'women': ['ladies', 'girl', 'female', 'woman', 'lady', 'girls'],
     'ladies': ['women', 'lady', 'girl', 'female'],
-    'men': ['man', 'boy', 'male', 'gent', 'gents'],
+    'men': ['man', 'boy', 'male', 'gent', 'gents', 'boys'],
     'man': ['men', 'boy', 'male', 'gent', 'gents'],
     'bag': ['handbag', 'purse', 'clutch', 'crossbody', 'tote', 'satchel'],
     'phone': ['mobile', 'smartphone', 'cellphone'],
@@ -127,6 +133,31 @@ function isRelevantProduct(title, query) {
     'watch': ['wristwatch'],
     'camera': ['dslr', 'mirrorless'],
     'printer': ['laser printer', 'inkjet'],
+    // Pakistani fashion
+    'lawn': ['lawn suit', 'lawn shirt', 'lawn fabric', 'cotton lawn'],
+    'kurti': ['kurta', 'short kurta', 'long kurta', 'printed kurta'],
+    'kurta': ['kurti', 'kameez', 'shirt'],
+    'pret': ['ready to wear', 'stitched', 'pret wear'],
+    'stitched': ['pret', 'ready to wear', 'stitched suit'],
+    'unstitched': ['fabric', 'unstitched suit', 'lawn fabric'],
+    'dupatta': ['chunri', 'shawl', 'scarf'],
+    'shalwar': ['trouser', 'trousers', 'palazzo'],
+    'trouser': ['shalwar', 'palazzo', 'capri', 'culottes', 'pants'],
+    'palazzo': ['wide leg', 'culottes', 'shalwar'],
+    'suit': ['2 piece', '3 piece', 'two piece', 'three piece', 'set'],
+    'embroidered': ['embroidery', 'zari', 'gota', 'thread work'],
+    'chiffon': ['georgette', 'organza', 'silk'],
+    'bridal': ['wedding', 'shaadi', 'bride', 'dulhan'],
+    'hijab': ['scarf', 'head scarf', 'modesty'],
+    'abaya': ['modest wear', 'jilbab'],
+    'jewellery': ['jewelry', 'earrings', 'bangles', 'necklace', 'ring'],
+    'jewelry': ['jewellery', 'earrings', 'bangles', 'necklace'],
+    'handbag': ['bag', 'purse', 'clutch', 'tote'],
+    'scarf': ['dupatta', 'stole', 'shawl'],
+    'shawl': ['scarf', 'stole', 'wrap'],
+    'pen': ['ballpen', 'gel pen', 'ink pen', 'writing instrument'],
+    'notebook': ['diary', 'notepad', 'journal'],
+    'stationery': ['school supplies', 'office supplies', 'art supplies'],
   };
 
   const GENERIC_DESCRIPTORS = new Set([
@@ -249,11 +280,15 @@ export async function searchAllStores(query, limit = 150) {
 
   const timeout = 30000; // 30 second timeout per store
 
-  // Run all scrapers in parallel with timeout
+  // Run all scrapers in parallel with staggered delay and timeout
   const results = await Promise.allSettled(
-    stores.map(store =>
+    stores.map((store, i) =>
       Promise.race([
-        store.adapter.searchProducts(query, limit),
+        (async () => {
+          // Stagger requests to avoid triggering bot protection (429/403)
+          await delay(i * 300); 
+          return store.adapter.searchProducts(query, limit);
+        })(),
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error(`${store.name} timeout`)), timeout)
         )

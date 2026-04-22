@@ -12,8 +12,8 @@ const STORE_COLOR = '#f85606';
  */
 export async function searchProducts(query, limit = 30) {
   try {
-    // Fetch up to 2 pages for better coverage
-    const maxPages = Math.min(Math.ceil(limit / 40), 2);
+    // Fetch up to 3 pages for better coverage
+    const maxPages = Math.min(Math.ceil(limit / 40), 3);
     let allItems = [];
     let sessionCookies = '';
 
@@ -105,12 +105,6 @@ export async function searchProducts(query, limit = 30) {
       const inStock = item.inStock !== false && item.inStock !== 0;
 
       if (title && price && price > 0) {
-        // Strict relevance: all query words must appear in the title
-        const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 1);
-        const titleLower = title.toLowerCase();
-        const allMatch = queryWords.every(w => titleLower.includes(w));
-        if (!allMatch) continue;
-
         products.push({
           title,
           price,

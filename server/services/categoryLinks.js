@@ -106,13 +106,13 @@ export const CATEGORY_PAGE_CONFIG = [
     store: 'Daraz',
     title: 'Men Clothing',
     url: 'https://www.daraz.pk/mens-clothing/',
-    keywords: ['men clothing', 'shirts', 'tshirts', 'jeans', 'pants', 'mens fashion', 'shalwar kameez'],
+    keywords: ['men clothing', 'men suits', 'shirts', 'tshirts', 'jeans', 'pants', 'mens fashion', 'shalwar kameez', 'men kurta', 'trousers', 'men pret'],
   },
   {
     store: 'Daraz',
     title: 'Women Clothing',
     url: 'https://www.daraz.pk/womens-clothing/',
-    keywords: ['women clothing', 'dress', 'skirts', 'fashion', 'ladies dress', 'kurti', 'lawn'],
+    keywords: ['women clothing', 'women lawn', 'girls lawn', 'lawn unstitched', 'lawn stitched', 'dress', 'kurti', 'kurta', 'dupatta', 'shalwar kameez', 'ladies dress', 'women pret', 'ready to wear', 'embroidered', 'chiffon', 'cotton lawn', 'formal dress', 'party wear', 'casual wear'],
   },
   {
     store: 'Daraz',
@@ -462,6 +462,222 @@ export const CATEGORY_PAGE_CONFIG = [
     url: 'https://highfy.pk/collections/lip-balm-1',
     title: 'Lip Balm',
     keywords: ['lip balm', 'lip care', 'chapstick'],
+  },
+  {
+    store: 'Highfy',
+    url: 'https://highfy.pk/collections/kids',
+    title: 'Kids Products',
+    keywords: ['kids clothes', 'kids products', 'children care', 'baby care'],
+  },
+  {
+    store: 'Highfy',
+    url: 'https://highfy.pk/collections/abaya-hijab',
+    title: 'Abaya & Hijab',
+    keywords: ['abaya', 'hijab', 'scarf', 'modest wear', 'niqab'],
+  },
+  {
+    store: 'Highfy',
+    url: 'https://highfy.pk/collections/ready-to-wear',
+    title: 'Ready To Wear',
+    keywords: ['ready to wear', 'pret', 'stitched', 'women suit', 'ladies suit'],
+  },
+  {
+    store: 'Highfy',
+    url: 'https://highfy.pk/collections/cotton',
+    title: 'Cotton Clothing',
+    keywords: ['cotton', 'cotton shirt', 'cotton kurti'],
+  },
+
+  // ───── LIMELIGHT (Shopify-based fashion store) ─────
+  {
+    store: 'Limelight',
+    url: 'https://www.limelight.pk/collections/unstitched',
+    title: 'Lawn Unstitched',
+    keywords: ['lawn unstitched', 'unstitched lawn', 'women lawn', 'girls lawn', 'lawn fabric', 'unstitched suit', 'cotton unstitched'],
+  },
+  {
+    store: 'Limelight',
+    url: 'https://www.limelight.pk/collections/pret',
+    title: 'Lawn Stitched Pret',
+    keywords: ['lawn stitched', 'pret', 'ready to wear', 'stitched suit', 'women pret', 'girls pret', 'casual pret'],
+  },
+  {
+    store: 'Limelight',
+    url: 'https://www.limelight.pk/collections/2-piece',
+    title: '2 Piece Suits',
+    keywords: ['2 piece', 'two piece', 'women 2 piece', 'girls 2 piece'],
+  },
+  {
+    store: 'Limelight',
+    url: 'https://www.limelight.pk/collections/3-piece',
+    title: '3 Piece Suits',
+    keywords: ['3 piece', 'three piece', 'women 3 piece', 'girls 3 piece', 'full suit'],
+  },
+  {
+    store: 'Limelight',
+    url: 'https://www.limelight.pk/collections/kurta',
+    title: 'Kurta & Kurti',
+    keywords: ['kurta', 'kurti', 'women kurta', 'short kurti', 'long kurti'],
+  },
+  {
+    store: 'Limelight',
+    url: 'https://www.limelight.pk/collections/formal',
+    title: 'Formal Dresses',
+    keywords: ['formal dress', 'party wear', 'embroidered', 'formal wear', 'chiffon', 'organza', 'occasion wear'],
+  },
+  {
+    store: 'Limelight',
+    url: 'https://www.limelight.pk/collections/casual',
+    title: 'Casual Wear',
+    keywords: ['casual wear', 'casual shirt', 'casual dress', 'everyday wear'],
+  },
+  {
+    store: 'Limelight',
+    url: 'https://www.limelight.pk/collections/winter',
+    title: 'Winter Collection',
+    keywords: ['winter collection', 'winter dress', 'khaddar', 'linen', 'velvet', 'warm clothes'],
+  },
+  {
+    store: 'Limelight',
+    url: 'https://www.limelight.pk/collections/dupatta',
+    title: 'Dupatta',
+    keywords: ['dupatta', 'chunri', 'shawl', 'scarf'],
+  },
+  {
+    store: 'Limelight',
+    url: 'https://www.limelight.pk/collections/trousers',
+    title: 'Trousers & Bottoms',
+    keywords: ['trouser', 'palazzo', 'culottes', 'shalwar', 'capri', 'cigarette pants'],
+  },
+  {
+    store: 'Limelight',
+    url: 'https://www.limelight.pk/collections/handbags',
+    title: 'Handbags',
+    keywords: ['handbag', 'bag', 'purse', 'clutch', 'tote'],
+  },
+  {
+    store: 'Limelight',
+    url: 'https://www.limelight.pk/collections/mens',
+    title: 'Men Suits',
+    keywords: ['men suits', 'men kurta', 'men clothing', 'men shalwar kameez', 'gents suit', 'boys suit'],
+  },
+
+  // ───── SAPPHIRE (Shopify-based fashion store) ─────
+  {
+    store: 'Sapphire',
+    url: 'https://pk.sapphireonline.pk/collections/women-unstitched',
+    title: 'Women Unstitched Lawn',
+    keywords: ['lawn unstitched', 'women lawn', 'girls lawn', 'unstitched suit', 'cotton fabric', 'printed fabric'],
+  },
+  {
+    store: 'Sapphire',
+    url: 'https://pk.sapphireonline.pk/collections/women-stitched',
+    title: 'Women Stitched',
+    keywords: ['lawn stitched', 'stitched suit', 'ready to wear', 'women pret', 'pret wear'],
+  },
+  {
+    store: 'Sapphire',
+    url: 'https://pk.sapphireonline.pk/collections/women-formal',
+    title: 'Women Formal',
+    keywords: ['formal dress', 'party wear', 'embroidered', 'formal wear', 'bridal wear', 'wedding dress', 'chiffon', 'organza'],
+  },
+  {
+    store: 'Sapphire',
+    url: 'https://pk.sapphireonline.pk/collections/women-kurta',
+    title: 'Kurta & Kurti',
+    keywords: ['kurta', 'kurti', 'women kurta', 'long kurta', 'printed kurta'],
+  },
+  {
+    store: 'Sapphire',
+    url: 'https://pk.sapphireonline.pk/collections/men',
+    title: 'Men Collection',
+    keywords: ['men suits', 'men kurta', 'men clothing', 'shalwar kameez men', 'gents wear', 'boys clothing'],
+  },
+  {
+    store: 'Sapphire',
+    url: 'https://pk.sapphireonline.pk/collections/women-hijab-scarves',
+    title: 'Hijab & Scarves',
+    keywords: ['hijab', 'scarf', 'dupatta', 'modesty wear', 'head scarf'],
+  },
+  {
+    store: 'Sapphire',
+    url: 'https://pk.sapphireonline.pk/collections/kids',
+    title: 'Kids Collection',
+    keywords: ['kids clothes', 'girls clothes', 'boys clothes', 'children wear', 'kids fashion'],
+  },
+  {
+    store: 'Sapphire',
+    url: 'https://pk.sapphireonline.pk/collections/women-winter',
+    title: 'Women Winter',
+    keywords: ['winter collection', 'winter dress', 'khaddar', 'linen', 'velvet', 'warm women'],
+  },
+  {
+    store: 'Sapphire',
+    url: 'https://pk.sapphireonline.pk/collections/accessories',
+    title: 'Accessories',
+    keywords: ['accessories', 'jewellery', 'jewelry', 'earrings', 'bangles', 'necklace'],
+  },
+  {
+    store: 'Sapphire',
+    url: 'https://pk.sapphireonline.pk/collections/handbags',
+    title: 'Handbags',
+    keywords: ['handbag', 'bag', 'purse', 'clutch', 'tote bag'],
+  },
+
+  // ───── STATIONERS.PK (Shopify-based stationery store) ─────
+  {
+    store: 'Stationers.pk',
+    url: 'https://stationers.pk/collections/pens',
+    title: 'Pens',
+    keywords: ['pen', 'ball pen', 'gel pen', 'ink pen', 'fountain pen', 'writing pen'],
+  },
+  {
+    store: 'Stationers.pk',
+    url: 'https://stationers.pk/collections/notebooks',
+    title: 'Notebooks & Diaries',
+    keywords: ['notebook', 'diary', 'journal', 'notepad', 'writing book'],
+  },
+  {
+    store: 'Stationers.pk',
+    url: 'https://stationers.pk/collections/art-supplies',
+    title: 'Art Supplies',
+    keywords: ['art supplies', 'paint', 'brushes', 'canvas', 'sketch', 'drawing', 'coloring'],
+  },
+  {
+    store: 'Stationers.pk',
+    url: 'https://stationers.pk/collections/office-supplies',
+    title: 'Office Supplies',
+    keywords: ['office supplies', 'stapler', 'file', 'folder', 'binder', 'tape', 'scissors'],
+  },
+  {
+    store: 'Stationers.pk',
+    url: 'https://stationers.pk/collections/school-supplies',
+    title: 'School Supplies',
+    keywords: ['school supplies', 'pencil', 'eraser', 'ruler', 'geometry box', 'school bag', 'stationery'],
+  },
+  {
+    store: 'Stationers.pk',
+    url: 'https://stationers.pk/collections/markers-highlighters',
+    title: 'Markers & Highlighters',
+    keywords: ['marker', 'highlighter', 'whiteboard marker', 'permanent marker'],
+  },
+  {
+    store: 'Stationers.pk',
+    url: 'https://stationers.pk/collections/paper',
+    title: 'Paper Products',
+    keywords: ['paper', 'a4 paper', 'printing paper', 'sticky notes', 'post it'],
+  },
+  {
+    store: 'Stationers.pk',
+    url: 'https://stationers.pk/collections/gift-wrapping',
+    title: 'Gift & Wrapping',
+    keywords: ['gift', 'gift wrap', 'ribbon', 'gift bag', 'wrapping paper'],
+  },
+  {
+    store: 'Stationers.pk',
+    url: 'https://stationers.pk/collections/calligraphy',
+    title: 'Calligraphy',
+    keywords: ['calligraphy', 'calligraphy pen', 'lettering', 'brush pen'],
   },
 ];
 

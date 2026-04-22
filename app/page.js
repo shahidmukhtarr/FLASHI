@@ -298,6 +298,18 @@ export default function HomePage() {
                       <img src="https://www.google.com/s2/favicons?domain=highfy.pk&sz=128" alt="Highfy" className="brand-logo-img" />
                       <span className="brand-logo-name">Highfy</span>
                     </div>
+                    <div className="trust-logo-card">
+                      <img src="https://www.google.com/s2/favicons?domain=limelight.pk&sz=128" alt="Limelight" className="brand-logo-img" />
+                      <span className="brand-logo-name">Limelight</span>
+                    </div>
+                    <div className="trust-logo-card">
+                      <img src="https://www.google.com/s2/favicons?domain=sapphireonline.pk&sz=128" alt="Sapphire" className="brand-logo-img" />
+                      <span className="brand-logo-name">Sapphire</span>
+                    </div>
+                    <div className="trust-logo-card">
+                      <img src="https://www.google.com/s2/favicons?domain=stationers.pk&sz=128" alt="Stationers.pk" className="brand-logo-img" />
+                      <span className="brand-logo-name">Stationers</span>
+                    </div>
                   </div>
                 </div>
               </div>

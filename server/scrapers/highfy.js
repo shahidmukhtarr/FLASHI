@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { getRequestHeaders, parsePrice, sanitizeText, truncate } from '../utils/helpers.js';
+import { getRequestHeaders, parsePrice, sanitizeText, truncate, fetchWithRetry } from '../utils/helpers.js';
 
 const STORE_NAME = 'Highfy';
 const STORE_URL = 'https://highfy.pk';
@@ -13,66 +13,127 @@ const STORE_COLOR = '#e91e63';
  */
 export async function searchProducts(query, limit = 20) {
   try {
-    const searchUrl = `${STORE_URL}/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=10`;
+    // 1. Try Shopify suggest API first
+    let products = await _fetchViaSuggestApi(query, limit);
 
-    const response = await axios.get(searchUrl, {
-      headers: {
-        ...getRequestHeaders(),
-        'Accept': 'application/json',
-        'Referer': STORE_URL,
-      },
-      timeout: 20000,
-    });
-
-    const data = response.data;
-    const rawProducts = data?.resources?.results?.products || [];
-    const products = [];
-
-    const queryWords = query.toLowerCase().trim().split(/\s+/).filter(w => w.length > 1);
-
-    for (const item of rawProducts) {
-      if (products.length >= limit) break;
-
-      const title = sanitizeText(item.title || '');
-      if (!title) continue;
-
-      // Relevance filter: majority of query words must appear in the title
-      const titleLower = title.toLowerCase();
-      const matchCount = queryWords.filter(word => titleLower.includes(word)).length;
-      const threshold = Math.max(1, Math.ceil(queryWords.length / 2));
-      if (queryWords.length > 0 && matchCount < threshold) continue;
-
-      const price = parsePrice(item.price);
-      const originalPrice = parsePrice(item.compare_at_price_max || item.compare_at_price_min);
-      let discount = null;
-      if (originalPrice && price && originalPrice > price) {
-        discount = Math.round(((originalPrice - price) / originalPrice) * 100) + '%';
-      }
-
-      const image = item.featured_image?.url || item.image || '';
-      const urlPath = item.url ? item.url.split('?')[0] : `/products/${item.handle}`;
-      const productUrl = `${STORE_URL}${urlPath}`;
-
-      products.push({
-        title,
-        price,
-        originalPrice: originalPrice && originalPrice > price ? originalPrice : null,
-        discount,
-        image,
-        url: productUrl,
-        rating: 0,
-        reviewCount: 0,
-        store: STORE_NAME,
-        storeUrl: STORE_URL,
-        storeColor: STORE_COLOR,
-        inStock: item.available !== false,
-      });
+    // 2. Fallback to HTML scraping (suggest API often returns empty on Highfy)
+    if (!products || products.length === 0) {
+      products = await _fetchViaHtml(query, limit);
     }
 
     console.log(`[${STORE_NAME}] Found ${products.length} relevant products for "${query}"`);
     return products;
   } catch (error) {
     console.error(`[${STORE_NAME}] Search error:`, error.message);
+    return [];
+  }
+}
+
+async function _fetchViaSuggestApi(query, limit) {
+  try {
+    const searchUrl = `${STORE_URL}/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=${limit}`;
+    const response = await fetchWithRetry(() => axios.get(searchUrl, {
+      headers: { ...getRequestHeaders(), 'Accept': 'application/json', 'Referer': STORE_URL },
+      timeout: 15000,
+    }));
+
+    const rawProducts = response.data?.resources?.results?.products || [];
+    if (rawProducts.length === 0) return [];
+
+    const products = [];
+    for (const item of rawProducts.slice(0, limit)) {
+      const title = sanitizeText(item.title || '');
+      if (!title) continue;
+
+      const price = parsePrice(item.price);
+      if (!price) continue;
+
+      const originalPrice = parsePrice(item.compare_at_price_max || item.compare_at_price_min);
+      let discount = null;
+      if (originalPrice && originalPrice > price) {
+        discount = `-${Math.round(((originalPrice - price) / originalPrice) * 100)}%`;
+      }
+
+      const image = item.featured_image?.url || item.image || '';
+      const urlPath = item.url ? item.url.split('?')[0] : `/products/${item.handle}`;
+
+      products.push({
+        title, price,
+        originalPrice: originalPrice && originalPrice > price ? originalPrice : null,
+        discount, image,
+        url: `${STORE_URL}${urlPath}`,
+        rating: 0, reviewCount: 0,
+        store: STORE_NAME, storeUrl: STORE_URL, storeColor: STORE_COLOR,
+        inStock: item.available !== false,
+      });
+    }
+    return products;
+  } catch {
+    return [];
+  }
+}
+
+async function _fetchViaHtml(query, limit) {
+  try {
+    const searchUrl = `${STORE_URL}/search?q=${encodeURIComponent(query)}&type=product`;
+    const response = await fetchWithRetry(() => axios.get(searchUrl, {
+      headers: getRequestHeaders(),
+      timeout: 15000,
+    }));
+
+    const $ = cheerio.load(response.data);
+    const products = [];
+
+    // Highfy uses Dawn theme: .card-wrapper contains product cards
+    $('.card-wrapper').each((i, el) => {
+      if (products.length >= limit) return false;
+      const $el = $(el);
+
+      // Title & link from .card__heading a.full-unstyled-link
+      const titleEl = $el.find('.card__heading a.full-unstyled-link, .card__heading a, h3 a').first();
+      const title = sanitizeText(titleEl.text());
+      if (!title) return;
+
+      let link = titleEl.attr('href') || '';
+      if (link && !link.startsWith('http')) link = `${STORE_URL}${link.split('?')[0]}`;
+
+      // Image
+      let image = $el.find('img.motion-reduce, img').first().attr('src') ||
+                  $el.find('img').first().attr('data-src') || '';
+      if (image && image.startsWith('//')) image = 'https:' + image;
+
+      // Price: .price-item--regular or .price-item--sale
+      const priceText = $el.find('.price-item--sale, .price-item--regular').first().text();
+      const price = parsePrice(priceText);
+      if (!price) return;
+
+      const oldPriceText = $el.find('.price-item--regular').last().text();
+      const salePrice = $el.find('.price-item--sale').first().text();
+      let originalPrice = null;
+      if (salePrice && oldPriceText) {
+        const op = parsePrice(oldPriceText);
+        if (op && op > price) originalPrice = op;
+      }
+
+      let discount = null;
+      if (originalPrice && originalPrice > price) {
+        discount = `-${Math.round(((originalPrice - price) / originalPrice) * 100)}%`;
+      }
+
+      products.push({
+        title, price,
+        originalPrice,
+        discount, image,
+        url: link,
+        rating: 0, reviewCount: 0,
+        store: STORE_NAME, storeUrl: STORE_URL, storeColor: STORE_COLOR,
+        inStock: !$el.find('.sold-out, .badge--sold-out').length,
+      });
+    });
+
+    return products;
+  } catch (error) {
+    console.error(`[${STORE_NAME}] HTML search error:`, error.message);
     return [];
   }
 }

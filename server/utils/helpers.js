@@ -70,6 +70,9 @@ export function identifyStore(url) {
     if (hostname.includes('shophive.com')) return 'shophive';
     if (hostname.includes('naheed.pk')) return 'naheed';
     if (hostname.includes('highfy.pk')) return 'highfy';
+    if (hostname.includes('limelight.pk')) return 'limelight';
+    if (hostname.includes('sapphireonline.pk')) return 'sapphire';
+    if (hostname.includes('stationers.pk')) return 'stationers';
 
     return null;
   } catch {
@@ -117,6 +120,34 @@ export function truncate(text, maxLen = 100) {
  */
 export function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Fetch with retry — handles 429 rate limiting with exponential backoff.
+ * @param {Function} requestFn - Async function that performs the request (must return an axios response)
+ * @param {number} maxRetries - Max retry attempts (default 2)
+ * @param {number} baseDelay - Base delay in ms before first retry (default 2000)
+ * @returns {Promise} The axios response
+ */
+export async function fetchWithRetry(requestFn, maxRetries = 2, baseDelay = 2000) {
+  let lastError;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await requestFn();
+    } catch (err) {
+      lastError = err;
+      const status = err?.response?.status;
+      if (status === 429 && attempt < maxRetries) {
+        const retryAfter = parseInt(err.response?.headers?.['retry-after']) || 0;
+        const waitMs = retryAfter ? retryAfter * 1000 : baseDelay * Math.pow(2, attempt);
+        console.log(`[Retry] 429 received, waiting ${waitMs}ms before retry ${attempt + 1}/${maxRetries}`);
+        await delay(waitMs);
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastError;
 }
 
 /**
