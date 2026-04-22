@@ -230,9 +230,10 @@ export default function HomePage() {
           <nav className={`nav ${menuOpen ? 'open' : ''}`}>
             <a href="/" className="nav-link" onClick={() => setMenuOpen(false)}>Home</a>
             <a href="#how-it-works" className="nav-link" onClick={() => setMenuOpen(false)}>How It Works</a>
-            <a href="#contact" className="nav-link contact-nav-link" onClick={() => setMenuOpen(false)}>Contact Us</a>
+            <a href="/about" className="nav-link" onClick={() => setMenuOpen(false)}>About Us</a>
+            <a href="/contact" className="nav-link contact-nav-link" onClick={() => setMenuOpen(false)}>Contact Us</a>
           </nav>
-          <a href="#contact" className="contact-btn" onClick={() => setMenuOpen(false)}>Contact Us</a>
+          <a href="/contact" className="contact-btn" onClick={() => setMenuOpen(false)}>Contact Us</a>
           <button className={`hamburger ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}>
             <span className="hamburger-line"></span>
             <span className="hamburger-line"></span>
@@ -565,7 +566,12 @@ export default function HomePage() {
                 <span className="logo-text">FLASHI</span>
               </div>
               <p className="footer-tagline" style={{ marginTop: '1rem' }}>Smarter price comparison for every shopper in Pakistan.</p>
-              <div className="social-links" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+                <a href="/about" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>About Us</a>
+                <a href="/contact" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Contact Us</a>
+                <a href="/privacy-policy" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Privacy Policy</a>
+              </div>
+              <div className="social-links" style={{ marginTop: '1.2rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
                 <a href="https://www.instagram.com/flashipk/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: 'var(--text-secondary, #666)', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#E1306C'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary, #666)'}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -577,7 +583,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; {new Date().getFullYear()} FLASHI.</p>
+            <p>&copy; {new Date().getFullYear()} FLASHI. All rights reserved.</p>
           </div>
         </div>
       </footer>
