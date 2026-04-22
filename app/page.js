@@ -629,9 +629,24 @@ export default function HomePage() {
             <p style={{marginBottom: '24px', lineHeight: '1.6'}}>
               Get exclusive sale alerts from Limelight & Sapphire and price drop notifications across all stores!
             </p>
-            <a href="/subscribe" className="submit-btn" style={{display: 'inline-block', textDecoration: 'none', width: '100%', padding: '12px 0'}}>
-              Learn More
-            </a>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <a href="/subscribe" className="submit-btn" style={{display: 'inline-block', textDecoration: 'none', width: '100%', padding: '12px 0'}}>
+                Learn More
+              </a>
+              <button 
+                onClick={closePremiumPopup} 
+                style={{
+                  background: 'none', 
+                  border: 'none', 
+                  color: 'var(--text-secondary, #666)', 
+                  textDecoration: 'underline', 
+                  cursor: 'pointer', 
+                  fontSize: '0.9rem'
+                }}
+              >
+                Skip for now
+              </button>
+            </div>
           </div>
         </div>
       )}
