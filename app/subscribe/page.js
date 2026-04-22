@@ -254,32 +254,12 @@ export default function SubscribePage() {
               {/* Bank Details */}
               <div className="sub-bank-details">
                 <h3>💳 Payment Details</h3>
-                <p className="sub-bank-note">Transfer Rs. 500 to any of the following accounts, then fill the form with your transaction details.</p>
+                <p className="sub-bank-note">Transfer Rs. 500 to the following account, then fill the form with your transaction details.</p>
                 
-                <div className="sub-bank-card">
-                  <div className="sub-bank-logo">🏦</div>
-                  <div className="sub-bank-info">
-                    <strong>JazzCash</strong>
-                    <span className="sub-bank-number">0300-XXXXXXX</span>
-                    <span className="sub-bank-holder">FLASHI Premium</span>
-                  </div>
-                  <button className="sub-copy-btn" onClick={() => {navigator.clipboard.writeText('0300XXXXXXX'); }} type="button">Copy</button>
-                </div>
-
-                <div className="sub-bank-card">
-                  <div className="sub-bank-logo">💚</div>
-                  <div className="sub-bank-info">
-                    <strong>EasyPaisa</strong>
-                    <span className="sub-bank-number">0300-XXXXXXX</span>
-                    <span className="sub-bank-holder">FLASHI Premium</span>
-                  </div>
-                  <button className="sub-copy-btn" onClick={() => {navigator.clipboard.writeText('0300XXXXXXX'); }} type="button">Copy</button>
-                </div>
-
                 <div className="sub-bank-card">
                   <div className="sub-bank-logo">🏛️</div>
                   <div className="sub-bank-info">
-                    <strong>Bank Transfer (HBL/MCB/UBL)</strong>
+                    <strong>UBL</strong>
                     <span className="sub-bank-number">XXXX-XXXXXXXXXXX</span>
                     <span className="sub-bank-holder">FLASHI Premium</span>
                   </div>
@@ -289,7 +269,7 @@ export default function SubscribePage() {
                 <div className="sub-bank-steps">
                   <h4>How it works:</h4>
                   <ol>
-                    <li>Transfer <strong>Rs. 500</strong> to any account above</li>
+                    <li>Transfer <strong>Rs. 500</strong> to the account above</li>
                     <li>Note down your <strong>Transaction ID / Reference</strong></li>
                     <li>Fill the form with your details</li>
                     <li>We verify & activate within <strong>24 hours</strong></li>
