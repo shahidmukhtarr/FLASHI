@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { supabase } from './lib/supabase-client.js';
 
 const API_BASE = '/api';
 const popularQueries = [
@@ -65,20 +64,23 @@ export default function HomePage() {
   const [contactForm, setContactForm] = useState({ name: '', email: '', subject: 'General Inquiry', message: '' });
   const [submitting, setSubmitting] = useState(false);
   const [user, setUser] = useState(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginForm, setLoginForm] = useState({ name: '', email: '' });
+  const [loginLoading, setLoginLoading] = useState(false);
 
   const sortedProducts = useMemo(() => sortProducts(products, sortKey), [products, sortKey]);
   const priceStats = useMemo(() => getPriceStats(sortedProducts), [sortedProducts]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
+    // Check local storage for user
+    const storedUser = localStorage.getItem('flashi_user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        console.error('Failed to parse stored user', e);
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -215,29 +217,39 @@ export default function HomePage() {
     }
   }
 
-  async function signInWithGoogle() {
+  async function handleLoginSubmit(e) {
+    e.preventDefault();
+    if (!loginForm.name || !loginForm.email) return;
+    
+    setLoginLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/`,
-        },
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginForm),
       });
-      if (error) throw error;
+      const data = await res.json();
+      
+      if (data.success) {
+        const userData = { full_name: loginForm.name, email: loginForm.email };
+        setUser(userData);
+        localStorage.setItem('flashi_user', JSON.stringify(userData));
+        setShowLoginModal(false);
+        showToast('Logged in successfully', 'success');
+      } else {
+        throw new Error(data.error || 'Login failed');
+      }
     } catch (error) {
-      showToast('Error logging in with Google', 'error');
-      console.error('Login error:', error);
+      showToast(error.message, 'error');
+    } finally {
+      setLoginLoading(false);
     }
   }
 
-  async function signOut() {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      showToast('Logged out successfully', 'success');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+  function signOut() {
+    setUser(null);
+    localStorage.removeItem('flashi_user');
+    showToast('Logged out successfully', 'success');
   }
 
 
@@ -276,14 +288,14 @@ export default function HomePage() {
             {user ? (
               <div className="user-menu-mobile">
                 <div className="user-info-mobile">
-                  <img src={user.user_metadata?.avatar_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'} alt="Avatar" className="user-avatar-mobile" />
-                  <span>{user.user_metadata?.full_name || user.email}</span>
+                  <div className="user-avatar-mobile-fallback">{user.full_name?.charAt(0).toUpperCase() || 'U'}</div>
+                  <span>{user.full_name || user.email}</span>
                 </div>
                 <button className="nav-link" onClick={() => { signOut(); setMenuOpen(false); }}>Log Out</button>
               </div>
             ) : (
-              <button className="nav-link google-login-mobile" onClick={() => { signInWithGoogle(); setMenuOpen(false); }}>
-                Login with Google
+              <button className="nav-link google-login-mobile" onClick={() => { setShowLoginModal(true); setMenuOpen(false); }}>
+                Login / Register
               </button>
             )}
           </nav>
@@ -291,10 +303,10 @@ export default function HomePage() {
           <div className="header-actions">
             {user ? (
               <div className="user-profile-dropdown">
-                <img src={user.user_metadata?.avatar_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'} alt="Avatar" className="user-avatar" title={user.user_metadata?.full_name || user.email} />
+                <div className="user-avatar-fallback" title={user.full_name || user.email}>{user.full_name?.charAt(0).toUpperCase() || 'U'}</div>
                 <div className="dropdown-content">
                   <div className="dropdown-user-info">
-                    <strong>{user.user_metadata?.full_name || 'User'}</strong>
+                    <strong>{user.full_name || 'User'}</strong>
                     <span>{user.email}</span>
                   </div>
                   <a href="/subscribe">My Subscription</a>
@@ -302,13 +314,7 @@ export default function HomePage() {
                 </div>
               </div>
             ) : (
-              <button className="google-login-btn" onClick={signInWithGoogle}>
-                <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                </svg>
+              <button className="google-login-btn" onClick={() => setShowLoginModal(true)}>
                 Login
               </button>
             )}
@@ -679,6 +685,41 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      {showLoginModal && (
+        <div className="modal-overlay" onClick={() => setShowLoginModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowLoginModal(false)}>×</button>
+            <h3>Login to FLASHI</h3>
+            <p>Save your favorite deals and get premium features.</p>
+            <form onSubmit={handleLoginSubmit}>
+              <div className="form-group" style={{ marginBottom: '16px' }}>
+                <label>Full Name</label>
+                <input 
+                  type="text" 
+                  placeholder="Your Name" 
+                  required 
+                  value={loginForm.name}
+                  onChange={(e) => setLoginForm({...loginForm, name: e.target.value})}
+                />
+              </div>
+              <div className="form-group" style={{ marginBottom: '24px' }}>
+                <label>Email Address</label>
+                <input 
+                  type="email" 
+                  placeholder="your@email.com" 
+                  required 
+                  value={loginForm.email}
+                  onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+                />
+              </div>
+              <button className="submit-btn" type="submit" disabled={loginLoading} style={{ width: '100%', marginTop: 0 }}>
+                {loginLoading ? 'Logging in...' : 'Login / Register'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

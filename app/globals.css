@@ -2381,3 +2381,68 @@ textarea:focus-visible {
   color: var(--secondary-text);
   line-height: 1.6;
 }
+
+/* ---------- Modal ---------- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: var(--radius-xl);
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px; right: 15px;
+  font-size: 24px;
+  color: var(--secondary-text);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: var(--accent-error);
+}
+
+.modal-content h3 {
+  font-size: var(--font-size-xl);
+  margin-bottom: 8px;
+}
+
+.modal-content p {
+  color: var(--secondary-text);
+  font-size: var(--font-size-sm);
+  margin-bottom: 20px;
+}
+
+.user-avatar-fallback, .user-avatar-mobile-fallback {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  border: 2px solid white;
+  box-shadow: var(--shadow-sm);
+}
+
+.user-avatar-mobile-fallback {
+  width: 40px; height: 40px;
+}
