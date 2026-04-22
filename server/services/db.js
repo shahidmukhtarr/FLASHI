@@ -5,7 +5,7 @@ const TABLE_NAME = 'products';
 
 let supabase = null;
 
-function getSupabaseClient() {
+export function getSupabaseClient() {
   if (!supabase) {
     const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -320,6 +320,88 @@ export async function getDbStats() {
     stores: uniqueStores,
     latestScrape: latestScrape ? new Date(latestScrape).toISOString() : null,
   };
+}
+
+// ─── Subscription Management ───
+
+export async function saveSubscription(data) {
+  const client = getSupabaseClient();
+  if (!client) return { error: 'Database not initialized' };
+
+  const row = {
+    email: data.email,
+    name: data.name || '',
+    phone: data.phone || '',
+    payment_method: data.paymentMethod || 'bank_transfer',
+    payment_ref: data.paymentRef || '',
+    amount: data.amount || 500,
+    status: 'pending',
+    created_at: new Date().toISOString(),
+    expires_at: null,
+  };
+
+  // If user already has a subscription, update it
+  const { data: existing } = await client
+    .from('subscribers')
+    .select('id')
+    .eq('email', data.email)
+    .limit(1);
+
+  if (existing && existing.length > 0) {
+    const { error } = await client
+      .from('subscribers')
+      .update({ ...row, updated_at: new Date().toISOString() })
+      .eq('email', data.email);
+    if (error) throw error;
+    return { success: true, isUpdate: true };
+  }
+
+  const { error } = await client.from('subscribers').insert([row]);
+  if (error) throw error;
+  return { success: true, isUpdate: false };
+}
+
+export async function getSubscriptionByEmail(email) {
+  const client = getSupabaseClient();
+  if (!client) return null;
+
+  const { data, error } = await client
+    .from('subscribers')
+    .select('*')
+    .eq('email', email)
+    .limit(1);
+
+  if (error || !data || data.length === 0) return null;
+
+  const sub = data[0];
+  // Check if subscription is expired
+  if (sub.status === 'active' && sub.expires_at && new Date(sub.expires_at) < new Date()) {
+    // Auto-expire
+    await client.from('subscribers').update({ status: 'expired' }).eq('id', sub.id);
+    sub.status = 'expired';
+  }
+
+  return sub;
+}
+
+export async function updateSubscriptionStatus(email, status, durationDays = 30) {
+  const client = getSupabaseClient();
+  if (!client) return { error: 'Database not initialized' };
+
+  const updates = { status, updated_at: new Date().toISOString() };
+  if (status === 'active') {
+    const expires = new Date();
+    expires.setDate(expires.getDate() + durationDays);
+    updates.expires_at = expires.toISOString();
+  }
+
+  const { error } = await client
+    .from('subscribers')
+    .update(updates)
+    .eq('email', email);
+
+  if (error) throw error;
+  return { success: true };
 }
 
 export async function saveContactMessage(messageData) {
