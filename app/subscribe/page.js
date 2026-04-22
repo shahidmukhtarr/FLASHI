@@ -92,6 +92,9 @@ export default function SubscribePage() {
 
   return (
     <main>
+      <div className="announcement-bar">
+        <span>✨ Welcome to FLASHI Premium - Never miss a price drop again!</span>
+      </div>
       <header className="header">
         <div className="container">
           <a href="/" className="logo">
@@ -168,7 +171,7 @@ export default function SubscribePage() {
           </h1>
           <p className="sub-hero-subtitle">
             Get exclusive price drop alerts, sale notifications from Limelight & Sapphire, 
-            and early access to the best deals across all 9 stores — delivered straight to you.
+            and early access to the best deals across all stores — delivered straight to you.
           </p>
         </div>
       </section>
@@ -192,7 +195,7 @@ export default function SubscribePage() {
                 <span className="sub-feature-icon">🔔</span>
                 <div>
                   <strong>Price Drop Notifications</strong>
-                  <p>Get instant alerts when products you're watching drop in price across all 9 stores</p>
+                  <p>Get instant alerts when products you're watching drop in price across all stores</p>
                 </div>
               </div>
               <div className="sub-feature-item">

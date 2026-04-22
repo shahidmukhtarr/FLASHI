@@ -147,6 +147,33 @@ input:focus, select:focus, textarea:focus {
   }
 }
 
+/* ---------- Announcement Bar ---------- */
+.announcement-bar {
+  background: var(--gradient-primary);
+  color: white;
+  text-align: center;
+  padding: 10px 16px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  position: relative;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.announcement-bar a {
+  color: white;
+  text-decoration: underline;
+  font-weight: 700;
+}
+
+.announcement-bar a:hover {
+  color: var(--secondary-bg);
+}
+
 /* ---------- Header ---------- */
 .header {
   position: sticky;

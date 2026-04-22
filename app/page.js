@@ -261,6 +261,10 @@ export default function HomePage() {
 
   return (
     <main>
+      <div className="announcement-bar">
+        <span>✨ Upgrade to FLASHI Premium for exclusive sale alerts and price drop notifications!</span>
+        <a href="/subscribe">Learn More</a>
+      </div>
       <header className="header">
         <div className="container">
           <a href="/" className="logo">
