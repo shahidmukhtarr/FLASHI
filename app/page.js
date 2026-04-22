@@ -495,7 +495,7 @@ export default function HomePage() {
                     <label>Your Name</label>
                     <input 
                       type="text" 
-                      placeholder="John Doe" 
+                      placeholder="Ahmed" 
                       required 
                       value={contactForm.name}
                       onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
@@ -505,7 +505,7 @@ export default function HomePage() {
                     <label>Email Address</label>
                     <input 
                       type="email" 
-                      placeholder="john@example.com" 
+                      placeholder="ahmed@gmail.com" 
                       required 
                       value={contactForm.email}
                       onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
@@ -547,26 +547,37 @@ export default function HomePage() {
 
       <footer className="footer">
         <div className="container">
-          <div className="footer-content">
-            <div className="footer-brand">
-              <span className="logo-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="30" height="30">
-                  <path d="M 5 35 L 35 35 L 30 39 L 5 39 Z" fill="#222"/>
-                  <path d="M 12 50 L 42 50 L 35 54 L 12 54 Z" fill="#222"/>
-                  <path d="M 18 65 L 35 65 L 30 69 L 18 69 Z" fill="#222"/>
-                  <path d="M 35 20 L 60 20 L 50 40 L 75 40 Q 82 40 80 50 L 70 70 L 40 70 Q 35 70 38 60 L 45 40 L 35 40 Z" fill="#369632"/>
-                  <circle cx="48" cy="80" r="7" fill="#222"/>
+          <div className="footer-content" style={{ justifyContent: 'center' }}>
+            <div className="footer-brand" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+              <div className="footer-logo-wrap" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span className="logo-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="30" height="30">
+                    <path d="M 5 35 L 35 35 L 30 39 L 5 39 Z" fill="#222"/>
+                    <path d="M 12 50 L 42 50 L 35 54 L 12 54 Z" fill="#222"/>
+                    <path d="M 18 65 L 35 65 L 30 69 L 18 69 Z" fill="#222"/>
+                    <path d="M 35 20 L 60 20 L 50 40 L 75 40 Q 82 40 80 50 L 70 70 L 40 70 Q 35 70 38 60 L 45 40 L 35 40 Z" fill="#369632"/>
+                    <circle cx="48" cy="80" r="7" fill="#222"/>
                   <circle cx="48" cy="80" r="3" fill="#fff"/>
                   <circle cx="68" cy="80" r="7" fill="#222"/>
                   <circle cx="68" cy="80" r="3" fill="#fff"/>
-                </svg>
-              </span>
-              <span className="logo-text">FLASHI</span>
-              <p className="footer-tagline">Smarter price comparison for every shopper in Pakistan.</p>
+                  </svg>
+                </span>
+                <span className="logo-text">FLASHI</span>
+              </div>
+              <p className="footer-tagline" style={{ marginTop: '1rem' }}>Smarter price comparison for every shopper in Pakistan.</p>
+              <div className="social-links" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <a href="https://www.instagram.com/flashipk/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: 'var(--text-secondary, #666)', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#E1306C'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary, #666)'}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                  </svg>
+                </a>
+              </div>
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; {new Date().getFullYear()} FLASHI. Compare prices with confidence.</p>
+            <p>&copy; {new Date().getFullYear()} FLASHI.</p>
           </div>
         </div>
       </footer>

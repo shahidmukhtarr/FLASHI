@@ -21,9 +21,9 @@ if (typeof window === 'undefined' && !isBuild) {
 }
 
 export const metadata = {
-  title: 'Flashi PK',
+  title: 'Flashi - Price Comparison',
   description: "Find The Best Lowest Prices Across Pakistan. Search any product and instantly compare prices from Pakistan's top stores in one place.",
-  keywords: 'price comparison website pakistanflashi pakistancheap products find online in pakistan',
+  keywords: 'price comparison website pakistan flashi pakistan cheap products find online in pakistan',
   robots: 'index, follow',
   other: {
     'google-adsense-account': 'ca-pub-6296239062398160'
