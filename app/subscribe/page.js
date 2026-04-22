@@ -92,9 +92,6 @@ export default function SubscribePage() {
 
   return (
     <main>
-      <div className="announcement-bar">
-        <span>✨ Welcome to FLASHI Premium - Never miss a price drop again!</span>
-      </div>
       <header className="header">
         <div className="container">
           <a href="/" className="logo">

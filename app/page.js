@@ -63,25 +63,23 @@ export default function HomePage() {
   const [statusMessage, setStatusMessage] = useState('');
   const [contactForm, setContactForm] = useState({ name: '', email: '', subject: 'General Inquiry', message: '' });
   const [submitting, setSubmitting] = useState(false);
-  const [user, setUser] = useState(null);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [loginForm, setLoginForm] = useState({ name: '', email: '' });
-  const [loginLoading, setLoginLoading] = useState(false);
+  const [showPremiumPopup, setShowPremiumPopup] = useState(false);
 
   const sortedProducts = useMemo(() => sortProducts(products, sortKey), [products, sortKey]);
   const priceStats = useMemo(() => getPriceStats(sortedProducts), [sortedProducts]);
 
   useEffect(() => {
-    // Check local storage for user
-    const storedUser = localStorage.getItem('flashi_user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error('Failed to parse stored user', e);
-      }
+    const hasSeen = localStorage.getItem('flashi_premium_popup');
+    if (!hasSeen) {
+      const timer = setTimeout(() => setShowPremiumPopup(true), 1500);
+      return () => clearTimeout(timer);
     }
   }, []);
+
+  function closePremiumPopup() {
+    localStorage.setItem('flashi_premium_popup', 'true');
+    setShowPremiumPopup(false);
+  }
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -217,40 +215,7 @@ export default function HomePage() {
     }
   }
 
-  async function handleLoginSubmit(e) {
-    e.preventDefault();
-    if (!loginForm.name || !loginForm.email) return;
-    
-    setLoginLoading(true);
-    try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loginForm),
-      });
-      const data = await res.json();
-      
-      if (data.success) {
-        const userData = { full_name: loginForm.name, email: loginForm.email };
-        setUser(userData);
-        localStorage.setItem('flashi_user', JSON.stringify(userData));
-        setShowLoginModal(false);
-        showToast('Logged in successfully', 'success');
-      } else {
-        throw new Error(data.error || 'Login failed');
-      }
-    } catch (error) {
-      showToast(error.message, 'error');
-    } finally {
-      setLoginLoading(false);
-    }
-  }
 
-  function signOut() {
-    setUser(null);
-    localStorage.removeItem('flashi_user');
-    showToast('Logged out successfully', 'success');
-  }
 
 
 
@@ -261,10 +226,6 @@ export default function HomePage() {
 
   return (
     <main>
-      <div className="announcement-bar">
-        <span>✨ Upgrade to FLASHI Premium for exclusive sale alerts and price drop notifications!</span>
-        <a href="/subscribe">Learn More</a>
-      </div>
       <header className="header">
         <div className="container">
           <a href="/" className="logo">
@@ -659,37 +620,18 @@ export default function HomePage() {
         </div>
       </footer>
 
-      {showLoginModal && (
-        <div className="modal-overlay" onClick={() => setShowLoginModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setShowLoginModal(false)}>×</button>
-            <h3>Login to FLASHI</h3>
-            <p>Save your favorite deals and get premium features.</p>
-            <form onSubmit={handleLoginSubmit}>
-              <div className="form-group" style={{ marginBottom: '16px' }}>
-                <label>Full Name</label>
-                <input 
-                  type="text" 
-                  placeholder="Your Name" 
-                  required 
-                  value={loginForm.name}
-                  onChange={(e) => setLoginForm({...loginForm, name: e.target.value})}
-                />
-              </div>
-              <div className="form-group" style={{ marginBottom: '24px' }}>
-                <label>Email Address</label>
-                <input 
-                  type="email" 
-                  placeholder="your@email.com" 
-                  required 
-                  value={loginForm.email}
-                  onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
-                />
-              </div>
-              <button className="submit-btn" type="submit" disabled={loginLoading} style={{ width: '100%', marginTop: 0 }}>
-                {loginLoading ? 'Logging in...' : 'Login / Register'}
-              </button>
-            </form>
+      {showPremiumPopup && (
+        <div className="modal-overlay" onClick={closePremiumPopup}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{textAlign: 'center'}}>
+            <button className="modal-close" onClick={closePremiumPopup}>×</button>
+            <div style={{fontSize: '48px', marginBottom: '16px'}}>✨</div>
+            <h3>Upgrade to FLASHI Premium</h3>
+            <p style={{marginBottom: '24px', lineHeight: '1.6'}}>
+              Get exclusive sale alerts from Limelight & Sapphire and price drop notifications across all stores!
+            </p>
+            <a href="/subscribe" className="submit-btn" style={{display: 'inline-block', textDecoration: 'none', width: '100%', padding: '12px 0'}}>
+              Learn More
+            </a>
           </div>
         </div>
       )}
