@@ -118,40 +118,9 @@ export default function SubscribePage() {
             <a href="/subscribe" className="nav-link" onClick={() => setMenuOpen(false)} style={{color: 'var(--primary)', fontWeight: 'bold'}}>Premium</a>
             <a href="/about" className="nav-link" onClick={() => setMenuOpen(false)}>About Us</a>
             <a href="/contact" className="nav-link contact-nav-link" onClick={() => setMenuOpen(false)}>Contact Us</a>
-            
-            {user ? (
-              <div className="user-menu-mobile">
-                <div className="user-info-mobile">
-                  <div className="user-avatar-mobile-fallback">{user.full_name?.charAt(0).toUpperCase() || 'U'}</div>
-                  <span>{user.full_name || user.email}</span>
-                </div>
-                <button className="nav-link" onClick={() => { signOut(); setMenuOpen(false); }}>Log Out</button>
-              </div>
-            ) : (
-              <button className="nav-link google-login-mobile" onClick={() => { setShowLoginModal(true); setMenuOpen(false); }}>
-                Login / Register
-              </button>
-            )}
           </nav>
 
           <div className="header-actions">
-            {user ? (
-              <div className="user-profile-dropdown">
-                <div className="user-avatar-fallback" title={user.full_name || user.email}>{user.full_name?.charAt(0).toUpperCase() || 'U'}</div>
-                <div className="dropdown-content">
-                  <div className="dropdown-user-info">
-                    <strong>{user.full_name || 'User'}</strong>
-                    <span>{user.email}</span>
-                  </div>
-                  <a href="/subscribe">My Subscription</a>
-                  <button onClick={signOut}>Log Out</button>
-                </div>
-              </div>
-            ) : (
-              <button className="google-login-btn" onClick={() => setShowLoginModal(true)}>
-                Login
-              </button>
-            )}
             <a href="/contact" className="contact-btn">Contact Us</a>
           </div>
           <button className={`hamburger ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}>
