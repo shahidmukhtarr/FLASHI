@@ -300,20 +300,6 @@ export default function HomePage() {
             <a href="/subscribe" className="nav-link" onClick={() => setMenuOpen(false)} style={{color: 'var(--primary)', fontWeight: 'bold'}}>Premium</a>
             <a href="/about" className="nav-link" onClick={() => setMenuOpen(false)}>About Us</a>
             <a href="/contact" className="nav-link contact-nav-link" onClick={() => setMenuOpen(false)}>Contact Us</a>
-            
-            {user ? (
-              <div className="user-menu-mobile">
-                <div className="user-info-mobile">
-                  <div className="user-avatar-mobile-fallback">{user.full_name?.charAt(0).toUpperCase() || 'U'}</div>
-                  <span>{user.full_name || user.email}</span>
-                </div>
-                <button className="nav-link" onClick={() => { signOut(); setMenuOpen(false); }}>Log Out</button>
-              </div>
-            ) : (
-              <button className="nav-link google-login-mobile" onClick={() => { setShowLoginModal(true); setMenuOpen(false); }}>
-                Login / Register
-              </button>
-            )}
           </nav>
 
           <div className="header-actions">
