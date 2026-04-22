@@ -192,6 +192,7 @@ input:focus, select:focus, textarea:focus {
   font-weight: 500;
   color: var(--dark-bg);
   transition: all var(--transition-fast);
+  white-space: nowrap;
 }
 
 .nav-link:hover {
