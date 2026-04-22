@@ -193,6 +193,7 @@ input:focus, select:focus, textarea:focus {
   color: var(--dark-bg);
   transition: all var(--transition-fast);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav-link:hover {
@@ -235,6 +236,7 @@ input:focus, select:focus, textarea:focus {
 .google-login-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   background: white;
   border: 1px solid var(--border-color);
@@ -244,6 +246,8 @@ input:focus, select:focus, textarea:focus {
   color: var(--primary-text);
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .google-login-btn:hover {
