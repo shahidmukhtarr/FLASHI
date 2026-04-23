@@ -21,7 +21,7 @@ if (typeof window === 'undefined' && !isBuild) {
 }
 
 export const metadata = {
-  title: 'Flashi – Find The Best Lowest Prices Across Pakistan.',
+  title: 'Flashi – Pakistan First Smart Shopping App.',
   description: "Search any product and instantly compare prices from Pakistan's top stores in one place..",
   keywords: 'price comparison app Pakistan, discount app Pakistan, food deals Pakistan, Flashi app,Flashi Pakistan',
   robots: 'index, follow',
