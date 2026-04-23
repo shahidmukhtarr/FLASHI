@@ -285,17 +285,26 @@ export default function SubscribePage() {
 
                 <button
                   className="sub-cta-btn"
-                  onClick={() => setShowPayment(true)}
+                  onClick={() => {
+                    if (user) {
+                      setShowPayment(true);
+                      setTimeout(() => {
+                        document.getElementById('payment')?.scrollIntoView({ behavior: 'smooth' });
+                      }, 100);
+                    } else {
+                      setShowLoginModal(true);
+                    }
+                  }}
                   type="button"
                 >
-                  Subscribe Now — Rs. 500/month
+                  {user ? 'Subscribe Now — Rs. 500/month' : 'Login to Subscribe'}
                 </button>
               </div>
             </div>
           </section>
 
           {/* Payment Section */}
-          {showPayment && (
+          {showPayment && user && (
             <section className="sub-payment" id="payment">
               <div className="container">
                 <div className="sub-payment-layout">
