@@ -21,10 +21,18 @@ if (typeof window === 'undefined' && !isBuild) {
 }
 
 export const metadata = {
-  title: 'Flashi - Price Comparison',
-  description: "Find The Best Lowest Prices Across Pakistan. Search any product and instantly compare prices from Pakistan's top stores in one place.",
-  keywords: 'price comparison website pakistan flashi pakistan cheap products find online in pakistan',
+  title: 'Flashi – Find The Best Lowest Prices Across Pakistan.',
+  description: "Search any product and instantly compare prices from Pakistan's top stores in one place..",
+  keywords: 'price comparison app Pakistan, discount app Pakistan, food deals Pakistan, Flashi app,Flashi Pakistan',
   robots: 'index, follow',
+  openGraph: {
+    title: 'Flashi – Price Comparison App in Pakistan',
+    description: 'Find the best deals and discounts near you with Flashi.',
+    images: ['/logo.png'],
+  },
+  alternates: {
+    canonical: 'https://flashi.pk/',
+  },
   other: {
     'google-adsense-account': 'ca-pub-6296239062398160'
   }
