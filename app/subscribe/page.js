@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 
 export default function SubscribePage() {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', paymentRef: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState(null);
   const [showPayment, setShowPayment] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState(null);
   const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -15,6 +16,21 @@ export default function SubscribePage() {
   const [subscriptionStatus, setSubscriptionStatus] = useState(null);
 
   useEffect(() => {
+    // Check for payment return params in URL
+    const params = new URLSearchParams(window.location.search);
+    const paymentStatus = params.get('payment');
+    const paymentMsg = params.get('msg');
+    if (paymentStatus) {
+      if (paymentStatus === 'success') {
+        setResult({ type: 'success', message: paymentMsg || 'Payment successful! Your subscription is now active.' });
+        setSubscriptionStatus('active');
+      } else {
+        setResult({ type: 'error', message: paymentMsg || 'Payment was not completed. Please try again.' });
+      }
+      // Clean URL params
+      window.history.replaceState({}, '', '/subscribe');
+    }
+
     const storedUser = localStorage.getItem('flashi_user');
     if (storedUser) {
       try {
@@ -26,12 +42,11 @@ export default function SubscribePage() {
           email: prev.email || parsed.email || ''
         }));
 
-
         // Fetch subscription status
         fetch(`/api/subscription?email=${encodeURIComponent(parsed.email)}`)
           .then(res => res.json())
           .then(data => {
-            if (data.success) setSubscriptionStatus(data.status);
+            if (data.success && data.status) setSubscriptionStatus(data.status);
           })
           .catch(console.error);
 
@@ -84,28 +99,43 @@ export default function SubscribePage() {
     setFormData(prev => ({ ...prev, name: '', email: '' }));
   }
 
-  async function handleSubmit(e) {
+  async function handlePayment(e) {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.phone) return;
+    if (!formData.name || !formData.email || !formData.phone || !paymentMethod) return;
     setSubmitting(true);
     setResult(null);
     try {
-      const res = await fetch('/api/subscribe', {
+      const res = await fetch('/api/payment/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          method: paymentMethod,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+        }),
       });
       const data = await res.json();
       if (data.success) {
-        setResult({ type: 'success', message: data.message });
-        setFormData({ name: '', email: '', phone: '', paymentRef: '' });
-        setSubscriptionStatus('pending'); // Optimistically update status
+        // Redirect to payment gateway using a hidden form POST
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = data.gatewayUrl;
+        for (const [key, value] of Object.entries(data.fields)) {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = value;
+          form.appendChild(input);
+        }
+        document.body.appendChild(form);
+        form.submit();
       } else {
-        setResult({ type: 'error', message: data.error || 'Something went wrong' });
+        setResult({ type: 'error', message: data.error || 'Failed to initiate payment' });
+        setSubmitting(false);
       }
     } catch {
       setResult({ type: 'error', message: 'Network error. Please try again.' });
-    } finally {
       setSubmitting(false);
     }
   }
@@ -294,46 +324,55 @@ export default function SubscribePage() {
             </div>
           </section>
 
-          {/* Payment & Subscription Form */}
+          {/* Payment Section */}
           {showPayment && (
             <section className="sub-payment" id="payment">
               <div className="container">
-                <div className="sub-payment-layout">
-                  {/* Bank Details */}
-                  <div className="sub-bank-details">
-                    <h3>💳 Payment Details</h3>
-                    <p className="sub-bank-note">Transfer Rs. 500 to the following account, then fill the form with your transaction details.</p>
-
-                    <div className="sub-bank-card">
-                      <div className="sub-bank-logo">🏛️</div>
-                      <div className="sub-bank-info">
-                        <strong>UBL</strong>
-                        <span className="sub-bank-number">XXXX-XXXXXXXXXXX</span>
-                        <span className="sub-bank-holder">FLASHI Premium</span>
-                      </div>
-                      <button className="sub-copy-btn" onClick={() => { navigator.clipboard.writeText('XXXXXXXXXXXXXXX'); }} type="button">Copy</button>
-                    </div>
-
-                    <div className="sub-bank-steps">
-                      <h4>How it works:</h4>
-                      <ol>
-                        <li>Transfer <strong>Rs. 500</strong> to the account above</li>
-                        <li>Note down your <strong>Transaction ID / Reference</strong></li>
-                        <li>Fill the form with your details</li>
-                        <li>We verify & activate within <strong>24 hours</strong></li>
-                      </ol>
-                    </div>
+                {result && (
+                  <div className={`sub-alert ${result.type}`} style={{ maxWidth: '700px', margin: '0 auto 30px' }}>
+                    {result.type === 'success' ? '✅' : '❌'} {result.message}
                   </div>
+                )}
 
-                  {/* Subscription Form */}
-                  <div className="sub-form-container">
-                    <h3> Subscription Form</h3>
-                    {result && (
-                      <div className={`sub-alert ${result.type}`}>
-                        {result.type === 'success' ? '✅' : '❌'} {result.message}
-                      </div>
-                    )}
-                    <form className="sub-form" onSubmit={handleSubmit}>
+                {/* Step 1: Choose Payment Method */}
+                <h3 style={{ textAlign: 'center', marginBottom: '30px', fontSize: '1.5rem' }}>
+                  💳 Choose Payment Method
+                </h3>
+                <div className="payment-methods-grid">
+                  <button
+                    type="button"
+                    className={`payment-method-card ${paymentMethod === 'jazzcash' ? 'selected' : ''}`}
+                    onClick={() => setPaymentMethod('jazzcash')}
+                  >
+                    <div className="pm-icon" style={{ background: '#e31837', color: '#fff' }}>JC</div>
+                    <strong>JazzCash</strong>
+                    <span>Mobile Wallet</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`payment-method-card ${paymentMethod === 'easypaisa' ? 'selected' : ''}`}
+                    onClick={() => setPaymentMethod('easypaisa')}
+                  >
+                    <div className="pm-icon" style={{ background: '#39b54a', color: '#fff' }}>EP</div>
+                    <strong>EasyPaisa</strong>
+                    <span>Mobile Wallet</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`payment-method-card ${paymentMethod === 'card' ? 'selected' : ''}`}
+                    onClick={() => setPaymentMethod('card')}
+                  >
+                    <div className="pm-icon" style={{ background: '#1a1f71', color: '#fff' }}>💳</div>
+                    <strong>Credit / Debit Card</strong>
+                    <span>Visa / Mastercard</span>
+                  </button>
+                </div>
+
+                {/* Step 2: Fill Details & Pay */}
+                {paymentMethod && (
+                  <div className="sub-form-card" style={{ maxWidth: '500px', margin: '40px auto 0' }}>
+                    <h3 style={{ marginBottom: '20px' }}>📝 Your Details</h3>
+                    <form className="sub-form" onSubmit={handlePayment}>
                       <div className="form-group">
                         <label>Full Name *</label>
                         <input
@@ -364,24 +403,15 @@ export default function SubscribePage() {
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         />
                       </div>
-                      <div className="form-group">
-                        <label>Transaction ID / Payment Reference</label>
-                        <input
-                          type="text"
-                          placeholder="e.g. TXN123456789 or screenshot ref"
-                          value={formData.paymentRef}
-                          onChange={(e) => setFormData({ ...formData, paymentRef: e.target.value })}
-                        />
-                      </div>
                       <button className="sub-submit-btn" type="submit" disabled={submitting}>
-                        {submitting ? 'Submitting...' : ' Submit Subscription Request'}
+                        {submitting ? 'Redirecting to payment...' : `Pay Rs. 500 via ${paymentMethod === 'jazzcash' ? 'JazzCash' : paymentMethod === 'easypaisa' ? 'EasyPaisa' : 'Card'}`}
                       </button>
                       <p className="sub-form-note">
-                        Your subscription will be activated within 24 hours after payment verification.
+                        You will be redirected to {paymentMethod === 'jazzcash' ? 'JazzCash' : paymentMethod === 'easypaisa' ? 'EasyPaisa' : 'the payment'} gateway to complete your payment securely. Your subscription activates instantly after payment.
                       </p>
                     </form>
                   </div>
-                </div>
+                )}
               </div>
             </section>
           )}
@@ -393,11 +423,11 @@ export default function SubscribePage() {
               <div className="sub-faq-grid">
                 <div className="sub-faq-item">
                   <h4>How do I pay?</h4>
-                  <p>Transfer Rs. 500 via bank transfer to our UBL account. No credit card or app needed!</p>
+                  <p>Pay securely with JazzCash, EasyPaisa, or any Visa/Mastercard. Your subscription activates instantly!</p>
                 </div>
                 <div className="sub-faq-item">
                   <h4>When will my subscription be activated?</h4>
-                  <p>Within 24 hours of payment verification. You'll receive a confirmation via email/WhatsApp.</p>
+                  <p>Instantly after successful payment — no waiting, no manual verification needed.</p>
                 </div>
                 <div className="sub-faq-item">
                   <h4>What notifications will I receive?</h4>
@@ -405,7 +435,7 @@ export default function SubscribePage() {
                 </div>
                 <div className="sub-faq-item">
                   <h4>Can I cancel anytime?</h4>
-                  <p>Yes! Your subscription runs for 30 days. Simply don't renew if you wish to cancel — no questions asked.</p>
+                  <p>Yes! Your subscription runs for 30 days. Simply don&apos;t renew if you wish to cancel — no questions asked.</p>
                 </div>
               </div>
             </div>
