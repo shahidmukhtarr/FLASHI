@@ -33,6 +33,9 @@ export const metadata = {
   alternates: {
     canonical: 'https://flashi.pk/',
   },
+  verification: {
+    google: '-GfeIA9cVZ6cTozbh7fRZd3BDr4LvSkRnRV3_4rdjtw',
+  },
   other: {
     'google-adsense-account': 'ca-pub-6296239062398160'
   }
