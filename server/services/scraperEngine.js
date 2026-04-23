@@ -276,18 +276,53 @@ function generateDemoReviews(query) {
  * Search across all stores in parallel
  */
 export async function searchAllStores(query, limit = 150) {
-  console.log(`[ScraperEngine] Searching all stores for: "${query}"`);
+  let trimmedQuery = query.trim();
+  let targetStoreName = null;
+
+  // Auto-detect store from query
+  const storeKeywords = [
+    { kw: 'daraz', name: 'Daraz' },
+    { kw: 'priceoye', name: 'PriceOye' },
+    { kw: 'mega.pk', name: 'Mega.pk' },
+    { kw: 'mega', name: 'Mega.pk' },
+    { kw: 'shophive', name: 'Shophive' },
+    { kw: 'naheed', name: 'Naheed' },
+    { kw: 'highfy', name: 'Highfy' },
+    { kw: 'limelight', name: 'Limelight' },
+    { kw: 'sapphire', name: 'Sapphire' },
+    { kw: 'stationers', name: 'Stationers.pk' }
+  ];
+
+  const queryLower = trimmedQuery.toLowerCase();
+  for (const item of storeKeywords) {
+    if (queryLower.includes(item.kw)) {
+      targetStoreName = item.name;
+      // Remove the keyword from the query for better search
+      const regex = new RegExp(`\\b${item.kw.replace('.', '\\.')}\\b`, 'gi');
+      trimmedQuery = trimmedQuery.replace(regex, '').trim();
+      break;
+    }
+  }
+
+  // If query is empty after stripping store name, just search the store name
+  if (!trimmedQuery) trimmedQuery = query.trim();
+
+  console.log(`[ScraperEngine] Searching ${targetStoreName ? targetStoreName : 'all stores'} for: "${trimmedQuery}"`);
 
   const timeout = 30000; // 30 second timeout per store
 
+  const storesToSearch = targetStoreName 
+    ? stores.filter(s => s.name === targetStoreName) 
+    : stores;
+
   // Run all scrapers in parallel with staggered delay and timeout
   const results = await Promise.allSettled(
-    stores.map((store, i) =>
+    storesToSearch.map((store, i) =>
       Promise.race([
         (async () => {
           // Stagger requests to avoid triggering bot protection (429/403)
           await delay(i * 300); 
-          return store.adapter.searchProducts(query, limit);
+          return store.adapter.searchProducts(trimmedQuery, limit);
         })(),
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error(`${store.name} timeout`)), timeout)
@@ -302,20 +337,20 @@ export async function searchAllStores(query, limit = 150) {
 
   for (let index = 0; index < results.length; index++) {
     const result = results[index];
-    const store = stores[index];
+    const store = storesToSearch[index];
     const storeName = store.name;
 
     let storeProducts = result.status === 'fulfilled' ? result.value : [];
 
     // Magical Fallback: PriceOye's internal search often hides phones. Guess the URL directly!
-    if (storeName === 'PriceOye' && (!storeProducts || storeProducts.filter(p => isRelevantProduct(p.title, query)).length === 0)) {
+    if (storeName === 'PriceOye' && (!storeProducts || storeProducts.filter(p => isRelevantProduct(p.title, trimmedQuery)).length === 0)) {
       console.log(`[ScraperEngine] PriceOye search failed/filtered. Attempting direct URL guess...`);
-      const slug = query.toLowerCase().replace(/\+/g, ' plus ').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const slug = trimmedQuery.toLowerCase().replace(/\+/g, ' plus ').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       const brand = slug.split('-')[0];
       const guessedUrl = `https://priceoye.pk/mobiles/${brand}/${slug}`;
       try {
         const directProduct = await store.adapter.getProductDetails(guessedUrl);
-        if (directProduct && isRelevantProduct(directProduct.title, query)) {
+        if (directProduct && isRelevantProduct(directProduct.title, trimmedQuery)) {
           console.log(`[ScraperEngine] PriceOye direct URL guess SUCCESS: ${guessedUrl}`);
           storeProducts = [directProduct];
         }
@@ -326,7 +361,7 @@ export async function searchAllStores(query, limit = 150) {
 
     if (storeProducts && storeProducts.length > 0) {
       const validProducts = storeProducts
-        .filter(p => p.price != null && p.price > 0 && p.inStock !== false && isRelevantProduct(p.title, query));
+        .filter(p => p.price != null && p.price > 0 && p.inStock !== false && isRelevantProduct(p.title, trimmedQuery));
       if (validProducts.length > 0) {
         allProducts.push(...validProducts);
         storesSearched.push(storeName);
@@ -355,11 +390,11 @@ export async function searchAllStores(query, limit = 150) {
     return a.price - b.price;
   });
 
-  const saveResult = await saveProducts(allProducts, query);
-  console.log(`[ScraperEngine] Saved products for query "${query}": new=${saveResult.newCount}, updated=${saveResult.updatedCount}`);
+  const saveResult = await saveProducts(allProducts, trimmedQuery);
+  console.log(`[ScraperEngine] Saved products for query "${trimmedQuery}": new=${saveResult.newCount}, updated=${saveResult.updatedCount}`);
 
   return {
-    query,
+    query: trimmedQuery,
     totalResults: allProducts.length,
     savedCount: saveResult.newCount,
     updatedCount: saveResult.updatedCount,
