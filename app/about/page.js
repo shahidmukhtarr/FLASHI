@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import '../globals.css';
 import SalesNavLink from '../components/SalesNavLink';
 
 export const metadata = {

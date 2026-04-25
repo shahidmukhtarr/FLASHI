@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import SalesNavLink from '../components/SalesNavLink';
-import '../globals.css';
 
 export const metadata = {
   title: 'Privacy Policy - FLASHI | Your Privacy Matters',

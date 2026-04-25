@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import '../globals.css';
 import SalesNavLink from '../components/SalesNavLink';
 
 const LogoSVG = () => (

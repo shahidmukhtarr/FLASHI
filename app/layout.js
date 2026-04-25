@@ -21,6 +21,7 @@ if (typeof window === 'undefined' && !isBuild) {
 }
 
 export const metadata = {
+  metadataBase: new URL('https://flashi.pk'),
   title: 'Flashi – Pakistan First Smart Shopping App.',
   description: "Search any product and instantly compare prices from Pakistan's top stores in one place..",
   keywords: 'price comparison app Pakistan, discount app Pakistan, cheap shopping Pakistan, flashi app, flashi Pakistan, flashi, flashi Pakistan, flashi app, flashi pk, flashi deals, flashi discounts, flashi price comparison, flashi shopping app, flashi online deals Pakistan, flashi savings app',
