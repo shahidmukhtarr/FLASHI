@@ -1,31 +1,28 @@
 'use client';
 
 import Script from 'next/script';
+import { useEffect, useRef } from 'react';
 
 /**
- * Global ad scripts that load once across the entire app.
- * These are interstitial/popunder type ads that don't need a container.
+ * Native Banner Ad - renders into a specific container div.
+ * Place between content sections.
  */
-export function GlobalAdScripts() {
+export function NativeBannerAd() {
   return (
-    <>
-      {/* Ad Network Script 1 - Interstitial */}
+    <div className="ad-banner-container">
       <Script
-        src="https://pl29259898.profitablecpmratenetwork.com/da/34/67/da3467791ecc369dd5a78e779e9a982b.js"
+        src="https://pl29259901.profitablecpmratenetwork.com/0abb0d7144a4d3736f57681dd82e13b5/invoke.js"
         strategy="afterInteractive"
+        async
+        data-cfasync="false"
       />
-      {/* Ad Network Script 2 - Interstitial */}
-      <Script
-        src="https://pl29259900.profitablecpmratenetwork.com/b5/29/6a/b5296a8c4b5616cae2f5d00468942169.js"
-        strategy="afterInteractive"
-      />
-    </>
+      <div id="container-0abb0d7144a4d3736f57681dd82e13b5"></div>
+    </div>
   );
 }
 
 /**
- * Banner Ad component (320x50) - place this where you want a banner ad to appear.
- * Best used between content sections (e.g. below search results, between product rows).
+ * Small Banner Ad (320x50 iframe) - compact horizontal banner.
  */
 export function BannerAd() {
   return (
@@ -50,5 +47,47 @@ export function BannerAd() {
         strategy="afterInteractive"
       />
     </div>
+  );
+}
+
+/**
+ * Sidebar / Display Ad (160x300 iframe) - taller display ad.
+ * Good for sidebars or between content blocks.
+ */
+export function DisplayAd() {
+  return (
+    <div className="ad-display-container">
+      <Script
+        id="ad-display-options"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            atOptions = {
+              'key' : '633652bcf6cdc2e81243dc897969d8fc',
+              'format' : 'iframe',
+              'height' : 300,
+              'width' : 160,
+              'params' : {}
+            };
+          `,
+        }}
+      />
+      <Script
+        src="https://www.highperformanceformat.com/633652bcf6cdc2e81243dc897969d8fc/invoke.js"
+        strategy="afterInteractive"
+      />
+    </div>
+  );
+}
+
+/**
+ * Global interstitial ad script - loads once in the layout.
+ */
+export function GlobalAdScript() {
+  return (
+    <Script
+      src="https://pl29259900.profitablecpmratenetwork.com/b5/29/6a/b5296a8c4b5616cae2f5d00468942169.js"
+      strategy="afterInteractive"
+    />
   );
 }

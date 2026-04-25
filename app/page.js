@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import SalesNavLink from './components/SalesNavLink';
 import UserHeaderActions from './components/UserHeaderActions';
-import { BannerAd } from './components/AdScripts';
+import { BannerAd, NativeBannerAd, DisplayAd } from './components/AdScripts';
 
 const API_BASE = '/api';
 const popularQueries = [
@@ -616,6 +616,11 @@ export default function HomePage() {
         <BannerAd />
       </div>
 
+      {/* Native Banner Ad */}
+      <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--spacing-md) 0' }}>
+        <NativeBannerAd />
+      </div>
+
       <section className="how-section" id="how-it-works">
         <div className="container">
           <h2 className="section-title">How <span className="highlight-text">FLASHI</span> Works</h2>
@@ -635,6 +640,11 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Display Ad */}
+      <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--spacing-lg) 0' }}>
+        <DisplayAd />
+      </div>
 
       <section className="contact-section" id="contact">
         <div className="container">

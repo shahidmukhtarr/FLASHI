@@ -2914,3 +2914,15 @@ textarea:focus-visible {
   overflow: hidden;
 }
 
+
+.ad-display-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 160px;
+  min-height: 300px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
