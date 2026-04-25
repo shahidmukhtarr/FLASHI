@@ -12,7 +12,6 @@ export default function SalesNavLink({ className, style, onClick, isAnchor }) {
     }
   }, []);
 
-  if (!show) return null;
 
   if (isAnchor) {
     return (

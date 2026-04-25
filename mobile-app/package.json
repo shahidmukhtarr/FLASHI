@@ -1,0 +1,31 @@
+{
+  "name": "flashi-mobile",
+  "version": "1.0.0",
+  "description": "Flashi – Pakistan's First Smart Shopping App (Mobile)",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'No build needed — using live website wrapper'",
+    "cap:init": "npx cap sync",
+    "cap:android": "npx cap open android",
+    "cap:ios": "npx cap open ios",
+    "cap:sync": "npx cap sync",
+    "cap:run:android": "npx cap run android"
+  },
+  "keywords": [
+    "flashi",
+    "price-comparison",
+    "mobile-app",
+    "capacitor"
+  ],
+  "author": "Flashi",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@capacitor/android": "^7.2.0",
+    "@capacitor/cli": "^7.2.0",
+    "@capacitor/core": "^7.2.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5"
+  }
+}
