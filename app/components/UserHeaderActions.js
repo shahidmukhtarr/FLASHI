@@ -50,9 +50,12 @@ export default function UserHeaderActions({ onLogin }) {
               <span>{user.email}</span>
             </div>
             {user.status === 'active' && (
-              <div style={{ padding: '8px 16px', background: 'rgba(54, 150, 50, 0.1)', color: '#2d6a28', fontSize: '12px', fontWeight: '600' }}>
-                👑 Premium Active
-              </div>
+              <>
+                <div style={{ padding: '8px 16px', background: 'rgba(54, 150, 50, 0.1)', color: '#2d6a28', fontSize: '12px', fontWeight: '600' }}>
+                  👑 Premium Active
+                </div>
+                <Link href="/notifications">My Notifications</Link>
+              </>
             )}
             <Link href="/subscribe">Subscription Plan</Link>
             <button onClick={handleLogout}>Logout</button>

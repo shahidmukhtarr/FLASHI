@@ -409,7 +409,8 @@ input:focus, select:focus, textarea:focus {
 
 @media (max-width: 992px) {
   .header-actions {
-    display: none;
+    display: flex;
+    margin-right: 10px;
   }
   .user-menu-mobile {
     display: flex;
