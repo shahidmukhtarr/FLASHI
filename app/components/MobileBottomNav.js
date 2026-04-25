@@ -76,9 +76,20 @@ export default function MobileBottomNav() {
               </div>
             </div>
           ) : (
-            <Link href="/?login=true" onClick={() => setMoreMenuOpen(false)} className="more-login-btn">
+            <button 
+              onClick={() => {
+                setMoreMenuOpen(false);
+                if (pathname === '/') {
+                  window.dispatchEvent(new CustomEvent('open-login-modal'));
+                } else {
+                  window.location.href = '/?login=true';
+                }
+              }} 
+              className="more-login-btn"
+              style={{ width: '100%', textAlign: 'center', border: 'none', cursor: 'pointer' }}
+            >
               Login / Register
-            </Link>
+            </button>
           )}
           <button className="close-more-btn" onClick={() => setMoreMenuOpen(false)}>×</button>
         </div>

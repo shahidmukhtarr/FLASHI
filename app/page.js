@@ -126,6 +126,13 @@ export default function HomePage() {
   }
 
   useEffect(() => {
+    const handleOpenLogin = () => {
+      setShowMobileSplash(false);
+      setShowLoginModal(true);
+    };
+
+    window.addEventListener('open-login-modal', handleOpenLogin);
+
     const params = new URLSearchParams(window.location.search);
     const q = params.get('q');
     const login = params.get('login');
@@ -134,10 +141,11 @@ export default function HomePage() {
       handleSearch(q, false);
     }
     if (login === 'true') {
-      setShowMobileSplash(false);
-      setShowLoginModal(true);
+      handleOpenLogin();
     }
-  }, [typeof window !== 'undefined' ? window.location.search : '']);
+
+    return () => window.removeEventListener('open-login-modal', handleOpenLogin);
+  }, []);
 
   useEffect(() => {
     if (!toast) return;

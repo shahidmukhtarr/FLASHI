@@ -420,6 +420,58 @@ input:focus, select:focus, textarea:focus {
   display: none; /* Hide hamburger entirely for mobile app feel */
 }
 
+@media (max-width: 768px) {
+  .steps-grid {
+    gap: 15px;
+  }
+  
+  .step-card {
+    padding: 20px 15px;
+  }
+  
+  .step-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+  
+  .step-card p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+  
+  .step-icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+  }
+  
+  /* Smaller Pricing Card */
+  .sub-pricing-card {
+    padding: 25px 20px;
+    border-radius: var(--radius-lg);
+  }
+  
+  .sub-plan-name {
+    font-size: 1.5rem;
+  }
+  
+  .sub-price-amount {
+    font-size: 2.2rem;
+  }
+  
+  .sub-feature-item {
+    gap: 12px;
+    margin-bottom: 15px;
+  }
+  
+  .sub-feature-item strong {
+    font-size: 0.95rem;
+  }
+  
+  .sub-feature-item p {
+    font-size: 0.8rem;
+  }
+}
+
 /* ---------- Mobile Bottom Navigation ---------- */
 .mobile-bottom-nav {
   display: none;
