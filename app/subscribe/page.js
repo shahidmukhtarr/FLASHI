@@ -257,20 +257,7 @@ export default function SubscribePage() {
                       <p>Get notified about deals before they go live — shop first, save more</p>
                     </div>
                   </div>
-                  <div className="sub-feature-item">
-                    <span className="sub-feature-icon"></span>
-                    <div>
-                      <strong>Notfication Updates Updates</strong>
-                      <p>Choose how you want to receive your deal alerts </p>
-                    </div>
-                  </div>
-                  <div className="sub-feature-item">
-                    <span className="sub-feature-icon"></span>
-                    <div>
-                      <strong>Priority Support</strong>
-                      <p>Get dedicated support and product tracking requests handled first</p>
-                    </div>
-                  </div>
+
                 </div>
 
                 <button

@@ -46,8 +46,19 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <Script id="device-detect" strategy="beforeInteractive">
+          {`
+            var ua = navigator.userAgent;
+            var isWebView = /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(ua) || /Android.*wv/i.test(ua) || /FBAN|FBAV/i.test(ua);
+            if (isWebView) {
+              document.documentElement.classList.add('is-app');
+            } else {
+              document.documentElement.classList.add('is-browser');
+            }
+          `}
+        </Script>
         <Script 
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6296239062398160" 
           strategy="afterInteractive"
