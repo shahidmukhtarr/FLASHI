@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function UserHeaderActions({ onLogin }) {
   const [user, setUser] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     try {
@@ -29,38 +30,22 @@ export default function UserHeaderActions({ onLogin }) {
     }
   };
 
+  if (pathname !== '/') {
+    return (
+      <div className="header-actions">
+        <Link href="/" className="go-home-btn" style={{ background: 'var(--gradient-primary)', color: 'white', padding: '8px 16px', borderRadius: 'var(--radius-full)', fontWeight: '600', fontSize: '14px', boxShadow: 'var(--shadow-sm)' }}>
+          <span>Go to Home</span>
+        </Link>
+      </div>
+    );
+  }
+
   if (user) {
     return (
       <div className="header-actions">
-        <div 
-          className={`user-profile-dropdown ${dropdownOpen ? 'open' : ''}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            setDropdownOpen(!dropdownOpen);
-          }}
-        >
-          <img 
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || user.full_name || user.email)}&background=6b705c&color=fff`} 
-            alt="Profile" 
-            className="user-avatar"
-          />
-          <div className="dropdown-content">
-            <div className="dropdown-user-info">
-              <strong>{user.full_name || user.name || 'User'}</strong>
-              <span>{user.email}</span>
-            </div>
-            {user.status === 'active' && (
-              <>
-                <div style={{ padding: '8px 16px', background: 'rgba(54, 150, 50, 0.1)', color: '#2d6a28', fontSize: '12px', fontWeight: '600' }}>
-                  👑 Premium Active
-                </div>
-                <Link href="/notifications">My Notifications</Link>
-              </>
-            )}
-            <Link href="/subscribe">Subscription Plan</Link>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-        </div>
+        <button className="google-login-btn" onClick={handleLogout} style={{ border: '1px solid var(--accent-error)', color: 'var(--accent-error)' }}>
+          <span>Logout</span>
+        </button>
       </div>
     );
   }
