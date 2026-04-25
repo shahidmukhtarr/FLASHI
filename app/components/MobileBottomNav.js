@@ -86,7 +86,7 @@ export default function MobileBottomNav() {
                 }
               }} 
               className="more-login-btn"
-              style={{ width: '100%', textAlign: 'center', border: 'none', cursor: 'pointer' }}
+              style={{ border: 'none', cursor: 'pointer' }}
             >
               Login / Register
             </button>
