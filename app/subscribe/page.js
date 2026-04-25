@@ -307,10 +307,10 @@ export default function SubscribePage() {
                       <div className="sub-bank-logo">🏛️</div>
                       <div className="sub-bank-info">
                         <strong>UBL</strong>
-                        <span className="sub-bank-number">XXXX-XXXXXXXXXXX</span>
+                        <span className="sub-bank-number">1774327143602</span>
                         <span className="sub-bank-holder">FLASHI Premium</span>
                       </div>
-                      <button className="sub-copy-btn" onClick={() => { navigator.clipboard.writeText('XXXXXXXXXXXXXXX'); }} type="button">Copy</button>
+                      <button className="sub-copy-btn" onClick={() => { navigator.clipboard.writeText('1774327143602'); }} type="button">Copy</button>
                     </div>
 
                     <div className="sub-bank-steps">

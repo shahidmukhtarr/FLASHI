@@ -130,8 +130,8 @@ export default function SalesClient() {
             Access to our live Special Discounts & Sales feed is exclusively available to FLASHI Premium subscribers.
           </p>
           {!user ? (
-            <a href="/" className="submit-btn" style={{ display: 'inline-block', textDecoration: 'none' }}>
-              Login to Check Status
+            <a href="/?login=true" className="submit-btn" style={{ display: 'inline-block', textDecoration: 'none' }}>
+              Login to Use premium feature
             </a>
           ) : (
             <a href="/subscribe" className="submit-btn" style={{ display: 'inline-block', textDecoration: 'none' }}>

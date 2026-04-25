@@ -86,6 +86,7 @@ export default function HomePage() {
   const [loginLoading, setLoginLoading] = useState(false);
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [loginError, setLoginError] = useState(null);
+  const [showMobileSplash, setShowMobileSplash] = useState(false);
 
   const sortedProducts = useMemo(() => sortProducts(products, sortKey), [products, sortKey]);
   const priceStats = useMemo(() => getPriceStats(sortedProducts), [sortedProducts]);
@@ -101,12 +102,21 @@ export default function HomePage() {
   useEffect(() => {
     // Check local storage for user
     const storedUser = localStorage.getItem('flashi_user');
+    const skippedLogin = localStorage.getItem('flashi_skip_login');
+    let isUserLoggedIn = false;
+    
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
+        isUserLoggedIn = true;
       } catch (e) {
         console.error('Failed to parse stored user', e);
       }
+    }
+
+    // Check if we should show mobile splash
+    if (window.innerWidth <= 768 && !isUserLoggedIn && !skippedLogin) {
+      setShowMobileSplash(true);
     }
   }, []);
 
@@ -118,9 +128,14 @@ export default function HomePage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const q = params.get('q');
+    const login = params.get('login');
     if (q) {
       setQuery(q);
       handleSearch(q, false);
+    }
+    if (login === 'true') {
+      setShowMobileSplash(false);
+      setShowLoginModal(true);
     }
   }, []);
 
@@ -306,6 +321,49 @@ export default function HomePage() {
 
   return (
     <main>
+      {showMobileSplash && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'var(--primary-bg)',
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '2rem',
+          textAlign: 'center'
+        }}>
+          <img src="/logo.png" alt="FLASHI" width="80" height="80" style={{ borderRadius: '16px', marginBottom: '1.5rem', boxShadow: 'var(--shadow-md)' }} />
+          <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--primary-text)' }}>Welcome to FLASHI</h1>
+          <p style={{ color: 'var(--secondary-text)', marginBottom: '2.5rem', fontSize: '1.1rem' }}>Pakistan's smartest price comparison platform</p>
+          
+          <button 
+            onClick={() => { setShowMobileSplash(false); setShowLoginModal(true); setIsRegisterMode(true); }}
+            style={{ width: '100%', maxWidth: '300px', padding: '16px', background: 'var(--gradient-primary)', color: 'white', border: 'none', borderRadius: 'var(--radius-full)', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1rem', cursor: 'pointer' }}
+          >
+            Create an Account
+          </button>
+          
+          <button 
+            onClick={() => { setShowMobileSplash(false); setShowLoginModal(true); setIsRegisterMode(false); }}
+            style={{ width: '100%', maxWidth: '300px', padding: '16px', background: 'white', color: 'var(--primary-text)', border: '2px solid var(--border-color)', borderRadius: 'var(--radius-full)', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1.5rem', cursor: 'pointer' }}
+          >
+            Log In
+          </button>
+          
+          <button 
+            onClick={() => { 
+              localStorage.setItem('flashi_skip_login', 'true'); 
+              setShowMobileSplash(false); 
+            }}
+            style={{ background: 'transparent', border: 'none', color: 'var(--secondary-text)', fontWeight: '600', textDecoration: 'underline', padding: '8px', cursor: 'pointer' }}
+          >
+            Continue without login
+          </button>
+        </div>
+      )}
+
       <header className="header">
         <div className="container">
           <a href="/" className="logo">

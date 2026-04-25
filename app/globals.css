@@ -739,7 +739,7 @@ input:focus, select:focus, textarea:focus {
 .search-btn {
   padding: 15px 30px;
   border-radius: var(--radius-lg);
-  background: var(--gradient-secondary);
+  background: linear-gradient(135deg, #369632 0%, #4caf50 100%);
   color: var(--light-text);
   font-weight: 700;
   text-transform: uppercase;
@@ -749,7 +749,7 @@ input:focus, select:focus, textarea:focus {
 
 .search-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 20px rgba(54, 150, 50, 0.3);
   filter: brightness(1.1);
 }
 
