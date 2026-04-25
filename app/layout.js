@@ -23,11 +23,11 @@ if (typeof window === 'undefined' && !isBuild) {
 export const metadata = {
   title: 'Flashi – Pakistan First Smart Shopping App.',
   description: "Search any product and instantly compare prices from Pakistan's top stores in one place..",
-  keywords: 'price comparison app Pakistan, discount app Pakistan, food deals Pakistan, Flashi app,Flashi Pakistan',
+  keywords: 'price comparison app Pakistan, discount app Pakistan, cheap shopping Pakistan, Flashi app, flashi Pakistan, Flashi, flashi Pakistan, flashi app, flashi pk, flashi deals, flashi discounts, flashi price comparison, flashi shopping app, flashi online deals Pakistan, flashi savings app',
   robots: 'index, follow',
   openGraph: {
     title: 'Flashi – Price Comparison App in Pakistan',
-    description: 'Find the best deals and discounts near you with Flashi.',
+    description: 'Find the best deals and discounts with Flashi.',
     images: ['/logo.png'],
   },
   alternates: {
