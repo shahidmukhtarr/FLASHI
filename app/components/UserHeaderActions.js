@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-export default function UserHeaderActions() {
+export default function UserHeaderActions({ onLogin }) {
   const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -22,21 +22,31 @@ export default function UserHeaderActions() {
     window.location.reload();
   };
 
+  const handleLoginClick = (e) => {
+    if (onLogin) {
+      e.preventDefault();
+      onLogin();
+    }
+  };
+
   if (user) {
     return (
       <div className="header-actions">
         <div 
           className={`user-profile-dropdown ${dropdownOpen ? 'open' : ''}`}
-          onClick={() => setDropdownOpen(!dropdownOpen)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setDropdownOpen(!dropdownOpen);
+          }}
         >
           <img 
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || user.email)}&background=6b705c&color=fff`} 
+            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || user.full_name || user.email)}&background=6b705c&color=fff`} 
             alt="Profile" 
             className="user-avatar"
           />
           <div className="dropdown-content">
             <div className="dropdown-user-info">
-              <strong>{user.name}</strong>
+              <strong>{user.full_name || user.name || 'User'}</strong>
               <span>{user.email}</span>
             </div>
             {user.status === 'active' && (
@@ -54,7 +64,7 @@ export default function UserHeaderActions() {
 
   return (
     <div className="header-actions">
-      <Link href="/" className="google-login-btn">
+      <Link href="/" className="google-login-btn" onClick={handleLoginClick}>
         <span>Login / Register</span>
       </Link>
     </div>

@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import SalesNavLink from './components/SalesNavLink';
+import UserHeaderActions from './components/UserHeaderActions';
 
 const API_BASE = '/api';
 const popularQueries = [
@@ -322,29 +323,7 @@ export default function HomePage() {
             <a href="/contact" className="nav-link contact-nav-link" onClick={() => setMenuOpen(false)}>Contact Us</a>
           </nav>
 
-          <div className="header-actions">
-            {user ? (
-              <div 
-                className={`user-profile-dropdown ${dropdownOpen ? 'open' : ''}`}
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-              >
-                <div className="user-avatar-fallback" title={user.full_name || user.email}>{user.full_name?.charAt(0).toUpperCase() || 'U'}</div>
-                <div className="dropdown-content">
-                  <div className="dropdown-user-info">
-                    <strong>{user.full_name || 'User'}</strong>
-                    <span>{user.email}</span>
-                  </div>
-                  <a href="/subscribe">My Subscription</a>
-                  <button onClick={signOut}>Log Out</button>
-                </div>
-              </div>
-            ) : (
-              <button className="google-login-btn" onClick={() => setShowLoginModal(true)}>
-                Login
-              </button>
-            )}
-            <a href="/contact" className="contact-btn">Contact Us</a>
-          </div>
+          <UserHeaderActions onLogin={() => setShowLoginModal(true)} />
           <button className={`hamburger ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}>
             <span className="hamburger-line"></span>
             <span className="hamburger-line"></span>
