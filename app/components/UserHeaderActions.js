@@ -7,15 +7,18 @@ import { usePathname } from 'next/navigation';
 export default function UserHeaderActions({ onLogin }) {
   const [user, setUser] = useState(null);
   const pathname = usePathname();
+  const [isHome, setIsHome] = useState(true);
 
   useEffect(() => {
+    setIsHome(pathname === '/');
+    
     try {
       const stored = localStorage.getItem('flashi_user');
       if (stored) {
         setUser(JSON.parse(stored));
       }
     } catch (err) {}
-  }, []);
+  }, [pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem('flashi_user');
@@ -30,7 +33,7 @@ export default function UserHeaderActions({ onLogin }) {
     }
   };
 
-  if (pathname !== '/') {
+  if (!isHome) {
     return (
       <div className="header-actions">
         <Link href="/" className="go-home-btn" style={{ background: 'var(--gradient-primary)', color: 'white', padding: '8px 16px', borderRadius: 'var(--radius-full)', fontWeight: '600', fontSize: '14px', boxShadow: 'var(--shadow-sm)' }}>
