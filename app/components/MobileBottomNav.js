@@ -76,7 +76,7 @@ export default function MobileBottomNav() {
               </div>
             </div>
           ) : (
-            <Link href="/" onClick={() => setMoreMenuOpen(false)} className="more-login-btn">
+            <Link href="/?login=true" onClick={() => setMoreMenuOpen(false)} className="more-login-btn">
               Login / Register
             </Link>
           )}
