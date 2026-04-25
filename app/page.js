@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import SalesNavLink from './components/SalesNavLink';
 
 const API_BASE = '/api';
 const popularQueries = [
@@ -31,8 +32,20 @@ function sortProducts(products, sortKey) {
       return list.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
     case 'reviews':
       return list.sort((a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0));
+    case 'recommended':
     default:
-      return list;
+      // Recommended: Prioritize products with images and avoid putting 
+      // extremely cheap irrelevant items (like hangers) at the very top
+      return list.sort((a, b) => {
+        // First priority: Has image
+        const imgA = a.image ? 1 : 0;
+        const imgB = b.image ? 1 : 0;
+        if (imgA !== imgB) return imgB - imgA;
+        
+        // Second priority: Store diversity (prioritize clothing stores for clothing-like queries if prices are reasonable)
+        // But for a generic sort, we'll just keep the original order which is usually one per store round-robin or similar
+        return 0;
+      });
   }
 }
 
@@ -66,8 +79,10 @@ export default function HomePage() {
   const [showPremiumPopup, setShowPremiumPopup] = useState(false);
   const [user, setUser] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [loginForm, setLoginForm] = useState({ name: '', email: '' });
+  const [loginForm, setLoginForm] = useState({ name: '', email: '', password: '' });
   const [loginLoading, setLoginLoading] = useState(false);
+  const [isRegisterMode, setIsRegisterMode] = useState(false);
+  const [loginError, setLoginError] = useState(null);
 
   const sortedProducts = useMemo(() => sortProducts(products, sortKey), [products, sortKey]);
   const priceStats = useMemo(() => getPriceStats(sortedProducts), [sortedProducts]);
@@ -165,7 +180,7 @@ export default function HomePage() {
         setProducts(productsList);
         setMeta(data.product?.title ? `Product details for "${data.product.title}"` : 'Product lookup result');
       } else {
-        const data = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=100`);
+        const data = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=5000`);
         setProducts(data.products || []);
         setMeta(`${data.total || 0} result${data.total === 1 ? '' : 's'}`);
         
@@ -178,7 +193,7 @@ export default function HomePage() {
             .then(async (liveData) => {
               if (liveData.success) {
                 // Re-fetch products to get the newly added items
-                const newData = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=100`);
+                const newData = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=5000`);
                 setProducts(newData.products || []);
                 setMeta(`${newData.total || 0} result${newData.total === 1 ? '' : 's'}`);
               }
@@ -233,11 +248,14 @@ export default function HomePage() {
 
   async function handleLoginSubmit(e) {
     e.preventDefault();
-    if (!loginForm.name || !loginForm.email) return;
+    setLoginError(null);
+    if (!loginForm.email || !loginForm.password) return;
+    if (isRegisterMode && !loginForm.name) return;
     
     setLoginLoading(true);
     try {
-      const res = await fetch('/api/login', {
+      const endpoint = isRegisterMode ? '/api/register' : '/api/login';
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(loginForm),
@@ -245,15 +263,23 @@ export default function HomePage() {
       const data = await res.json();
       
       if (data.success) {
-        const userData = { full_name: loginForm.name, email: loginForm.email };
-        setUser(userData);
-        localStorage.setItem('flashi_user', JSON.stringify(userData));
-        setShowLoginModal(false);
-        showToast(`Welcome back, ${userData.full_name}!`, 'success');
+        if (isRegisterMode) {
+          setIsRegisterMode(false);
+          setLoginError(null);
+          showToast('Registration successful! Please login to continue.', 'success');
+          setLoginForm(prev => ({ ...prev, name: '' }));
+        } else {
+          const userData = { full_name: data.user?.name || loginForm.name, email: loginForm.email };
+          setUser(userData);
+          localStorage.setItem('flashi_user', JSON.stringify(userData));
+          setShowLoginModal(false);
+          showToast(`Welcome back, ${userData.full_name}!`, 'success');
+        }
       } else {
-        throw new Error(data.error || 'Login failed');
+        throw new Error(data.error || (isRegisterMode ? 'Registration failed' : 'Login failed'));
       }
     } catch (error) {
+      setLoginError(error.message);
       showToast(error.message, 'error');
     } finally {
       setLoginLoading(false);
@@ -296,6 +322,7 @@ export default function HomePage() {
           </a>
           <nav className={`nav ${menuOpen ? 'open' : ''}`}>
             <a href="/" className="nav-link" onClick={() => setMenuOpen(false)}>Home</a>
+            <SalesNavLink isAnchor className="nav-link" onClick={() => setMenuOpen(false)} style={{ color: 'var(--primary)', fontWeight: 'bold' }} />
             <a href="#how-it-works" className="nav-link" onClick={() => setMenuOpen(false)}>How It Works</a>
             <a href="/subscribe" className="nav-link" onClick={() => setMenuOpen(false)} style={{color: 'var(--primary)', fontWeight: 'bold'}}>Premium</a>
             <a href="/about" className="nav-link" onClick={() => setMenuOpen(false)}>About Us</a>
@@ -454,6 +481,7 @@ export default function HomePage() {
                   <div className="sort-group">
                     <label className="sort-label">Sort by</label>
                     <select className="sort-select" value={sortKey} onChange={(event) => setSortKey(event.target.value)}>
+                      <option value="recommended">Recommended</option>
                       <option value="price-asc">Price: Low → High</option>
                       <option value="price-desc">Price: High → Low</option>
                       <option value="rating">Best Rating</option>
@@ -723,32 +751,55 @@ export default function HomePage() {
         <div className="modal-overlay" onClick={() => setShowLoginModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setShowLoginModal(false)}>×</button>
-            <h3>Login to FLASHI</h3>
+            <h3>{isRegisterMode ? 'Create an Account' : 'Login to FLASHI'}</h3>
             <p>Save your favorite deals and get premium features.</p>
+            {loginError && <div style={{ color: '#ef4444', marginBottom: '15px', padding: '10px', background: '#fef2f2', borderRadius: '4px', fontSize: '0.9rem', border: '1px solid #fca5a5' }}>{loginError}</div>}
             <form onSubmit={handleLoginSubmit}>
+              {isRegisterMode && (
+                <div className="form-group" style={{ marginBottom: '16px' }}>
+                  <label>Full Name</label>
+                  <input
+                    type="text"
+                    placeholder="Your Name"
+                    required
+                    value={loginForm.name}
+                    onChange={(e) => setLoginForm({ ...loginForm, name: e.target.value })}
+                  />
+                </div>
+              )}
               <div className="form-group" style={{ marginBottom: '16px' }}>
-                <label>Full Name</label>
-                <input 
-                  type="text" 
-                  placeholder="Your Name" 
-                  required 
-                  value={loginForm.name}
-                  onChange={(e) => setLoginForm({...loginForm, name: e.target.value})}
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  required
+                  value={loginForm.email}
+                  onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
                 />
               </div>
               <div className="form-group" style={{ marginBottom: '24px' }}>
-                <label>Email Address</label>
-                <input 
-                  type="email" 
-                  placeholder="your@email.com" 
-                  required 
-                  value={loginForm.email}
-                  onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+                <label>Password</label>
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                  value={loginForm.password}
+                  onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                 />
               </div>
               <button className="submit-btn" type="submit" disabled={loginLoading} style={{ width: '100%', marginTop: 0 }}>
-                {loginLoading ? 'Logging in...' : 'Login / Register'}
+                {loginLoading ? 'Processing...' : isRegisterMode ? 'Sign Up' : 'Login'}
               </button>
+              <div style={{ marginTop: '15px', textAlign: 'center', fontSize: '0.9rem' }}>
+                {isRegisterMode ? 'Already have an account? ' : 'Need an account? '}
+                <button 
+                  type="button" 
+                  onClick={() => { setIsRegisterMode(!isRegisterMode); setLoginError(null); }}
+                  style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontWeight: 'bold' }}
+                >
+                  {isRegisterMode ? 'Login' : 'Sign Up'}
+                </button>
+              </div>
             </form>
           </div>
         </div>

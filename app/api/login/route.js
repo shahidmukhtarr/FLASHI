@@ -1,18 +1,18 @@
 import { NextResponse } from 'next/server';
-import { saveUser } from '../../../server/services/db.js';
+import { authenticateUser } from '../../../server/services/db.js';
 
 export async function POST(request) {
   try {
-    const { name, email } = await request.json();
+    const { email, password } = await request.json();
 
-    if (!name || !email) {
-      return NextResponse.json({ error: 'Name and email are required' }, { status: 400 });
+    if (!email || !password) {
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
     }
 
-    const result = await saveUser(name, email);
+    const result = await authenticateUser(email, password);
 
     if (result?.error) {
-      return NextResponse.json({ error: result.error }, { status: 500 });
+      return NextResponse.json({ error: result.error }, { status: 401 });
     }
 
     return NextResponse.json({ success: true, user: result });

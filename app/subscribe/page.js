@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import SalesNavLink from '../components/SalesNavLink';
 
 export default function SubscribePage() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', paymentRef: '' });
@@ -10,8 +11,10 @@ export default function SubscribePage() {
   const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [loginForm, setLoginForm] = useState({ name: '', email: '' });
+  const [loginForm, setLoginForm] = useState({ name: '', email: '', password: '' });
   const [loginLoading, setLoginLoading] = useState(false);
+  const [isRegisterMode, setIsRegisterMode] = useState(false);
+  const [loginError, setLoginError] = useState(null);
   const [subscriptionStatus, setSubscriptionStatus] = useState(null);
 
   useEffect(() => {
@@ -43,11 +46,14 @@ export default function SubscribePage() {
 
   async function handleLoginSubmit(e) {
     e.preventDefault();
-    if (!loginForm.name || !loginForm.email) return;
+    setLoginError(null);
+    if (!loginForm.email || !loginForm.password) return;
+    if (isRegisterMode && !loginForm.name) return;
 
     setLoginLoading(true);
     try {
-      const res = await fetch('/api/login', {
+      const endpoint = isRegisterMode ? '/api/register' : '/api/login';
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(loginForm),
@@ -55,22 +61,31 @@ export default function SubscribePage() {
       const data = await res.json();
 
       if (data.success) {
-        const userData = { full_name: loginForm.name, email: loginForm.email };
-        setUser(userData);
-        localStorage.setItem('flashi_user', JSON.stringify(userData));
-        setFormData(prev => ({ ...prev, name: userData.full_name, email: userData.email }));
-        setShowLoginModal(false);
+        if (isRegisterMode) {
+          setIsRegisterMode(false);
+          setLoginError(null);
+          setLoginForm(prev => ({ ...prev, name: '' }));
+          // Note: In this page we don't have showToast, we can use an alert or just rely on the UI change
+          alert('Registration successful! Please login to continue.');
+        } else {
+          const userData = { full_name: data.user?.name || loginForm.name, email: loginForm.email };
+          setUser(userData);
+          localStorage.setItem('flashi_user', JSON.stringify(userData));
+          setFormData(prev => ({ ...prev, name: userData.full_name, email: userData.email }));
+          setShowLoginModal(false);
 
-        // Fetch subscription status
-        const statusRes = await fetch(`/api/subscription?email=${encodeURIComponent(userData.email)}`);
-        const statusData = await statusRes.json();
-        if (statusData.success) {
-          setSubscriptionStatus(statusData.status);
+          // Fetch subscription status
+          const statusRes = await fetch(`/api/subscription?email=${encodeURIComponent(userData.email)}`);
+          const statusData = await statusRes.json();
+          if (statusData.success) {
+            setSubscriptionStatus(statusData.status);
+          }
         }
       } else {
-        throw new Error(data.error || 'Login failed');
+        throw new Error(data.error || (isRegisterMode ? 'Registration failed' : 'Login failed'));
       }
     } catch (error) {
+      setLoginError(error.message);
       console.error(error.message);
     } finally {
       setLoginLoading(false);
@@ -131,6 +146,7 @@ export default function SubscribePage() {
           </a>
           <nav className={`nav ${menuOpen ? 'open' : ''}`}>
             <a href="/" className="nav-link" onClick={() => setMenuOpen(false)}>Home</a>
+            <SalesNavLink isAnchor className="nav-link" onClick={() => setMenuOpen(false)} style={{ color: 'var(--primary)', fontWeight: 'bold' }} />
             <a href="/#how-it-works" className="nav-link" onClick={() => setMenuOpen(false)}>How It Works</a>
             <a href="/subscribe" className="nav-link" onClick={() => setMenuOpen(false)} style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Premium</a>
             <a href="/about" className="nav-link" onClick={() => setMenuOpen(false)}>About Us</a>
@@ -275,7 +291,7 @@ export default function SubscribePage() {
                     </div>
                   </div>
                   <div className="sub-feature-item">
-                    <span className="sub-feature-icon">🛡️</span>
+                    <span className="sub-feature-icon"></span>
                     <div>
                       <strong>Priority Support</strong>
                       <p>Get dedicated support and product tracking requests handled first</p>
@@ -434,20 +450,23 @@ export default function SubscribePage() {
         <div className="modal-overlay" onClick={() => setShowLoginModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setShowLoginModal(false)}>×</button>
-            <h3>Login to FLASHI</h3>
+            <h3>{isRegisterMode ? 'Create an Account' : 'Login to FLASHI'}</h3>
             <p>Save your favorite deals and get premium features.</p>
+            {loginError && <div style={{ color: '#ef4444', marginBottom: '15px', padding: '10px', background: '#fef2f2', borderRadius: '4px', fontSize: '0.9rem', border: '1px solid #fca5a5' }}>{loginError}</div>}
             <form onSubmit={handleLoginSubmit}>
+              {isRegisterMode && (
+                <div className="form-group" style={{ marginBottom: '16px' }}>
+                  <label>Full Name</label>
+                  <input
+                    type="text"
+                    placeholder="Your Name"
+                    required
+                    value={loginForm.name}
+                    onChange={(e) => setLoginForm({ ...loginForm, name: e.target.value })}
+                  />
+                </div>
+              )}
               <div className="form-group" style={{ marginBottom: '16px' }}>
-                <label>Full Name</label>
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  required
-                  value={loginForm.name}
-                  onChange={(e) => setLoginForm({ ...loginForm, name: e.target.value })}
-                />
-              </div>
-              <div className="form-group" style={{ marginBottom: '24px' }}>
                 <label>Email Address</label>
                 <input
                   type="email"
@@ -457,9 +476,29 @@ export default function SubscribePage() {
                   onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
                 />
               </div>
+              <div className="form-group" style={{ marginBottom: '24px' }}>
+                <label>Password</label>
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                  value={loginForm.password}
+                  onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                />
+              </div>
               <button className="submit-btn" type="submit" disabled={loginLoading} style={{ width: '100%', marginTop: 0 }}>
-                {loginLoading ? 'Logging in...' : 'Login / Register'}
+                {loginLoading ? 'Processing...' : isRegisterMode ? 'Sign Up' : 'Login'}
               </button>
+              <div style={{ marginTop: '15px', textAlign: 'center', fontSize: '0.9rem' }}>
+                {isRegisterMode ? 'Already have an account? ' : 'Need an account? '}
+                <button 
+                  type="button" 
+                  onClick={() => { setIsRegisterMode(!isRegisterMode); setLoginError(null); }}
+                  style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontWeight: 'bold' }}
+                >
+                  {isRegisterMode ? 'Login' : 'Sign Up'}
+                </button>
+              </div>
             </form>
           </div>
         </div>

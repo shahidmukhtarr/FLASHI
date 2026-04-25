@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import SalesNavLink from '../components/SalesNavLink';
 import '../globals.css';
 
 export const metadata = {
@@ -182,9 +183,10 @@ export default function PrivacyPolicyPage() {
           </Link>
           <nav className="nav">
             <Link href="/" className="nav-link">Home</Link>
+            <SalesNavLink className="nav-link" style={{ color: 'var(--primary)', fontWeight: 'bold' }} />
             <Link href="/about" className="nav-link">About Us</Link>
-            <Link href="/contact" className="nav-link">Contact Us</Link>
-            <Link href="/privacy-policy" className="nav-link">Privacy Policy</Link>
+            <Link href="/subscribe" className="nav-link" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Premium</Link>
+            <Link href="/contact" className="nav-link contact-nav-link">Contact Us</Link>
           </nav>
           <Link href="/contact" className="contact-btn">Contact Us</Link>
         </div>

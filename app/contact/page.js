@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import '../globals.css';
+import SalesNavLink from '../components/SalesNavLink';
 
 const LogoSVG = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="30" height="30">
@@ -69,9 +70,10 @@ export default function ContactPage() {
           </Link>
           <nav className={`nav ${menuOpen ? 'open' : ''}`}>
             <Link href="/" className="nav-link" onClick={() => setMenuOpen(false)}>Home</Link>
+            <SalesNavLink className="nav-link" onClick={() => setMenuOpen(false)} style={{ color: 'var(--primary)', fontWeight: 'bold' }} />
             <Link href="/about" className="nav-link" onClick={() => setMenuOpen(false)}>About Us</Link>
-            <Link href="/contact" className="nav-link" onClick={() => setMenuOpen(false)}>Contact Us</Link>
-            <Link href="/privacy-policy" className="nav-link" onClick={() => setMenuOpen(false)}>Privacy Policy</Link>
+            <Link href="/subscribe" className="nav-link" onClick={() => setMenuOpen(false)} style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Premium</Link>
+            <Link href="/contact" className="nav-link contact-nav-link" onClick={() => setMenuOpen(false)}>Contact Us</Link>
           </nav>
           <Link href="/contact" className="contact-btn">Contact Us</Link>
           <button

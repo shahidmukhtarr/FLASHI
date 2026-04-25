@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import '../globals.css';
+import SalesNavLink from '../components/SalesNavLink';
 
 export const metadata = {
   title: 'About Us - FLASHI | Pakistan\'s Price Comparison Engine',
@@ -40,9 +41,10 @@ export default function AboutPage() {
           </Link>
           <nav className="nav">
             <Link href="/" className="nav-link">Home</Link>
+            <SalesNavLink className="nav-link" style={{ color: 'var(--primary)', fontWeight: 'bold' }} />
             <Link href="/about" className="nav-link">About Us</Link>
-            <Link href="/contact" className="nav-link">Contact Us</Link>
-            <Link href="/privacy-policy" className="nav-link">Privacy Policy</Link>
+            <Link href="/subscribe" className="nav-link" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Premium</Link>
+            <Link href="/contact" className="nav-link contact-nav-link">Contact Us</Link>
           </nav>
           <Link href="/contact" className="contact-btn">Contact Us</Link>
         </div>
@@ -97,24 +99,7 @@ export default function AboutPage() {
                 We built FLASHI to solve that. Our engine scans Pakistan's leading e-commerce platforms in real time, aggregates pricing data, and presents it all in one clean, fast interface — so you never overpay again.
               </p>
             </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '1.2rem',
-            }}>
-              {[
-                { icon: '⚡', title: 'Real-Time Prices', desc: 'Live price data from top Pakistani stores.' },
-                { icon: '🔒', title: 'No Data Selling', desc: 'We never sell or monetize your personal data.' },
-                { icon: '🇵🇰', title: 'Made in Pakistan', desc: 'Built for Pakistani shoppers, by Pakistani builders.' },
-                { icon: '💸', title: '100% Free', desc: 'Always free for shoppers. No hidden fees, ever.' },
-              ].map((item) => (
-                <div key={item.title} className="step-card" style={{ padding: '1.5rem', textAlign: 'left' }}>
-                  <div style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{item.icon}</div>
-                  <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.3rem' }}>{item.title}</h3>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary, #666)', margin: 0 }}>{item.desc}</p>
-                </div>
-              ))}
-            </div>
+
           </div>
         </div>
       </section>

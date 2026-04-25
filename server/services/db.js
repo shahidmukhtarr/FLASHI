@@ -404,37 +404,75 @@ export async function updateSubscriptionStatus(email, status, durationDays = 30)
   return { success: true };
 }
 
-export async function saveUser(name, email) {
+export async function saveUser(name, email, password) {
   const client = getSupabaseClient();
   if (!client) return { error: 'Database not initialized' };
 
   // Check if user exists
-  const { data: existing } = await client
+  const { data: existing, error: checkError } = await client
     .from('users')
     .select('*')
     .eq('email', email)
     .limit(1);
 
-  if (existing && existing.length > 0) {
-    // Update name just in case
-    await client.from('users').update({ name, updated_at: new Date().toISOString() }).eq('email', email);
-    return existing[0];
+  if (checkError) {
+    console.error('[DB] saveUser check error:', checkError.message);
+    return { error: `Database error: ${checkError.message}` };
   }
+
+  if (existing && existing.length > 0) {
+    return { error: 'User already exists' };
+  }
+
+  // Use a simple hash for password
+  const password_hash = password ? crypto.createHash('sha256').update(password).digest('hex') : '';
 
   // Insert new user
   const { data, error } = await client
     .from('users')
-    .insert([{ name, email, created_at: new Date().toISOString() }])
+    .insert([{ name, email, password_hash, created_at: new Date().toISOString() }])
     .select()
     .single();
 
   if (error) {
-    // Fallback: if 'users' table doesn't exist, we just ignore the error so login still works locally
-    console.error('[DB] saveUser error (table might not exist):', error.message);
-    return { name, email, id: 'local-' + Date.now() };
+    console.error('[DB] saveUser insert error:', error.message);
+    return { error: `Registration failed: ${error.message}. Ensure columns 'email' and 'name' exist in the 'users' table.` };
   }
 
+  if (data && data.password_hash) delete data.password_hash;
   return data;
+}
+
+export async function authenticateUser(email, password) {
+  const client = getSupabaseClient();
+  if (!client) return { error: 'Database not initialized' };
+
+  const { data: existing, error } = await client
+    .from('users')
+    .select('*')
+    .eq('email', email)
+    .limit(1);
+
+  if (error) {
+    console.error('[DB] authenticateUser error:', error.message);
+    return { error: `Database error: ${error.message}` };
+  }
+
+  if (!existing || existing.length === 0) {
+    return { error: 'Invalid email or password' };
+  }
+
+  const user = existing[0];
+  
+  if (user.password_hash) {
+    const hash = crypto.createHash('sha256').update(password).digest('hex');
+    if (user.password_hash !== hash) {
+      return { error: 'Invalid email or password' };
+    }
+    delete user.password_hash;
+  }
+
+  return user;
 }
 
 export async function saveContactMessage(messageData) {

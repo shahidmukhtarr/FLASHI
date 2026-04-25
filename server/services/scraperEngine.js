@@ -25,7 +25,7 @@ const stores = [
   { adapter: stationers, name: 'Stationers.pk', domain: 'stationers.pk' },
 ];
 
-const ACCESSORY_KEYWORDS = ['cover', 'case', 'protector', 'screen protector', 'tempered glass', 'cable', 'charger', 'adapter', 'strap', 'pouch', 'handsfree', 'earphone', 'skin', 'lens', 'smartwatch', 'earbuds', 'buds', 'trimmer', 'speaker', 'powerbank', 'power bank', 'holder', 'stand', 'ring light', 'selfie stick'];
+const ACCESSORY_KEYWORDS = ['cover', 'case', 'protector', 'screen protector', 'tempered glass', 'cable', 'charger', 'adapter', 'strap', 'pouch', 'handsfree', 'earphone', 'skin', 'lens', 'smartwatch', 'earbuds', 'buds', 'trimmer', 'speaker', 'powerbank', 'power bank', 'holder', 'stand', 'ring light', 'selfie stick', 'hanger', 'button', 'thread', 'hook', 'pin', 'needle', 'box', 'organizer', 'rack'];
 
 function normalizeUrl(url, baseUrl) {
   try {
@@ -135,8 +135,9 @@ function isRelevantProduct(title, query) {
     'printer': ['laser printer', 'inkjet'],
     // Pakistani fashion
     'lawn': ['lawn suit', 'lawn shirt', 'lawn fabric', 'cotton lawn'],
-    'kurti': ['kurta', 'short kurta', 'long kurta', 'printed kurta'],
+    'kurti': ['kurta', 'short kurta', 'long kurta', 'printed kurta', 'shirt'],
     'kurta': ['kurti', 'kameez', 'shirt'],
+    'shirt': ['kurta', 'kurti', 'kameez', 'top', 'suit', 'dress'],
     'pret': ['ready to wear', 'stitched', 'pret wear'],
     'stitched': ['pret', 'ready to wear', 'stitched suit'],
     'unstitched': ['fabric', 'unstitched suit', 'lawn fabric'],
@@ -144,7 +145,7 @@ function isRelevantProduct(title, query) {
     'shalwar': ['trouser', 'trousers', 'palazzo'],
     'trouser': ['shalwar', 'palazzo', 'capri', 'culottes', 'pants'],
     'palazzo': ['wide leg', 'culottes', 'shalwar'],
-    'suit': ['2 piece', '3 piece', 'two piece', 'three piece', 'set'],
+    'suit': ['2 piece', '3 piece', 'two piece', 'three piece', 'set', 'shirt', 'kurta'],
     'embroidered': ['embroidery', 'zari', 'gota', 'thread work'],
     'chiffon': ['georgette', 'organza', 'silk'],
     'bridal': ['wedding', 'shaadi', 'bride', 'dulhan'],
