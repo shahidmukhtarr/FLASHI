@@ -21,7 +21,7 @@ if (typeof window === 'undefined' && !isBuild) {
 }
 
 export const metadata = {
-  title: 'Flashi – Pakistan First Smart Shopping App..',
+  title: 'Flashi – Pakistan First Smart Shopping App.',
   description: "Search any product and instantly compare prices from Pakistan's top stores in one place..",
   keywords: 'price comparison app Pakistan, discount app Pakistan, food deals Pakistan, Flashi app,Flashi Pakistan',
   robots: 'index, follow',
@@ -45,6 +45,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <meta name="google-site-verification" content="-GfeIA9cVZ6cTozbh7fRZd3BDr4LvSkRnRV3_4rdjtw" />
         <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="language" content="English" />
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6296239062398160" crossOrigin="anonymous"></script>
