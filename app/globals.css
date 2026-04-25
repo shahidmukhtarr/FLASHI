@@ -519,12 +519,13 @@ input:focus, select:focus, textarea:focus {
 }
 
 .bottom-nav-item:hover, .bottom-nav-item.active {
-  color: var(--accent-primary);
+  color: #369632;
 }
 
 .bottom-nav-item.active svg {
   transform: scale(1.1);
-  color: var(--accent-primary);
+  color: #369632;
+  stroke: #369632;
 }
 
 .nav-icon-badge-wrap {
