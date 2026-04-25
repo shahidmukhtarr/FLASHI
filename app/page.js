@@ -207,7 +207,9 @@ export default function HomePage() {
         setMeta(data.product?.title ? `Product details for "${data.product.title}"` : 'Product lookup result');
       } else {
         const data = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=5000`);
-        setProducts(data.products || []);
+        // Filter out discount/sale products (originalPrice > price) from normal search
+        const filteredProducts = (data.products || []).filter(p => !p.originalPrice || p.originalPrice <= p.price);
+        setProducts(filteredProducts);
         setMeta(`${data.total || 0} result${data.total === 1 ? '' : 's'}`);
         
         if (data.needsLiveScrape) {
@@ -220,8 +222,10 @@ export default function HomePage() {
               if (liveData.success) {
                 // Re-fetch products to get the newly added items
                 const newData = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=5000`);
-                setProducts(newData.products || []);
-                setMeta(`${newData.total || 0} result${newData.total === 1 ? '' : 's'}`);
+                // Filter out discount/sale products from normal search
+                const newFiltered = (newData.products || []).filter(p => !p.originalPrice || p.originalPrice <= p.price);
+                setProducts(newFiltered);
+                setMeta(`${newFiltered.length} result${newFiltered.length === 1 ? '' : 's'}`);
               }
             })
             .catch(console.error)
@@ -344,7 +348,7 @@ export default function HomePage() {
         }}>
           <img src="/logo.png" alt="FLASHI" width="80" height="80" style={{ borderRadius: '16px', marginBottom: '1.5rem', boxShadow: 'var(--shadow-md)' }} />
           <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--primary-text)' }}>Welcome to FLASHI</h1>
-          <p style={{ color: 'var(--secondary-text)', marginBottom: '2.5rem', fontSize: '1.1rem' }}>Pakistan's smartest price comparison platform</p>
+          <p style={{ color: 'var(--secondary-text)', marginBottom: '2.5rem', fontSize: '1.1rem' }}>Pakistan's smartest Smart Shopping platform</p>
           
           <button 
             onClick={() => { setShowMobileSplash(false); setShowLoginModal(true); setIsRegisterMode(true); }}
@@ -423,7 +427,7 @@ export default function HomePage() {
                     onKeyDown={(event) => event.key === 'Enter' && handleSearch()}
                   />
                   <button className="search-btn" type="button" onClick={() => handleSearch()} disabled={loading}>
-                    Compare Prices
+                    Search
                   </button>
                 </div>
                 <div className="search-hints">
@@ -725,7 +729,7 @@ export default function HomePage() {
                 </span>
                 <span className="logo-text">FLASHI</span>
               </div>
-              <p className="footer-tagline" style={{ marginTop: '1rem' }}>Smarter price comparison for every shopper in Pakistan.</p>
+              <p className="footer-tagline" style={{ marginTop: '1rem' }}>Smarter Smart Shopping for every shopper in Pakistan.</p>
               <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
                 <a href="/about" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>About Us</a>
                 <a href="/contact" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Contact Us</a>
