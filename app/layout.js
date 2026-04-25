@@ -4,20 +4,13 @@ import './globals.css';
 const isBuild = process.env.npm_lifecycle_event === 'build' || process.env.NEXT_PHASE === 'phase-production-build' || (typeof process !== 'undefined' && process.argv && process.argv.some(arg => arg.includes('build') || arg.includes('export')));
 
 if (typeof window === 'undefined' && !isBuild) {
-  import('../server/services/db.js').then(({ initDb }) => {
-    initDb().catch(err => {
-      console.error('[Bootstrap] Database initialization failed:', err.message);
-    });
-  });
-
-  import('../server/services/scheduler.js').then(({ startScheduler }) => {
-    if (!process.env.VERCEL) {
-      startScheduler();
-      console.log('[Bootstrap] Background scheduler started.');
-    } else {
-      console.log('[Bootstrap] Scheduler disabled in Vercel environment.');
-    }
-  });
+  // Run bootstrap in background
+  Promise.all([
+    import('../server/services/db.js').then(m => m.initDb()),
+    import('../server/services/scheduler.js').then(m => {
+      if (!process.env.VERCEL) m.startScheduler();
+    })
+  ]).catch(err => console.error('[Bootstrap] Startup failed:', err.message));
 }
 
 export const metadata = {
