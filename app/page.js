@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import SalesNavLink from './components/SalesNavLink';
 import UserHeaderActions from './components/UserHeaderActions';
+import { BannerAd } from './components/AdScripts';
 
 const API_BASE = '/api';
 const popularQueries = [
@@ -610,7 +611,10 @@ export default function HomePage() {
         )
       )}
 
-
+      {/* Ad Banner */}
+      <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--spacing-lg) 0' }}>
+        <BannerAd />
+      </div>
 
       <section className="how-section" id="how-it-works">
         <div className="container">

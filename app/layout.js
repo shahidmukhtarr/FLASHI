@@ -1,6 +1,7 @@
 import './globals.css';
 import MobileBottomNav from './components/MobileBottomNav';
 import DeviceDetector from './components/DeviceDetector';
+import { GlobalAdScripts } from './components/AdScripts';
 import Script from 'next/script';
 
 // Initialize services on server startup (skip during build time)
@@ -59,6 +60,7 @@ export default function RootLayout({ children }) {
         <DeviceDetector />
         {children}
         <MobileBottomNav />
+        <GlobalAdScripts />
       </body>
     </html>
   );
