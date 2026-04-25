@@ -80,14 +80,3 @@ export function DisplayAd() {
   );
 }
 
-/**
- * Global interstitial ad script - loads once in the layout.
- */
-export function GlobalAdScript() {
-  return (
-    <Script
-      src="https://pl29259900.profitablecpmratenetwork.com/b5/29/6a/b5296a8c4b5616cae2f5d00468942169.js"
-      strategy="afterInteractive"
-    />
-  );
-}
