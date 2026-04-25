@@ -1,3 +1,4 @@
+export const revalidate = 0;
 import './globals.css';
 
 // Initialize services on server startup (skip during build time)
