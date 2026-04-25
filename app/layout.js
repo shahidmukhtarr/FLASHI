@@ -1,5 +1,6 @@
 import './globals.css';
 import MobileBottomNav from './components/MobileBottomNav';
+import DeviceDetector from './components/DeviceDetector';
 import Script from 'next/script';
 
 // Initialize services on server startup (skip during build time)
@@ -48,17 +49,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <Script id="device-detect" strategy="beforeInteractive">
-          {`
-            var ua = navigator.userAgent;
-            var isWebView = /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(ua) || /Android.*wv/i.test(ua) || /FBAN|FBAV/i.test(ua);
-            if (isWebView) {
-              document.documentElement.classList.add('is-app');
-            } else {
-              document.documentElement.classList.add('is-browser');
-            }
-          `}
-        </Script>
         <Script 
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6296239062398160" 
           strategy="afterInteractive"
@@ -66,6 +56,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body suppressHydrationWarning>
+        <DeviceDetector />
         {children}
         <MobileBottomNav />
       </body>
