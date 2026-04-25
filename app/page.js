@@ -137,7 +137,7 @@ export default function HomePage() {
       setShowMobileSplash(false);
       setShowLoginModal(true);
     }
-  }, []);
+  }, [typeof window !== 'undefined' ? window.location.search : '']);
 
   useEffect(() => {
     if (!toast) return;
