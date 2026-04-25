@@ -13,6 +13,13 @@ if (typeof window === 'undefined' && !isBuild) {
   ]).catch(err => console.error('[Bootstrap] Startup failed:', err.message));
 }
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: 'cover',
+};
+
 export const metadata = {
   metadataBase: new URL('https://flashi.pk'),
   title: 'Flashi – Pakistan First Smart Shopping App.',

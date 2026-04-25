@@ -73,6 +73,7 @@ export default function HomePage() {
 
   const [searchMode, setSearchMode] = useState('db');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [liveLoading, setLiveLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
   const [contactForm, setContactForm] = useState({ name: '', email: '', subject: 'General Inquiry', message: '' });
@@ -323,7 +324,10 @@ export default function HomePage() {
 
           <div className="header-actions">
             {user ? (
-              <div className="user-profile-dropdown">
+              <div 
+                className={`user-profile-dropdown ${dropdownOpen ? 'open' : ''}`}
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              >
                 <div className="user-avatar-fallback" title={user.full_name || user.email}>{user.full_name?.charAt(0).toUpperCase() || 'U'}</div>
                 <div className="dropdown-content">
                   <div className="dropdown-user-info">

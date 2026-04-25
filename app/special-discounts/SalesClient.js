@@ -156,8 +156,8 @@ export default function SalesClient() {
             
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: '1.5rem',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+              gap: '1rem',
               maxWidth: '1000px',
               margin: '0 auto'
             }}>
@@ -170,7 +170,7 @@ export default function SalesClient() {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    padding: '2.5rem 1.5rem',
+                    padding: '1.5rem 1rem',
                     cursor: 'pointer',
                     textAlign: 'center',
                     border: '1px solid var(--border-color)',
@@ -179,9 +179,9 @@ export default function SalesClient() {
                   <img 
                     src={`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`} 
                     alt={store.name} 
-                    style={{ width: '64px', height: '64px', marginBottom: '1rem', borderRadius: '50%' }} 
+                    style={{ width: '48px', height: '48px', marginBottom: '0.8rem', borderRadius: '50%' }} 
                   />
-                  <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem', fontWeight: 700 }}>{store.name}</h3>
+                  <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', fontWeight: 700 }}>{store.name}</h3>
                   <div style={{
                     background: '#e8f5e9',
                     color: '#2e7d32',

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import SalesNavLink from '../components/SalesNavLink';
 import SalesClient from './SalesClient';
+import UserHeaderActions from '../components/UserHeaderActions';
 
 export const metadata = {
   title: 'Special Discounts & Sales - FLASHI | Pakistan\'s Price Comparison Engine',
@@ -30,7 +31,7 @@ export default function SpecialDiscountsPage() {
             <Link href="/subscribe" className="nav-link" style={{ color: 'var(--primary, #369632)', fontWeight: 'bold' }}>Premium</Link>
             <Link href="/contact" className="nav-link contact-nav-link">Contact Us</Link>
           </nav>
-          <Link href="/contact" className="contact-btn">Contact Us</Link>
+          <UserHeaderActions />
         </div>
       </header>
 

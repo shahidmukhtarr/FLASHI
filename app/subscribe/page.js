@@ -16,7 +16,7 @@ export default function SubscribePage() {
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [loginError, setLoginError] = useState(null);
   const [subscriptionStatus, setSubscriptionStatus] = useState(null);
-
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   useEffect(() => {
 
     const storedUser = localStorage.getItem('flashi_user');
@@ -146,7 +146,10 @@ export default function SubscribePage() {
 
           <div className="header-actions">
             {user ? (
-              <div className="user-profile-dropdown">
+              <div 
+                className={`user-profile-dropdown ${dropdownOpen ? 'open' : ''}`}
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              >
                 <div className="user-avatar-fallback" title={user.full_name || user.email}>{user.full_name?.charAt(0).toUpperCase() || 'U'}</div>
                 <div className="dropdown-content">
                   <div className="dropdown-user-info">
@@ -238,11 +241,12 @@ export default function SubscribePage() {
                 <div className="sub-pricing-header">
                   <div className="sub-plan-badge">Most Popular</div>
                   <h2 className="sub-plan-name">Premium Plan</h2>
-                  <div className="sub-price-wrap">
-                    <span className="sub-price-amount">Rs. 500</span>
+                  <div className="sub-price-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                    <span style={{ textDecoration: 'line-through', color: 'rgba(255,255,255,0.5)', fontSize: '1.5rem', fontWeight: 600 }}>Rs. 1000</span>
+                    <span className="sub-price-amount" style={{ color: 'var(--accent-warning)' }}>Rs. 500</span>
                     <span className="sub-price-period">/month</span>
                   </div>
-                  <p className="sub-price-note">Simple bank transfer — no credit card needed</p>
+                  <p className="sub-price-note">Rs 500 for first 10 users then Rs 1000</p>
                 </div>
 
                 <div className="sub-features-list">
@@ -421,7 +425,7 @@ export default function SubscribePage() {
                 </div>
                 <div className="sub-faq-item">
                   <h4>Can I cancel anytime?</h4>
-                  <p>Yes! Your subscription runs for 30 days. Simply don&apos;t renew if you wish to cancel — no questions asked.</p>
+                  <p>Note: You can't cancel once purchased. Contact us to cancel it. Thank you.</p>
                 </div>
               </div>
             </div>
