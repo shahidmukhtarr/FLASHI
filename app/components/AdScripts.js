@@ -1,81 +1,74 @@
 'use client';
 
-import Script from 'next/script';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 /**
- * Native Banner Ad - renders into a specific container div.
- * Place between content sections.
+ * Ad scripts that cause pop-unders and click-hijacking (like profitablecpmratenetwork and highperformanceformat)
+ * have been removed. We are using safe Google AdSense placeholders instead, as AdSense 
+ * is already configured in layout.js.
  */
+
 export function NativeBannerAd() {
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && window.adsbygoogle) {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      }
+    } catch (e) {
+      console.error('AdSense error:', e);
+    }
+  }, []);
+
   return (
-    <div className="ad-banner-container">
-      <Script
-        src="https://pl29259901.profitablecpmratenetwork.com/0abb0d7144a4d3736f57681dd82e13b5/invoke.js"
-        strategy="afterInteractive"
-        async
-        data-cfasync="false"
-      />
-      <div id="container-0abb0d7144a4d3736f57681dd82e13b5"></div>
+    <div className="ad-banner-container" style={{ textAlign: 'center', width: '100%', minHeight: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <ins className="adsbygoogle"
+           style={{ display: 'block', width: '100%' }}
+           data-ad-client="ca-pub-6296239062398160"
+           data-ad-slot="auto"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
     </div>
   );
 }
 
-/**
- * Small Banner Ad (320x50 iframe) - compact horizontal banner.
- */
 export function BannerAd() {
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && window.adsbygoogle) {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      }
+    } catch (e) {
+      console.error('AdSense error:', e);
+    }
+  }, []);
+
   return (
-    <div className="ad-banner-container">
-      <Script
-        id="ad-banner-options"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            atOptions = {
-              'key' : '4f6441b13ebcdcae2e0ed7b1c5828ada',
-              'format' : 'iframe',
-              'height' : 50,
-              'width' : 320,
-              'params' : {}
-            };
-          `,
-        }}
-      />
-      <Script
-        src="https://www.highperformanceformat.com/4f6441b13ebcdcae2e0ed7b1c5828ada/invoke.js"
-        strategy="afterInteractive"
-      />
+    <div className="ad-banner-container" style={{ textAlign: 'center', width: '100%', minHeight: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <ins className="adsbygoogle"
+           style={{ display: 'inline-block', width: '320px', height: '50px' }}
+           data-ad-client="ca-pub-6296239062398160"
+           data-ad-slot="auto"></ins>
     </div>
   );
 }
 
-/**
- * Sidebar / Display Ad (160x300 iframe) - taller display ad.
- * Good for sidebars or between content blocks.
- */
 export function DisplayAd() {
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && window.adsbygoogle) {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      }
+    } catch (e) {
+      console.error('AdSense error:', e);
+    }
+  }, []);
+
   return (
-    <div className="ad-display-container">
-      <Script
-        id="ad-display-options"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            atOptions = {
-              'key' : '633652bcf6cdc2e81243dc897969d8fc',
-              'format' : 'iframe',
-              'height' : 300,
-              'width' : 160,
-              'params' : {}
-            };
-          `,
-        }}
-      />
-      <Script
-        src="https://www.highperformanceformat.com/633652bcf6cdc2e81243dc897969d8fc/invoke.js"
-        strategy="afterInteractive"
-      />
+    <div className="ad-display-container" style={{ textAlign: 'center', width: '100%', minHeight: '300px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <ins className="adsbygoogle"
+           style={{ display: 'inline-block', width: '160px', height: '300px' }}
+           data-ad-client="ca-pub-6296239062398160"
+           data-ad-slot="auto"></ins>
     </div>
   );
 }
