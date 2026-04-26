@@ -1,74 +1,136 @@
 'use client';
 
-import { useEffect } from 'react';
+import Script from 'next/script';
 
 /**
- * Ad scripts that cause pop-unders and click-hijacking (like profitablecpmratenetwork and highperformanceformat)
- * have been removed. We are using safe Google AdSense placeholders instead, as AdSense 
- * is already configured in layout.js.
+ * 320x50 Mobile Banner Ad
  */
-
-export function NativeBannerAd() {
-  useEffect(() => {
-    try {
-      if (typeof window !== 'undefined' && window.adsbygoogle) {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-      }
-    } catch (e) {
-      console.error('AdSense error:', e);
-    }
-  }, []);
-
-  return (
-    <div className="ad-banner-container" style={{ textAlign: 'center', width: '100%', minHeight: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <ins className="adsbygoogle"
-           style={{ display: 'block', width: '100%' }}
-           data-ad-client="ca-pub-6296239062398160"
-           data-ad-slot="auto"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-    </div>
-  );
-}
-
 export function BannerAd() {
-  useEffect(() => {
-    try {
-      if (typeof window !== 'undefined' && window.adsbygoogle) {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-      }
-    } catch (e) {
-      console.error('AdSense error:', e);
-    }
-  }, []);
-
   return (
-    <div className="ad-banner-container" style={{ textAlign: 'center', width: '100%', minHeight: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <ins className="adsbygoogle"
-           style={{ display: 'inline-block', width: '320px', height: '50px' }}
-           data-ad-client="ca-pub-6296239062398160"
-           data-ad-slot="auto"></ins>
+    <div className="ad-banner-container" style={{ minHeight: '50px', display: 'flex', justifyContent: 'center' }}>
+      <Script
+        id="ad-320x50-options"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            atOptions = {
+              'key' : '4f6441b13ebcdcae2e0ed7b1c5828ada',
+              'format' : 'iframe',
+              'height' : 50,
+              'width' : 320,
+              'params' : {}
+            };
+          `,
+        }}
+      />
+      <Script
+        src="https://www.highperformanceformat.com/4f6441b13ebcdcae2e0ed7b1c5828ada/invoke.js"
+        strategy="afterInteractive"
+      />
     </div>
   );
 }
 
-export function DisplayAd() {
-  useEffect(() => {
-    try {
-      if (typeof window !== 'undefined' && window.adsbygoogle) {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-      }
-    } catch (e) {
-      console.error('AdSense error:', e);
-    }
-  }, []);
-
+/**
+ * Native Banner Ad
+ */
+export function NativeBannerAd() {
   return (
-    <div className="ad-display-container" style={{ textAlign: 'center', width: '100%', minHeight: '300px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <ins className="adsbygoogle"
-           style={{ display: 'inline-block', width: '160px', height: '300px' }}
-           data-ad-client="ca-pub-6296239062398160"
-           data-ad-slot="auto"></ins>
+    <div className="ad-banner-container" style={{ display: 'flex', justifyContent: 'center' }}>
+      <Script
+        src="https://pl29259901.profitablecpmratenetwork.com/0abb0d7144a4d3736f57681dd82e13b5/invoke.js"
+        strategy="afterInteractive"
+        async
+        data-cfasync="false"
+      />
+      <div id="container-0abb0d7144a4d3736f57681dd82e13b5"></div>
+    </div>
+  );
+}
+
+/**
+ * 300x250 Medium Rectangle Banner Ad
+ */
+export function Banner300x250Ad() {
+  return (
+    <div className="ad-banner-container" style={{ minHeight: '250px', display: 'flex', justifyContent: 'center' }}>
+      <Script
+        id="ad-300x250-options"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            atOptions = {
+              'key' : '44c3b23d555bf918d9b280a4183c435d',
+              'format' : 'iframe',
+              'height' : 250,
+              'width' : 300,
+              'params' : {}
+            };
+          `,
+        }}
+      />
+      <Script
+        src="https://www.highperformanceformat.com/44c3b23d555bf918d9b280a4183c435d/invoke.js"
+        strategy="afterInteractive"
+      />
+    </div>
+  );
+}
+
+/**
+ * 468x60 Banner Ad
+ */
+export function Banner468x60Ad() {
+  return (
+    <div className="ad-banner-container" style={{ minHeight: '60px', display: 'flex', justifyContent: 'center' }}>
+      <Script
+        id="ad-468x60-options"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            atOptions = {
+              'key' : '2ff2feae0be05506088f391736342ca2',
+              'format' : 'iframe',
+              'height' : 60,
+              'width' : 468,
+              'params' : {}
+            };
+          `,
+        }}
+      />
+      <Script
+        src="https://www.highperformanceformat.com/2ff2feae0be05506088f391736342ca2/invoke.js"
+        strategy="afterInteractive"
+      />
+    </div>
+  );
+}
+
+/**
+ * 160x300 Sidebar / Display Ad
+ */
+export function DisplayAd() {
+  return (
+    <div className="ad-display-container" style={{ minHeight: '300px', display: 'flex', justifyContent: 'center' }}>
+      <Script
+        id="ad-160x300-options"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            atOptions = {
+              'key' : '633652bcf6cdc2e81243dc897969d8fc',
+              'format' : 'iframe',
+              'height' : 300,
+              'width' : 160,
+              'params' : {}
+            };
+          `,
+        }}
+      />
+      <Script
+        src="https://www.highperformanceformat.com/633652bcf6cdc2e81243dc897969d8fc/invoke.js"
+        strategy="afterInteractive"
+      />
     </div>
   );
 }
