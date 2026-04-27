@@ -25,7 +25,7 @@ const stores = [
   { adapter: stationers, name: 'Stationers.pk', domain: 'stationers.pk' },
 ];
 
-const ACCESSORY_KEYWORDS = ['cover', 'case', 'protector', 'screen protector', 'tempered glass', 'cable', 'charger', 'adapter', 'strap', 'pouch', 'handsfree', 'earphone', 'skin', 'lens', 'smartwatch', 'earbuds', 'buds', 'trimmer', 'speaker', 'powerbank', 'power bank', 'holder', 'stand', 'ring light', 'selfie stick', 'hanger', 'button', 'thread', 'hook', 'pin', 'needle', 'box', 'organizer', 'rack'];
+const ACCESSORY_KEYWORDS = ['cover', 'case', 'protector', 'screen protector', 'tempered glass', 'cable', 'charger', 'adapter', 'strap', 'pouch', 'handsfree', 'earphone', 'skin', 'lens', 'smartwatch', 'earbuds', 'buds', 'trimmer', 'speaker', 'powerbank', 'power bank', 'holder', 'stand', 'ring light', 'selfie stick', 'hanger', 'coat hanger', 'button', 'thread', 'hook', 'pin', 'needle', 'box', 'organizer', 'rack', 'storage bag', 'shoe bag', 'dust bag', 'shoe tree', 'boot shaper', 'shoe rack', 'display stand', 'shoe horn', 'sticker', 'shoelace', 'insole'];
 
 function normalizeUrl(url, baseUrl) {
   try {
@@ -851,4 +851,5 @@ export async function scrapeAllCategoryLinks({ limitPerCategory = 30, onProgress
   };
 }
 
+export { isRelevantProduct, ACCESSORY_KEYWORDS };
 export default { searchAllStores, getProductFromUrl, getReviews, getSupportedStores, scrapeAllCategoryLinks };

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { queryStoredProducts } from '../../../server/services/db.js';
-import { searchAllStores, scrapeRelevantCategoryPages } from '../../../server/services/scraperEngine.js';
+import { searchAllStores, scrapeRelevantCategoryPages, isRelevantProduct } from '../../../server/services/scraperEngine.js';
 
 export async function GET(request) {
   try {
@@ -42,9 +42,16 @@ export async function GET(request) {
     if (!trimmedQuery) trimmedQuery = q.trim();
 
     // Step 1: Query what we already have in the DB
-    const data = await queryStoredProducts({ q: trimmedQuery, store: targetStore, sort, limit: Math.min(limit, 5000), page });
+    const data = await queryStoredProducts({ q: trimmedQuery, store: targetStore, sort, limit: Math.min(limit, 1000), page });
 
-    // Step 2: If we have fewer than 30 results, tell the frontend to trigger a live background scrape
+    // Step 2: Apply the same relevance filter used by the live scraper to remove
+    // irrelevant accessories (hangers, organizers, storage bags, etc.) from DB results
+    if (trimmedQuery.length >= 2 && data.products) {
+      data.products = data.products.filter(p => isRelevantProduct(p.title || '', trimmedQuery));
+      data.total = data.products.length;
+    }
+
+    // Step 3: If we have fewer than 30 results, tell the frontend to trigger a live background scrape
     const needsLiveScrape = trimmedQuery.length >= 2 && (data.products?.length ?? 0) < 30;
     data.needsLiveScrape = needsLiveScrape;
 

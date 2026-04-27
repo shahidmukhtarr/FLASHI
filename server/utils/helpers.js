@@ -36,8 +36,21 @@ export function getRequestHeaders() {
  */
 export function parsePrice(priceStr) {
   if (priceStr == null) return null;
-  // Remove currency symbols, especially 'Rs.' which contains a dot that breaksparseFloat
-  let cleaned = String(priceStr).replace(/Rs\.?/gi, '').replace(/PKR/gi, '');
+  
+  const str = String(priceStr);
+  
+  // Handle ranges like "Rs. 30 - Rs. 1,500"
+  if (str.includes('-')) {
+    const parts = str.split('-').map(p => parsePrice(p.trim())).filter(n => n !== null);
+    if (parts.length > 0) {
+      // For ranges, we usually want the maximum price to avoid bait-and-switch listings (e.g. Rs. 30 for socks in a shoe listing)
+      return Math.max(...parts);
+    }
+    return null;
+  }
+
+  // Remove currency symbols, especially 'Rs.' which contains a dot that breaks parseFloat
+  let cleaned = str.replace(/Rs\.?/gi, '').replace(/PKR/gi, '');
   // Remove commas
   cleaned = cleaned.replace(/,/g, '');
   // Remove any other non-digit/dot characters

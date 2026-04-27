@@ -77,11 +77,26 @@ export async function searchProducts(query, limit = 30) {
 
       // Price: "Rs. 266,999" → parse the number
       const priceRaw = item.priceShow || '';
-      const price = parsePrice(priceRaw);
+      let price = parsePrice(priceRaw);
+      
+      // Fallback to numeric 'price' field if available and more reliable
+      if (item.price && (!price || parseFloat(item.price) > price)) {
+        const numericPrice = parseFloat(item.price);
+        if (!isNaN(numericPrice) && numericPrice > 0) {
+          price = numericPrice;
+        }
+      }
 
       // Original price (strikethrough)
       const origRaw = item.originalPriceShow || '';
-      const originalPrice = origRaw ? parsePrice(origRaw) : null;
+      let originalPrice = origRaw ? parsePrice(origRaw) : null;
+      
+      if (item.originalPrice && (!originalPrice || parseFloat(item.originalPrice) > (originalPrice || 0))) {
+        const numericOrig = parseFloat(item.originalPrice);
+        if (!isNaN(numericOrig) && numericOrig > 0) {
+          originalPrice = numericOrig;
+        }
+      }
 
       // Image
       const image = item.image || '';

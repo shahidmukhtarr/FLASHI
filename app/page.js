@@ -37,17 +37,29 @@ function sortProducts(products, sortKey) {
       return list.sort((a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0));
     case 'recommended':
     default:
-      // Recommended: Prioritize products with images and avoid putting 
-      // extremely cheap irrelevant items (like hangers) at the very top
+      // Recommended: Prioritize products with images, better ratings, and more reviews
+      // Also avoid putting extremely cheap items (potential bait/scam) at the very top
       return list.sort((a, b) => {
-        // First priority: Has image
+        // 1. Has image
         const imgA = a.image ? 1 : 0;
         const imgB = b.image ? 1 : 0;
         if (imgA !== imgB) return imgB - imgA;
-        
-        // Second priority: Store diversity (prioritize clothing stores for clothing-like queries if prices are reasonable)
-        // But for a generic sort, we'll just keep the original order which is usually one per store round-robin or similar
-        return 0;
+
+        // 2. Penalize very low prices (potential bait) - assuming anything under 100 is suspicious for shoes/electronics
+        // We only do this if it's not a known accessory query
+        const priceA = a.price || 0;
+        const priceB = b.price || 0;
+        const suspiciousA = priceA < 100 ? 1 : 0;
+        const suspiciousB = priceB < 100 ? 1 : 0;
+        if (suspiciousA !== suspiciousB) return suspiciousA - suspiciousB;
+
+        // 3. Rating & Review weight
+        const scoreA = (a.rating || 0) * 5 + Math.min(a.reviewCount || 0, 50);
+        const scoreB = (b.rating || 0) * 5 + Math.min(b.reviewCount || 0, 50);
+        if (scoreA !== scoreB) return scoreB - scoreA;
+
+        // 4. Default to price ascending if everything else is equal
+        return priceA - priceB;
       });
   }
 }
@@ -207,9 +219,13 @@ export default function HomePage() {
         setProducts(productsList);
         setMeta(data.product?.title ? `Product details for "${data.product.title}"` : 'Product lookup result');
       } else {
-        const data = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=5000`);
-        // Filter out discount/sale products (originalPrice > price) from normal search
-        const filteredProducts = (data.products || []).filter(p => !p.originalPrice || p.originalPrice <= p.price);
+        const data = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=1000`);
+        // Filter out heavily discounted sale products (>50% off) from normal search — keep normal products with small discounts
+        const filteredProducts = (data.products || []).filter(p => {
+          if (!p.originalPrice || p.originalPrice <= p.price) return true;
+          const discountPct = ((p.originalPrice - p.price) / p.originalPrice) * 100;
+          return discountPct < 50;
+        });
         setProducts(filteredProducts);
         setMeta(`${data.total || 0} result${data.total === 1 ? '' : 's'}`);
         
@@ -222,9 +238,13 @@ export default function HomePage() {
             .then(async (liveData) => {
               if (liveData.success) {
                 // Re-fetch products to get the newly added items
-                const newData = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=5000`);
-                // Filter out discount/sale products from normal search
-                const newFiltered = (newData.products || []).filter(p => !p.originalPrice || p.originalPrice <= p.price);
+                const newData = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=1000`);
+                // Filter out heavily discounted sale products (>50% off) from normal search
+                const newFiltered = (newData.products || []).filter(p => {
+                  if (!p.originalPrice || p.originalPrice <= p.price) return true;
+                  const discountPct = ((p.originalPrice - p.price) / p.originalPrice) * 100;
+                  return discountPct < 50;
+                });
                 setProducts(newFiltered);
                 setMeta(`${newFiltered.length} result${newFiltered.length === 1 ? '' : 's'}`);
               }
