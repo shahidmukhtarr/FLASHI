@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseClient } from '../../../../server/services/db.js';
+import { sendSubscriptionActiveEmail } from '../../../../server/services/emailService.js';
 
 /**
  * POST /api/admin/activate-subscriptions
@@ -29,7 +30,7 @@ export async function POST(request) {
 
     const { data: pendingSubs, error: fetchError } = await client
       .from('subscribers')
-      .select('id, email, created_at')
+      .select('id, email, name, created_at')
       .eq('status', 'pending')
       .lte('created_at', oneHourAgo);
 
@@ -59,6 +60,13 @@ export async function POST(request) {
 
     console.log(`[AutoActivate] Activated ${ids.length} subscriber(s):`, pendingSubs.map(s => s.email));
 
+    // Send activation emails to all newly activated subscribers (fire-and-forget)
+    for (const sub of pendingSubs) {
+      sendSubscriptionActiveEmail(sub.email, sub.name, expiresAt.toISOString()).catch(err =>
+        console.error(`[AutoActivate] Activation email failed for ${sub.email}:`, err.message)
+      );
+    }
+
     return NextResponse.json({
       success: true,
       activated: ids.length,
@@ -74,3 +82,4 @@ export async function POST(request) {
 export async function GET(request) {
   return POST(request);
 }
+

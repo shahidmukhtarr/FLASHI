@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { saveSubscription, getSubscriptionByEmail } from '../../../server/services/db.js';
+import { sendSubscriptionRequestEmail } from '../../../server/services/emailService.js';
 
 export async function POST(request) {
   try {
@@ -22,6 +23,11 @@ export async function POST(request) {
     if (result.error) {
       return NextResponse.json({ error: result.error }, { status: 500 });
     }
+
+    // Send subscription request confirmation email (fire-and-forget)
+    sendSubscriptionRequestEmail(email, name, phone, paymentRef).catch(err =>
+      console.error('[Subscribe API] Subscription request email failed:', err.message)
+    );
 
     return NextResponse.json({
       success: true,

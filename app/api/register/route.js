@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { saveUser } from '../../../server/services/db.js';
+import { sendWelcomeEmail } from '../../../server/services/emailService.js';
 
 export async function POST(request) {
   try {
@@ -14,6 +15,11 @@ export async function POST(request) {
     if (result?.error) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
+
+    // Send welcome email (fire-and-forget — don't block the response)
+    sendWelcomeEmail(email, name).catch(err =>
+      console.error('[Register API] Welcome email failed:', err.message)
+    );
 
     return NextResponse.json({ success: true, user: result });
   } catch (error) {
