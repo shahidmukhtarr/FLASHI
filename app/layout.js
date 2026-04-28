@@ -25,9 +25,9 @@ export const viewport = {
 
 export const metadata = {
   metadataBase: new URL('https://flashi.pk'),
-  title: 'Flashi – Pakistan First Smart Shopping App.',
+  title: 'Flashi – Pakistan First Smart Shopping Platform.',
   description: "Search any product and instantly compare prices from Pakistan's top stores in one place..",
-  keywords: 'price comparison app Pakistan, discount app Pakistan, cheap shopping Pakistan, flashi app, flashi Pakistan, flashi, flashi Pakistan, flashi app, flashi pk, flashi deals, flashi discounts, flashi price comparison, flashi shopping app, flashi online deals Pakistan, flashi savings app',
+  keywords: 'price comparison app Pakistan, discount app Pakistan, cheap shopping Pakistan, flashi app, flashi Pakistan, flashi pk, flashi Pakistan, flashi app, flashi pk, flashi deals, flashi discounts, flashi price comparison, flashi shopping app, flashi online deals Pakistan, flashi savings app',
   robots: 'index, follow',
   openGraph: {
     title: 'Flashi – Price Comparison App in Pakistan',
@@ -49,13 +49,25 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <Script 
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6296239062398160" 
+        <Script
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6296239062398160"
           strategy="afterInteractive"
           crossOrigin="anonymous"
         />
       </head>
       <body suppressHydrationWarning>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+          (function() {
+            var ua = navigator.userAgent;
+            var isWebView = /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(ua) || /Android.*wv/i.test(ua) || /FBAN|FBAV/i.test(ua);
+            if (isWebView || window.Capacitor) {
+              document.documentElement.classList.add('is-app');
+            } else {
+              document.documentElement.classList.add('is-browser');
+            }
+          })();
+        `}} />
         <DeviceDetector />
         {children}
         <MobileBottomNav />

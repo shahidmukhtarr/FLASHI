@@ -46,8 +46,11 @@ export default function AdminPage() {
   const [scrapeQuery, setScrapeQuery] = useState('');
   const [categoryUrls, setCategoryUrls] = useState('');
   const [seedStatus, setSeedStatus] = useState(null);
+  const [subscribers, setSubscribers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingSubscribers, setLoadingSubscribers] = useState(false);
   const [toast, setToast] = useState(null);
+  const [secretKey, setSecretKey] = useState('');
 
   const filteredProducts = useMemo(() => sortProducts(products, sort), [products, sort]);
 
@@ -55,6 +58,7 @@ export default function AdminPage() {
     loadProducts();
     loadStats();
     loadScheduler();
+    loadSubscribers();
   }, []);
 
   useEffect(() => {
@@ -68,6 +72,12 @@ export default function AdminPage() {
   }
 
   async function fetchJson(url, options = {}) {
+    if (secretKey) {
+      options.headers = {
+        ...options.headers,
+        'Authorization': `Bearer ${secretKey}`
+      };
+    }
     const response = await fetch(url, options);
     const data = await response.json();
     if (!response.ok) {
@@ -111,6 +121,39 @@ export default function AdminPage() {
     } catch (error) {
       console.error(error);
       showToast(error.message, 'error');
+    }
+  }
+
+  async function loadSubscribers() {
+    setLoadingSubscribers(true);
+    try {
+      const data = await fetchJson('/api/admin/subscribers');
+      setSubscribers(data.subscribers || []);
+    } catch (error) {
+      console.error(error);
+      showToast('Failed to load subscribers', 'error');
+    } finally {
+      setLoadingSubscribers(false);
+    }
+  }
+
+  async function handleActivateSubscriber() {
+    if (!confirm(`Are you sure you want to activate all pending subscribers?`)) return;
+    if (!secretKey) {
+      showToast('Please enter Secret Key for this operation', 'error');
+      return;
+    }
+    setLoading(true);
+    try {
+      const data = await fetchJson('/api/admin/activate-subscriptions', { method: 'POST' });
+      showToast(`Activated ${data.activated} subscribers!`, 'success');
+      loadSubscribers();
+      loadStats();
+    } catch (error) {
+      console.error(error);
+      showToast(error.message, 'error');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -270,6 +313,18 @@ export default function AdminPage() {
           )}
 
           <div className="admin-grid">
+            <div className="admin-card admin-card-wide" style={{ background: '#fffbeb', border: '1px solid #fcd34d' }}>
+              <label htmlFor="admin-secret">🔑 Authorization Key (CRON_SECRET)</label>
+              <input
+                id="admin-secret"
+                className="input-field"
+                type="password"
+                value={secretKey}
+                onChange={(event) => setSecretKey(event.target.value)}
+                placeholder="Enter your CRON_SECRET to perform protected actions"
+              />
+              <p style={{ fontSize: '0.7rem', color: '#92400e', marginTop: '5px' }}>This key is required for manual activation and starting background jobs.</p>
+            </div>
             <div className="admin-card admin-card-wide">
               <label htmlFor="admin-query">Search stored products</label>
               <input
@@ -403,6 +458,79 @@ export default function AdminPage() {
             <div className="admin-card">
               <h3>Latest scraped</h3>
               <p>{stats?.latestScrape || 'N/A'}</p>
+            </div>
+            <div className="admin-card" style={{ borderTop: '4px solid var(--accent-warning)' }}>
+              <h3>Subscribers</h3>
+              <p>{stats?.subscriberCount ?? '0'}</p>
+              <div style={{ fontSize: '12px', marginTop: '5px', color: 'var(--secondary-text)' }}>
+                Current Price: <strong>Rs. {stats?.currentPrice ?? '500'}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div className="admin-table-wrapper" style={{ marginBottom: '40px' }}>
+            <div className="admin-table-header">
+              <h3>Premium Subscribers</h3>
+              <span>{subscribers.length} total</span>
+            </div>
+            <div className="admin-table">
+              {loadingSubscribers ? (
+                <div className="empty-state">Loading subscribers...</div>
+              ) : subscribers.length === 0 ? (
+                <div className="empty-state">No subscribers found.</div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+                    <thead>
+                      <tr style={{ textAlign: 'left', borderBottom: '2px solid var(--border-color)' }}>
+                        <th style={{ padding: '12px' }}>User</th>
+                        <th style={{ padding: '12px' }}>Contact</th>
+                        <th style={{ padding: '12px' }}>Payment Ref</th>
+                        <th style={{ padding: '12px' }}>Amount</th>
+                        <th style={{ padding: '12px' }}>Status</th>
+                        <th style={{ padding: '12px' }}>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {subscribers.map((sub) => (
+                        <tr key={sub.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                          <td style={{ padding: '12px' }}>
+                            <strong>{sub.name}</strong><br/>
+                            <span style={{ fontSize: '12px', color: 'var(--secondary-text)' }}>{sub.email}</span>
+                          </td>
+                          <td style={{ padding: '12px' }}>{sub.phone}</td>
+                          <td style={{ padding: '12px' }}><code>{sub.payment_ref || 'N/A'}</code></td>
+                          <td style={{ padding: '12px' }}>Rs. {sub.amount}</td>
+                          <td style={{ padding: '12px' }}>
+                            <span style={{
+                              padding: '4px 8px',
+                              borderRadius: '12px',
+                              fontSize: '11px',
+                              fontWeight: 'bold',
+                              textTransform: 'uppercase',
+                              background: sub.status === 'active' ? '#dcfce7' : '#fef9c3',
+                              color: sub.status === 'active' ? '#166534' : '#854d0e'
+                            }}>
+                              {sub.status}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px' }}>
+                            {sub.status === 'pending' && (
+                              <button 
+                                className="button button-primary" 
+                                style={{ padding: '4px 12px', fontSize: '12px' }}
+                                onClick={() => handleActivateSubscriber(sub.email)}
+                              >
+                                Activate
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
 

@@ -18,7 +18,16 @@ export default function SubscribePage() {
   const [loginError, setLoginError] = useState(null);
   const [subscriptionStatus, setSubscriptionStatus] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [currentPrice, setCurrentPrice] = useState(500);
+
   useEffect(() => {
+    // Fetch current price
+    fetch('/api/subscription/price')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setCurrentPrice(data.price);
+      })
+      .catch(console.error);
 
     const storedUser = localStorage.getItem('flashi_user');
     if (storedUser) {
@@ -201,7 +210,7 @@ export default function SubscribePage() {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'var(--secondary-text)' }}>Plan:</span>
-                  <strong>FLASHI Premium (Rs. 500/mo)</strong>
+                  <strong>FLASHI Premium (Rs. {currentPrice}/mo)</strong>
                 </div>
               </div>
 
@@ -221,11 +230,11 @@ export default function SubscribePage() {
                   <div className="sub-plan-badge">Most Popular</div>
                   <h2 className="sub-plan-name">Premium Plan</h2>
                   <div className="sub-price-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-                    <span style={{ textDecoration: 'line-through', color: 'rgba(255,255,255,0.5)', fontSize: '1.5rem', fontWeight: 600 }}>Rs. 1000</span>
-                    <span className="sub-price-amount" style={{ color: 'var(--accent-warning)' }}>Rs. 500</span>
+                    <span style={{ textDecoration: 'line-through', color: 'rgba(255,255,255,0.5)', fontSize: '1.5rem', fontWeight: 600 }}>Rs. {currentPrice === 250 ? '500' : '1000'}</span>
+                    <span className="sub-price-amount" style={{ color: 'var(--accent-warning)' }}>Rs. {currentPrice}</span>
                     <span className="sub-price-period">/month</span>
                   </div>
-                  <p className="sub-price-note">Rs 500 for first 10 users then Rs 1000</p>
+                  <p className="sub-price-note">Rs 250 for first 10 users then Rs 500</p>
                 </div>
 
                 <div className="sub-features-list">
@@ -274,7 +283,7 @@ export default function SubscribePage() {
                   }}
                   type="button"
                 >
-                  {user ? 'Subscribe Now — Rs. 500/month' : 'Login to Subscribe'}
+                  {user ? `Subscribe Now — Rs. ${currentPrice}/month` : 'Login to Subscribe'}
                 </button>
               </div>
             </div>
@@ -288,7 +297,7 @@ export default function SubscribePage() {
                   {/* Bank Details */}
                   <div className="sub-bank-details">
                     <h3>💳 Payment Details</h3>
-                    <p className="sub-bank-note">Transfer Rs. 500 to the following account, then fill the form with your transaction details.</p>
+                    <p className="sub-bank-note">Transfer Rs. {currentPrice} to the following account, then fill the form with your transaction details.</p>
 
                     <div className="sub-bank-card">
                       <div className="sub-bank-logo">🏛️</div>
@@ -303,7 +312,7 @@ export default function SubscribePage() {
                     <div className="sub-bank-steps">
                       <h4>How it works:</h4>
                       <ol>
-                        <li>Transfer <strong>Rs. 500</strong> to the account above</li>
+                        <li>Transfer <strong>Rs. {currentPrice}</strong> to the account above</li>
                         <li>Note down your <strong>Transaction ID / Reference</strong></li>
                         <li>Fill the form with your details</li>
                         <li>We verify & activate within <strong>24 hours</strong></li>
@@ -379,7 +388,7 @@ export default function SubscribePage() {
               <div className="sub-faq-grid">
                 <div className="sub-faq-item">
                   <h4>How do I pay?</h4>
-                  <p>Transfer Rs. 500 via bank transfer to our UBL account. No credit card or app needed!</p>
+                  <p>Transfer Rs. {currentPrice} via bank transfer to our UBL account. No credit card or app needed!</p>
                 </div>
                 <div className="sub-faq-item">
                   <h4>When will my subscription be activated?</h4>

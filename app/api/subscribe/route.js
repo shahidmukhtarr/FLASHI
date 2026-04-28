@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { saveSubscription, getSubscriptionByEmail } from '../../../server/services/db.js';
+import { saveSubscription, getSubscriptionByEmail, getCurrentSubscriptionPrice } from '../../../server/services/db.js';
 import { sendSubscriptionRequestEmail } from '../../../server/services/emailService.js';
 
 export async function POST(request) {
@@ -11,13 +11,15 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Name, email, and phone number are required' }, { status: 400 });
     }
 
+    const amount = await getCurrentSubscriptionPrice();
+
     const result = await saveSubscription({
       name,
       email,
       phone,
       paymentMethod: 'bank_transfer',
       paymentRef: paymentRef || '',
-      amount: 500,
+      amount: amount,
     });
 
     if (result.error) {
@@ -25,7 +27,7 @@ export async function POST(request) {
     }
 
     // Send subscription request confirmation email (fire-and-forget)
-    sendSubscriptionRequestEmail(email, name, phone, paymentRef).catch(err =>
+    sendSubscriptionRequestEmail(email, name, phone, paymentRef, amount).catch(err =>
       console.error('[Subscribe API] Subscription request email failed:', err.message)
     );
 

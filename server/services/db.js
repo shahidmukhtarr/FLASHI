@@ -315,12 +315,33 @@ export async function getDbStats() {
 
   const latestScrape = latestRows?.[0]?.scraped_at || null;
 
+  const subscriberCount = await getSubscriberCount();
+  const currentPrice = await getCurrentSubscriptionPrice();
+
   return {
     totalProducts: totalCount ?? (totalData?.length ?? 0),
     totalStores: uniqueStores.length,
     stores: uniqueStores,
     latestScrape: latestScrape ? new Date(latestScrape).toISOString() : null,
+    subscriberCount,
+    currentPrice,
   };
+}
+
+export async function getAllSubscribers() {
+  const client = getSupabaseClient();
+  if (!client) return [];
+
+  const { data, error } = await client
+    .from('subscribers')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('[DB] getAllSubscribers error:', error.message);
+    throw error;
+  }
+  return data || [];
 }
 
 // ─── Subscription Management ───
@@ -335,7 +356,7 @@ export async function saveSubscription(data) {
     phone: data.phone || '',
     payment_method: data.paymentMethod || 'bank_transfer',
     payment_ref: data.paymentRef || '',
-    amount: data.amount || 500,
+    amount: data.amount,
     status: 'pending',
     created_at: new Date().toISOString(),
     expires_at: null,
@@ -403,6 +424,30 @@ export async function updateSubscriptionStatus(email, status, durationDays = 30)
 
   if (error) throw error;
   return { success: true };
+}
+
+export async function getSubscriberCount() {
+  const client = getSupabaseClient();
+  if (!client) return 0;
+
+  // We count only confirmed or active subscribers? 
+  // User said "first 10 users", usually implies first 10 who signed up/paid.
+  // Let's count all entries in subscribers for now, or maybe only active ones.
+  // Given it's a "first 10" promo, let's count all who at least requested.
+  const { count, error } = await client
+    .from('subscribers')
+    .select('*', { count: 'exact', head: true });
+
+  if (error) {
+    console.error('[DB] getSubscriberCount error:', error.message);
+    return 0;
+  }
+  return count || 0;
+}
+
+export async function getCurrentSubscriptionPrice() {
+  const count = await getSubscriberCount();
+  return count < 10 ? 250 : 500;
 }
 
 export async function saveUser(name, email, password) {

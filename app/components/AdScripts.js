@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 /**
  * Ad scripts that cause pop-unders and click-hijacking (like profitablecpmratenetwork and highperformanceformat)
@@ -9,10 +9,15 @@ import { useEffect } from 'react';
  */
 
 export function NativeBannerAd() {
+  const adRef = useRef(null);
+  const pushed = useRef(false);
+
   useEffect(() => {
+    if (pushed.current) return;
     try {
       if (typeof window !== 'undefined' && window.adsbygoogle) {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
+        pushed.current = true;
       }
     } catch (e) {
       console.error('AdSense error:', e);
@@ -22,6 +27,7 @@ export function NativeBannerAd() {
   return (
     <div className="ad-banner-container" style={{ textAlign: 'center', width: '100%', minHeight: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <ins className="adsbygoogle"
+           ref={adRef}
            style={{ display: 'block', width: '100%' }}
            data-ad-client="ca-pub-6296239062398160"
            data-ad-slot="auto"
@@ -32,10 +38,14 @@ export function NativeBannerAd() {
 }
 
 export function BannerAd() {
+  const pushed = useRef(false);
+
   useEffect(() => {
+    if (pushed.current) return;
     try {
       if (typeof window !== 'undefined' && window.adsbygoogle) {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
+        pushed.current = true;
       }
     } catch (e) {
       console.error('AdSense error:', e);
@@ -53,10 +63,14 @@ export function BannerAd() {
 }
 
 export function DisplayAd() {
+  const pushed = useRef(false);
+
   useEffect(() => {
+    if (pushed.current) return;
     try {
       if (typeof window !== 'undefined' && window.adsbygoogle) {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
+        pushed.current = true;
       }
     } catch (e) {
       console.error('AdSense error:', e);

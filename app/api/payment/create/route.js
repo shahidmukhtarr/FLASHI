@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createJazzCashPayment, createEasyPaisaPayment, generateTxnRef } from '../../../../server/services/payment.js';
-import { saveSubscription } from '../../../../server/services/db.js';
+import { saveSubscription, getCurrentSubscriptionPrice } from '../../../../server/services/db.js';
 
 /**
  * POST /api/payment/create
@@ -16,7 +16,7 @@ export async function POST(request) {
     }
 
     const txnRef = generateTxnRef();
-    const amount = 500; // Rs. 500
+    const amount = await getCurrentSubscriptionPrice();
 
     // Save subscription as 'initiated' in DB
     await saveSubscription({

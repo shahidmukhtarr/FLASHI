@@ -7,9 +7,11 @@ import { usePathname } from 'next/navigation';
 export default function MobileBottomNav() {
   const [user, setUser] = useState(null);
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
+    setMounted(true);
     try {
       const stored = localStorage.getItem('flashi_user');
       if (stored) {
@@ -17,6 +19,8 @@ export default function MobileBottomNav() {
       }
     } catch (err) {}
   }, []);
+
+  if (!mounted) return null;
 
   const handleLogout = () => {
     localStorage.removeItem('flashi_user');
@@ -87,11 +91,12 @@ export default function MobileBottomNav() {
               }} 
               className="more-login-btn"
               style={{ border: 'none', cursor: 'pointer' }}
+              suppressHydrationWarning
             >
               Login / Register
             </button>
           )}
-          <button className="close-more-btn" onClick={() => setMoreMenuOpen(false)}>×</button>
+          <button className="close-more-btn" onClick={() => setMoreMenuOpen(false)} suppressHydrationWarning>×</button>
         </div>
         
         <div className="more-menu-links">

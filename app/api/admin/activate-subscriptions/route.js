@@ -25,14 +25,10 @@ export async function POST(request) {
   }
 
   try {
-    // Find all pending subscribers whose submission was >= 1 hour ago
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-
     const { data: pendingSubs, error: fetchError } = await client
       .from('subscribers')
       .select('id, email, name, created_at')
-      .eq('status', 'pending')
-      .lte('created_at', oneHourAgo);
+      .eq('status', 'pending');
 
     if (fetchError) throw fetchError;
 

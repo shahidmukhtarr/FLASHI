@@ -117,7 +117,7 @@ export default function HomePage() {
     const storedUser = localStorage.getItem('flashi_user');
     const skippedLogin = localStorage.getItem('flashi_skip_login');
     let isUserLoggedIn = false;
-    
+
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
@@ -178,7 +178,7 @@ export default function HomePage() {
       try {
         const data = JSON.parse(text);
         error = data.error || data.message || error;
-      } catch {}
+      } catch { }
       throw new Error(error);
     }
     return text ? JSON.parse(text) : {};
@@ -228,7 +228,7 @@ export default function HomePage() {
         });
         setProducts(filteredProducts);
         setMeta(`${data.total || 0} result${data.total === 1 ? '' : 's'}`);
-        
+
         if (data.needsLiveScrape) {
           setLiveLoading(true);
           setStatusMessage(LIVE_WAIT_MESSAGE);
@@ -282,7 +282,7 @@ export default function HomePage() {
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.error || 'Failed to send message');
       }
@@ -302,7 +302,7 @@ export default function HomePage() {
     setLoginError(null);
     if (!loginForm.email || !loginForm.password) return;
     if (isRegisterMode && !loginForm.name) return;
-    
+
     setLoginLoading(true);
     try {
       const endpoint = isRegisterMode ? '/api/register' : '/api/login';
@@ -312,7 +312,7 @@ export default function HomePage() {
         body: JSON.stringify(loginForm),
       });
       const data = await res.json();
-      
+
       if (data.success) {
         if (isRegisterMode) {
           setIsRegisterMode(false);
@@ -370,25 +370,25 @@ export default function HomePage() {
           <img src="/logo.png" alt="FLASHI" width="80" height="80" style={{ borderRadius: '16px', marginBottom: '1.5rem', boxShadow: 'var(--shadow-md)' }} />
           <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--primary-text)' }}>Welcome to FLASHI</h1>
           <p style={{ color: 'var(--secondary-text)', marginBottom: '2.5rem', fontSize: '1.1rem' }}>Pakistan's smartest Smart Shopping platform</p>
-          
-          <button 
+
+          <button
             onClick={() => { setShowMobileSplash(false); setShowLoginModal(true); setIsRegisterMode(true); }}
             style={{ width: '100%', maxWidth: '300px', padding: '16px', background: 'var(--gradient-primary)', color: 'white', border: 'none', borderRadius: 'var(--radius-full)', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1rem', cursor: 'pointer' }}
           >
             Create an Account
           </button>
-          
-          <button 
+
+          <button
             onClick={() => { setShowMobileSplash(false); setShowLoginModal(true); setIsRegisterMode(false); }}
             style={{ width: '100%', maxWidth: '300px', padding: '16px', background: 'white', color: 'var(--primary-text)', border: '2px solid var(--border-color)', borderRadius: 'var(--radius-full)', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1.5rem', cursor: 'pointer' }}
           >
             Log In
           </button>
-          
-          <button 
-            onClick={() => { 
-              localStorage.setItem('flashi_skip_login', 'true'); 
-              setShowMobileSplash(false); 
+
+          <button
+            onClick={() => {
+              localStorage.setItem('flashi_skip_login', 'true');
+              setShowMobileSplash(false);
             }}
             style={{ background: 'transparent', border: 'none', color: 'var(--secondary-text)', fontWeight: '600', textDecoration: 'underline', padding: '8px', cursor: 'pointer' }}
           >
@@ -409,7 +409,7 @@ export default function HomePage() {
             <a href="/" className="nav-link" onClick={() => setMenuOpen(false)}>Home</a>
             <SalesNavLink isAnchor className="nav-link" onClick={() => setMenuOpen(false)} style={{ color: 'var(--primary)', fontWeight: 'bold' }} />
             <a href="#how-it-works" className="nav-link" onClick={() => setMenuOpen(false)}>How It Works</a>
-            <a href="/subscribe" className="nav-link" onClick={() => setMenuOpen(false)} style={{color: 'var(--primary)', fontWeight: 'bold'}}>Premium</a>
+            <a href="/subscribe" className="nav-link" onClick={() => setMenuOpen(false)} style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Premium</a>
             <a href="/about" className="nav-link" onClick={() => setMenuOpen(false)}>About Us</a>
             <a href="/contact" className="nav-link contact-nav-link" onClick={() => setMenuOpen(false)}>Contact Us</a>
           </nav>
@@ -675,7 +675,7 @@ export default function HomePage() {
                 We'd love to hear <span className="highlight-text">your feedback</span>
               </h2>
               <p className="contact-desc">
-                Have a question about FLASHI? Want to suggest a new store or report a bug? 
+                Have a question about FLASHI? Want to suggest a new store or report a bug?
                 Our team is here to help you get the best out of your shopping experience.
               </p>
               <div className="contact-features">
@@ -701,30 +701,30 @@ export default function HomePage() {
                 <div className="form-row">
                   <div className="form-group">
                     <label>Your Name</label>
-                    <input 
-                      type="text" 
-                      placeholder="Ahmed" 
-                      required 
+                    <input
+                      type="text"
+                      placeholder="Ahmed"
+                      required
                       value={contactForm.name}
-                      onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
+                      onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
                     <label>Email Address</label>
-                    <input 
-                      type="email" 
-                      placeholder="ahmed@gmail.com" 
-                      required 
+                    <input
+                      type="email"
+                      placeholder="ahmed@gmail.com"
+                      required
                       value={contactForm.email}
-                      onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                      onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
                     />
                   </div>
                 </div>
                 <div className="form-group">
                   <label>Subject</label>
-                  <select 
+                  <select
                     value={contactForm.subject}
-                    onChange={(e) => setContactForm({...contactForm, subject: e.target.value})}
+                    onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })}
                   >
                     <option>General Inquiry</option>
                     <option>Store Suggestion</option>
@@ -736,12 +736,12 @@ export default function HomePage() {
                 </div>
                 <div className="form-group">
                   <label>Message</label>
-                  <textarea 
-                    rows="4" 
-                    placeholder="Tell us what's on your mind..." 
+                  <textarea
+                    rows="4"
+                    placeholder="Tell us what's on your mind..."
                     required
                     value={contactForm.message}
-                    onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
+                    onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
                   ></textarea>
                 </div>
                 <button className="submit-btn" type="submit" disabled={submitting}>
@@ -763,7 +763,7 @@ export default function HomePage() {
                 </span>
                 <span className="logo-text">FLASHI</span>
               </div>
-              <p className="footer-tagline" style={{ marginTop: '1rem' }}>Smarter Smart Shopping for every shopper in Pakistan.</p>
+              <p className="footer-tagline" style={{ marginTop: '1rem' }}>Smart Shopping for every shopper in Pakistan.</p>
               <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
                 <a href="/about" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>About Us</a>
                 <a href="/contact" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Contact Us</a>
@@ -788,25 +788,25 @@ export default function HomePage() {
 
       {showPremiumPopup && (
         <div className="modal-overlay" onClick={closePremiumPopup}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{textAlign: 'center'}}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
             <button className="modal-close" onClick={closePremiumPopup}>×</button>
-            <div style={{fontSize: '48px', marginBottom: '16px'}}>✨</div>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>✨</div>
             <h3>Upgrade to FLASHI Premium</h3>
-            <p style={{marginBottom: '24px', lineHeight: '1.6'}}>
+            <p style={{ marginBottom: '24px', lineHeight: '1.6' }}>
               Get exclusive sale alerts from Limelight & Sapphire and price drop notifications across all stores!
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <a href="/subscribe" className="submit-btn" style={{display: 'inline-block', textDecoration: 'none', width: '100%', padding: '12px 0'}}>
+              <a href="/subscribe" className="submit-btn" style={{ display: 'inline-block', textDecoration: 'none', width: '100%', padding: '12px 0' }}>
                 Learn More
               </a>
-              <button 
-                onClick={closePremiumPopup} 
+              <button
+                onClick={closePremiumPopup}
                 style={{
-                  background: 'none', 
-                  border: 'none', 
-                  color: 'var(--text-secondary, #666)', 
-                  textDecoration: 'underline', 
-                  cursor: 'pointer', 
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-secondary, #666)',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
                   fontSize: '0.9rem'
                 }}
               >
@@ -862,8 +862,8 @@ export default function HomePage() {
               </button>
               <div style={{ marginTop: '15px', textAlign: 'center', fontSize: '0.9rem' }}>
                 {isRegisterMode ? 'Already have an account? ' : 'Need an account? '}
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => { setIsRegisterMode(!isRegisterMode); setLoginError(null); }}
                   style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontWeight: 'bold' }}
                 >

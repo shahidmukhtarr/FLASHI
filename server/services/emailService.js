@@ -154,7 +154,7 @@ export async function sendWelcomeEmail(email, name) {
 
 // ─── 2. Subscription Request Submitted ──────────────────────────────────────────
 
-export async function sendSubscriptionRequestEmail(email, name, phone, paymentRef) {
+export async function sendSubscriptionRequestEmail(email, name, phone, paymentRef, amount = 500) {
   const firstName = (name || 'there').split(' ')[0];
 
   const body = `
@@ -185,7 +185,7 @@ export async function sendSubscriptionRequestEmail(email, name, phone, paymentRe
           </tr>
           <tr>
             <td style="padding:6px 0;font-size:14px;color:#888;">Plan</td>
-            <td style="padding:6px 0;font-size:14px;color:#a78bfa;font-weight:700;">Premium — Rs. 500/month</td>
+            <td style="padding:6px 0;font-size:14px;color:#a78bfa;font-weight:700;">Premium — Rs. ${amount}/month</td>
           </tr>
           <tr>
             <td style="padding:6px 0;font-size:14px;color:#888;">Status</td>
@@ -205,7 +205,7 @@ export async function sendSubscriptionRequestEmail(email, name, phone, paymentRe
     </p>
   `;
 
-  const text = `Hi ${firstName},\n\nWe've received your FLASHI Premium subscription request.\n\nPlan: Premium — Rs. 500/month\nStatus: Pending Verification\n\nYour subscription will be activated within 24 hours after payment verification.\n\nThank you!\n— FLASHI Team`;
+  const text = `Hi ${firstName},\n\nWe've received your FLASHI Premium subscription request.\n\nPlan: Premium — Rs. ${amount}/month\nStatus: Pending Verification\n\nYour subscription will be activated within 24 hours after payment verification.\n\nThank you!\n— FLASHI Team`;
 
   return sendMail({
     to: email,
