@@ -171,17 +171,29 @@ export default function HomePage() {
   }
 
   async function fetchJson(url) {
-    const response = await fetch(url);
-    const text = await response.text();
-    if (!response.ok) {
-      let error = `HTTP ${response.status}`;
-      try {
-        const data = JSON.parse(text);
-        error = data.error || data.message || error;
-      } catch { }
-      throw new Error(error);
+    try {
+      const response = await fetch(url);
+      const text = await response.text();
+      if (!response.ok) {
+        // 502/503/504 happen when the server is cold-starting or having issues
+        if (response.status >= 502 && response.status <= 504) {
+          throw new Error('Internet Connection Timed Out');
+        }
+        let error = `HTTP ${response.status}`;
+        try {
+          const data = JSON.parse(text);
+          error = data.error || data.message || error;
+        } catch { }
+        throw new Error(error);
+      }
+      return text ? JSON.parse(text) : {};
+    } catch (error) {
+      // Catch network-level failures (e.g. TypeError: Failed to fetch)
+      if (error.name === 'TypeError' || error.message.includes('Failed to fetch') || error.message.includes('network')) {
+        throw new Error('Internet Connection Timed Out');
+      }
+      throw error;
     }
-    return text ? JSON.parse(text) : {};
   }
 
   async function handleSearch(value = query, pushHistory = true) {
@@ -220,11 +232,11 @@ export default function HomePage() {
         setMeta(data.product?.title ? `Product details for "${data.product.title}"` : 'Product lookup result');
       } else {
         const data = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=1000`);
-        // Filter out heavily discounted sale products (>50% off) from normal search — keep normal products with small discounts
+        // Filter out discounted sale products (>15% off) from normal search — these are premium-only
         const filteredProducts = (data.products || []).filter(p => {
           if (!p.originalPrice || p.originalPrice <= p.price) return true;
           const discountPct = ((p.originalPrice - p.price) / p.originalPrice) * 100;
-          return discountPct < 50;
+          return discountPct < 15;
         });
         setProducts(filteredProducts);
         setMeta(`${data.total || 0} result${data.total === 1 ? '' : 's'}`);
@@ -239,11 +251,11 @@ export default function HomePage() {
               if (liveData.success) {
                 // Re-fetch products to get the newly added items
                 const newData = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=1000`);
-                // Filter out heavily discounted sale products (>50% off) from normal search
+                // Filter out discounted sale products (>15% off) from normal search — premium-only
                 const newFiltered = (newData.products || []).filter(p => {
                   if (!p.originalPrice || p.originalPrice <= p.price) return true;
                   const discountPct = ((p.originalPrice - p.price) / p.originalPrice) * 100;
-                  return discountPct < 50;
+                  return discountPct < 15;
                 });
                 setProducts(newFiltered);
                 setMeta(`${newFiltered.length} result${newFiltered.length === 1 ? '' : 's'}`);
@@ -460,6 +472,18 @@ export default function HomePage() {
                   ))}
                 </div>
 
+                {/* APK Download pill — hero area */}
+                <div className="hero-app-download">
+                  <a href="/flashi-mobile.apk" download="FLASHI.apk" className="hero-apk-btn" id="hero-apk-download">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                      <line x1="12" y1="18" x2="12" y2="18"/>
+                    </svg>
+                    <span>Download Android App</span>
+                    <span className="hero-apk-badge">Free</span>
+                  </a>
+                </div>
+
                 <div className="trust-section">
                   <div className="trust-label"><h2>Most Popular Stores</h2></div>
                   <div className="trust-logos">
@@ -640,6 +664,70 @@ export default function HomePage() {
       <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--spacing-md) 0' }}>
         <NativeBannerAd />
       </div>
+
+      {/* ═══ APK Download Section ═══ */}
+      <section className="app-download-section" id="download-app">
+        <div className="container">
+          <div className="app-download-card">
+            <div className="app-download-left">
+              <div className="app-download-icon-wrap">
+                <img src="/logo.png" alt="FLASHI App" className="app-download-icon" />
+                <div className="app-download-ripple" />
+              </div>
+              <div className="app-download-text">
+                <div className="app-download-eyebrow">📱 Mobile App</div>
+                <h2 className="app-download-title">Get FLASHI on Your Phone</h2>
+                <p className="app-download-desc">
+                  Shop smarter on the go. Search and compare prices from Pakistan's top stores — right from your pocket.
+                </p>
+                <ul className="app-download-features">
+                  <li><span className="app-feat-check">✓</span> Compare prices instantly</li>
+                  <li><span className="app-feat-check">✓</span> Works offline after first load</li>
+                  <li><span className="app-feat-check">✓</span> Premium sale alerts</li>
+                  <li><span className="app-feat-check">✓</span> No Play Store needed</li>
+                </ul>
+              </div>
+            </div>
+            <div className="app-download-right">
+              <a
+                href="/flashi-mobile.apk"
+                download="FLASHI.apk"
+                className="apk-download-btn"
+                id="main-apk-download"
+              >
+                <svg className="apk-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <div className="apk-btn-text">
+                  <span className="apk-btn-label">Download APK</span>
+                  <span className="apk-btn-sub">Android · Free · v1.0</span>
+                </div>
+              </a>
+              <p className="app-download-note">
+                Enable "Install from unknown sources" in Android Settings after downloading.
+              </p>
+              <div className="app-download-stats">
+                <div className="app-stat">
+                  <span className="app-stat-num">7+</span>
+                  <span className="app-stat-label">Stores</span>
+                </div>
+                <div className="app-stat-divider" />
+                <div className="app-stat">
+                  <span className="app-stat-num">Free</span>
+                  <span className="app-stat-label">Always</span>
+                </div>
+                <div className="app-stat-divider" />
+                <div className="app-stat">
+                  <span className="app-stat-num">🇵🇰</span>
+                  <span className="app-stat-label">Pakistan</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="how-section" id="how-it-works">
         <div className="container">

@@ -82,6 +82,14 @@ export default function SalesClient() {
     setLoading(true);
     try {
       const res = await fetch(`/api/sales?url=${encodeURIComponent(store.url)}`);
+      
+      if (!res.ok) {
+        if (res.status >= 502 && res.status <= 504) {
+          throw new Error('Internet Connection Timed Out');
+        }
+        throw new Error(`HTTP ${res.status}`);
+      }
+
       const data = await res.json();
       if (data.success && data.products) {
         const sortedProducts = data.products.sort((a, b) => {
@@ -92,7 +100,12 @@ export default function SalesClient() {
         setProductsCache(prev => ({ ...prev, [store.name]: sortedProducts }));
       }
     } catch (error) {
-      console.error(`Failed to fetch sales for ${store.name}`, error);
+      if (error.name === 'TypeError' || error.message.includes('Failed to fetch') || error.message.includes('network')) {
+        console.error(`Failed to fetch sales for ${store.name}: Internet Connection Timed Out`);
+        alert('Internet Connection Timed Out. Please try again.');
+      } else {
+        console.error(`Failed to fetch sales for ${store.name}`, error);
+      }
       setProductsCache(prev => ({ ...prev, [store.name]: [] }));
     } finally {
       setLoading(false);

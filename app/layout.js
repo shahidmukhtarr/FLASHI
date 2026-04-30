@@ -1,4 +1,5 @@
 import './globals.css';
+import './download.css';
 import MobileBottomNav from './components/MobileBottomNav';
 import DeviceDetector from './components/DeviceDetector';
 import Script from 'next/script';
