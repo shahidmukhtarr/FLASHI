@@ -12,7 +12,10 @@ if (typeof window === 'undefined' && !isBuild) {
     import('../server/services/db.js').then(m => m.initDb()),
     import('../server/services/scheduler.js').then(m => {
       if (!process.env.VERCEL) m.startScheduler();
-    })
+    }),
+    // Keep-alive: self-ping every 8 min so the server never idles out.
+    // This ensures the mobile APK works even after a period of no user traffic.
+    import('../server/services/keepAlive.js').then(m => m.startKeepAlive()),
   ]).catch(err => console.error('[Bootstrap] Startup failed:', err.message));
 }
 
