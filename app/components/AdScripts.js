@@ -25,7 +25,7 @@ export function NativeBannerAd() {
   }, []);
 
   return (
-    <div className="ad-banner-container" style={{ textAlign: 'center', width: '100%', minHeight: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <div className="ad-banner-container" style={{ textAlign: 'center', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <ins className="adsbygoogle"
            ref={adRef}
            style={{ display: 'block', width: '100%' }}
@@ -53,7 +53,7 @@ export function BannerAd() {
   }, []);
 
   return (
-    <div className="ad-banner-container" style={{ textAlign: 'center', width: '100%', minHeight: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <div className="ad-banner-container" style={{ textAlign: 'center', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <ins className="adsbygoogle"
            style={{ display: 'inline-block', width: '320px', height: '50px' }}
            data-ad-client="ca-pub-6296239062398160"
@@ -78,11 +78,13 @@ export function DisplayAd() {
   }, []);
 
   return (
-    <div className="ad-display-container" style={{ textAlign: 'center', width: '100%', minHeight: '300px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <div className="ad-display-container" style={{ textAlign: 'center', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <ins className="adsbygoogle"
-           style={{ display: 'inline-block', width: '160px', height: '300px' }}
+           style={{ display: 'block', width: '100%' }}
            data-ad-client="ca-pub-6296239062398160"
-           data-ad-slot="auto"></ins>
+           data-ad-slot="auto"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
     </div>
   );
 }

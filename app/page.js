@@ -656,12 +656,12 @@ export default function HomePage() {
       )}
 
       {/* Ad Banner */}
-      <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--spacing-lg) 0' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--spacing-md) 0 0' }}>
         <BannerAd />
       </div>
 
       {/* Native Banner Ad */}
-      <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--spacing-md) 0' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--spacing-sm) 0' }}>
         <NativeBannerAd />
       </div>
 
@@ -745,12 +745,24 @@ export default function HomePage() {
               <h3>Compare prices</h3>
               <p>See the best prices from multiple stores and choose the lowest offer.</p>
             </div>
+            <div className="step-card">
+              <div className="step-number">03</div>
+              <div className="step-icon">🛒</div>
+              <h3>Shop the best deal</h3>
+              <p>Click through to your chosen store and save money on every purchase.</p>
+            </div>
+            <div className="step-card">
+              <div className="step-number">04</div>
+              <div className="step-icon">🔔</div>
+              <h3>Get sale alerts</h3>
+              <p>Upgrade to Premium and never miss a flash sale or price drop again.</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Display Ad */}
-      <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--spacing-lg) 0' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--spacing-sm) 0' }}>
         <DisplayAd />
       </div>
 

@@ -465,28 +465,6 @@ input:focus, select:focus, textarea:focus {
 }
 
 @media (max-width: 768px) {
-  .steps-grid {
-    gap: 15px;
-  }
-  
-  .step-card {
-    padding: 20px 15px;
-  }
-  
-  .step-card h3 {
-    font-size: 1.1rem;
-    margin-bottom: 8px;
-  }
-  
-  .step-card p {
-    font-size: 0.85rem;
-    line-height: 1.4;
-  }
-  
-  .step-icon {
-    font-size: 2rem;
-    margin-bottom: 12px;
-  }
   
   /* Smaller Pricing Card */
   .sub-pricing-card {
@@ -713,12 +691,11 @@ html.is-app .header-actions {
 .hero {
   background: radial-gradient(circle at top right, #6b705c, #2d3436);
   color: var(--light-text);
-  padding: 100px 0;
+  padding: 48px 0 40px;
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
-  min-height: 80vh;
 }
 
 .hero::after {
@@ -750,8 +727,7 @@ html.is-app .header-actions {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-2xl);
-  min-height: 620px;
+  gap: var(--spacing-lg);
   position: relative;
   text-align: center;
 }
@@ -796,10 +772,10 @@ html.is-app .header-actions {
 }
 
 .hero-subtitle {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: var(--spacing-xl);
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
@@ -880,36 +856,12 @@ html.is-app .header-actions {
 }
 
 .trust-section {
-  margin-top: var(--spacing-xl);
+  margin-top: var(--spacing-lg);
   text-align: center;
 }
 
 .trust-label {
-  display: block;
-  font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: var(--spacing-md);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 500;
-}
-
-.trust-logos {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-2xl);
-  flex-wrap: wrap;
-  padding: var(--spacing-xl) 0;
-}
-
-.trust-section {
-  margin-top: var(--spacing-2xl);
-  text-align: center;
-}
-
-.trust-label {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
 }
 
 .trust-label h2 {
@@ -922,12 +874,12 @@ html.is-app .header-actions {
 }
 
 .trust-logos {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-xl) 0;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) 0;
   max-width: 1000px;
   margin: 0 auto;
 }
@@ -998,66 +950,90 @@ html.is-app .header-actions {
 
 .steps-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--spacing-lg);
-  max-width: 900px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+  max-width: 1000px;
   margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .steps-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
 }
 
 .step-card {
   background: var(--secondary-bg);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
 }
 
 .step-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-md);
+  border-color: var(--accent-primary);
 }
 
 .step-number {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: var(--accent-primary);
   color: var(--light-text);
   font-weight: 700;
-  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-sm);
 }
 
 .step-icon {
-  font-size: 1.75rem;
-  margin-bottom: var(--spacing-md);
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-sm);
 }
 
 .step-card h3 {
-  font-size: var(--font-size-xl);
-  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
   color: var(--primary-text);
 }
 
 .step-card p {
   color: var(--secondary-text);
-  line-height: 1.8;
+  line-height: 1.6;
+  font-size: var(--font-size-sm);
+}
+
+/* ---------- How It Works Section ---------- */
+.how-section {
+  padding: var(--spacing-xl) 0 var(--spacing-lg);
+  background: var(--primary-bg);
 }
 
 /* ---------- Main Content ---------- */
 .main-content {
-  padding: var(--spacing-2xl) 0;
+  padding: var(--spacing-xl) 0;
 }
 
 .section-title {
-  font-size: clamp(2.75rem, 4vw, 3.75rem);
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
   font-weight: 800;
   text-align: center;
   margin-bottom: var(--spacing-lg);
   color: var(--primary-text);
+  letter-spacing: -0.02em;
 }
 
 .section-subtitle {
@@ -1072,7 +1048,7 @@ html.is-app .header-actions {
 
 /* ---------- Loading States ---------- */
 .loading-section {
-  padding: var(--spacing-2xl) 0;
+  padding: var(--spacing-xl) 0;
 }
 
 .loading-grid {
@@ -1125,7 +1101,7 @@ html.is-app .header-actions {
 
 /* ---------- Results Section ---------- */
 .results-section {
-  padding: var(--spacing-2xl) 0;
+  padding: var(--spacing-xl) 0 var(--spacing-lg);
 }
 
 .results-header {
@@ -1856,8 +1832,8 @@ html.is-app .header-actions {
 .footer {
   background: var(--dark-bg);
   color: var(--light-text);
-  padding: var(--spacing-2xl) 0;
-  margin-top: var(--spacing-2xl);
+  padding: var(--spacing-xl) 0;
+  margin-top: var(--spacing-xl);
 }
 
 .footer-content {
@@ -2094,7 +2070,7 @@ html.is-app .header-actions {
   }
 
   .hero {
-    padding: var(--spacing-xl) 0;
+    padding: var(--spacing-lg) 0;
   }
 
   .hero-layout {
@@ -2115,11 +2091,11 @@ html.is-app .header-actions {
   }
 
   .hero-title {
-    font-size: 2.4rem;
+    font-size: 2rem;
   }
 
   .section-title {
-    font-size: 2.4rem;
+    font-size: 1.6rem;
   }
 
   .search-btn {
@@ -2156,7 +2132,7 @@ html.is-app .header-actions {
   }
 
   .hero-title {
-    font-size: var(--font-size-2xl);
+    font-size: var(--font-size-xl);
   }
 
   .admin-stats {
@@ -2229,7 +2205,7 @@ textarea:focus-visible {
 
 /* ---------- Contact Section ---------- */
 .contact-section {
-  padding: var(--spacing-2xl) 0;
+  padding: var(--spacing-xl) 0;
   background-color: var(--secondary-bg);
   border-top: 1px solid var(--border-color);
 }
@@ -2909,7 +2885,6 @@ textarea:focus-visible {
   justify-content: center;
   width: 100%;
   max-width: 320px;
-  min-height: 50px;
   margin: 0 auto;
   overflow: hidden;
 }
@@ -2921,7 +2896,6 @@ textarea:focus-visible {
   justify-content: center;
   width: 100%;
   max-width: 160px;
-  min-height: 300px;
   margin: 0 auto;
   overflow: hidden;
 }
