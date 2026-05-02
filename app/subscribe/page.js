@@ -408,6 +408,24 @@ export default function SubscribePage() {
 
           <footer className="footer">
             <div className="container">
+              <div className="footer-content" style={{ justifyContent: 'center' }}>
+                <div className="footer-brand" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                  <div className="footer-logo-wrap" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span className="logo-icon">
+                      <img src="/logo.png" alt="FLASHI" width="30" height="30" style={{ borderRadius: '6px' }} />
+                    </span>
+                    <span className="logo-text">FLASHI</span>
+                  </div>
+                  <p className="footer-tagline" style={{ marginTop: '1rem' }}>Smarter price comparison for every shopper in Pakistan.</p>
+                  <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                    <a href="/about" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>About Us</a>
+                    <a href="/blog" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Blog</a>
+                    <a href="/contact" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Contact Us</a>
+                    <a href="/privacy-policy" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Privacy Policy</a>
+                    <a href="/terms-and-conditions" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Terms & Conditions</a>
+                  </div>
+                </div>
+              </div>
               <div className="footer-bottom">
                 <p>&copy; {new Date().getFullYear()} FLASHI. All rights reserved.</p>
               </div>

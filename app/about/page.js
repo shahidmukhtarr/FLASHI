@@ -32,6 +32,7 @@ export default function AboutPage() {
           <nav className="nav">
             <Link href="/" className="nav-link">Home</Link>
             <SalesNavLink className="nav-link" style={{ color: 'var(--primary)', fontWeight: 'bold' }} />
+            <Link href="/blog" className="nav-link">Blog</Link>
             <Link href="/about" className="nav-link">About Us</Link>
             <Link href="/subscribe" className="nav-link" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Premium</Link>
             <Link href="/contact" className="nav-link contact-nav-link">Contact Us</Link>
@@ -83,10 +84,17 @@ export default function AboutPage() {
                 Smarter Shopping for <span className="highlight-text">Every Pakistani</span>
               </h2>
               <p style={{ color: 'var(--text-secondary, #666)', lineHeight: 1.8, marginBottom: '1rem', fontSize: '1.05rem' }}>
-                FLASHI was born from a simple frustration — spending hours jumping between websites trying to find the best price for a product, only to regret not having checked one more store.
+                FLASHI was born from a simple frustration — spending hours jumping between websites trying to find the best price for a product, only to regret not having checked one more store. As we explain in our guide on{' '}
+                <Link href="/blog/how-to-compare-prices-online-pakistan" style={{ color: 'var(--primary, #369632)', textDecoration: 'none', fontWeight: 600 }}>how to compare prices online in Pakistan</Link>, manually checking each store wastes valuable time and money.
+              </p>
+              <p style={{ color: 'var(--text-secondary, #666)', lineHeight: 1.8, marginBottom: '1rem', fontSize: '1.05rem' }}>
+                We built FLASHI to solve that. Our engine scans Pakistan's leading e-commerce platforms in real time, aggregates pricing data, and presents it all in one clean, fast interface — so you never overpay again. Curious about the technology behind it? Read our article on{' '}
+                <Link href="/blog/how-price-comparison-engines-work" style={{ color: 'var(--primary, #369632)', textDecoration: 'none', fontWeight: 600 }}>how price comparison engines like FLASHI work</Link>.
               </p>
               <p style={{ color: 'var(--text-secondary, #666)', lineHeight: 1.8, fontSize: '1.05rem' }}>
-                We built FLASHI to solve that. Our engine scans Pakistan's leading e-commerce platforms in real time, aggregates pricing data, and presents it all in one clean, fast interface — so you never overpay again.
+                We believe every Pakistani shopper deserves access to the best deals. Whether you're looking for the{' '}
+                <Link href="/blog/best-smartphones-under-50000-pakistan" style={{ color: 'var(--primary, #369632)', textDecoration: 'none', fontWeight: 600 }}>best smartphones under Rs. 50,000</Link> or want to understand{' '}
+                <Link href="/blog/why-prices-differ-across-stores-pakistan" style={{ color: 'var(--primary, #369632)', textDecoration: 'none', fontWeight: 600 }}>why prices differ across stores</Link>, FLASHI makes it effortless.
               </p>
             </div>
 
@@ -105,7 +113,9 @@ export default function AboutPage() {
           <div className="hero-badge" style={{ display: 'inline-block', marginBottom: '1rem' }}>Coverage</div>
           <h2 className="section-title">Stores We <span className="highlight-text">Compare</span></h2>
           <p style={{ color: 'var(--text-secondary, #666)', marginBottom: '3rem', fontSize: '1.05rem' }}>
-            We aggregate prices from Pakistan's most trusted online stores.
+            We aggregate prices from Pakistan's most trusted online stores. See our detailed{' '}
+            <Link href="/blog/daraz-vs-priceoye-which-is-better" style={{ color: 'var(--primary, #369632)', textDecoration: 'none', fontWeight: 600 }}>Daraz vs PriceOye comparison</Link>{' '}
+            to understand how these platforms stack up.
           </p>
           <div className="trust-logos" style={{ justifyContent: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
             {['daraz.pk', 'priceoye.pk', 'mega.pk', 'highfy.pk'].map((domain) => (
@@ -139,6 +149,75 @@ export default function AboutPage() {
                 <p>{item.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Shopping Tips Section with Blog Backlinks */}
+      <section style={{
+        background: 'var(--bg-secondary, #f8f9fa)',
+        padding: '80px 0',
+        borderTop: '1px solid var(--border-color, #eee)',
+        borderBottom: '1px solid var(--border-color, #eee)',
+      }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <div className="hero-badge" style={{ display: 'inline-block', marginBottom: '1rem' }}>Learn More</div>
+            <h2 className="section-title">Shopping <span className="highlight-text">Resources</span></h2>
+            <p style={{ color: 'var(--text-secondary, #666)', fontSize: '1.05rem', maxWidth: '600px', margin: '0 auto' }}>
+              Explore our blog for expert guides, tips, and insights to help you shop smarter across Pakistan.
+            </p>
+          </div>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            gap: '1.5rem',
+          }}>
+            {[
+              { href: '/blog/save-money-online-shopping-pakistan', icon: '💰', title: '15 Ways to Save Money Shopping Online', desc: 'Discover coupon codes, cashback offers, flash sales, and more money-saving strategies.' },
+              { href: '/blog/online-shopping-safety-tips-pakistan', icon: '🛡️', title: '10 Online Shopping Safety Tips', desc: 'Protect yourself from scams and fraud while shopping online in Pakistan.' },
+              { href: '/blog/avoid-fake-products-online-pakistan', icon: '🚫', title: 'How to Spot Fake Products Online', desc: 'Learn to identify counterfeit products and protect your purchases.' },
+              { href: '/blog/best-laptops-for-students-pakistan', icon: '💻', title: 'Best Laptops for Students', desc: 'Budget-friendly laptop picks compared across multiple Pakistani stores.' },
+              { href: '/blog/understanding-flash-sales-pakistan', icon: '🔔', title: 'Never Miss a Flash Sale', desc: 'How flash sales work on Daraz, Limelight, and Sapphire — and how to catch them.' },
+              { href: '/blog/ecommerce-growth-pakistan-2026', icon: '📊', title: 'E-Commerce Growth in Pakistan', desc: 'Explore the latest trends and statistics shaping Pakistan\'s online shopping landscape.' },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '1rem',
+                  padding: '1.2rem',
+                  background: 'var(--bg-primary, #fff)',
+                  borderRadius: '12px',
+                  border: '1px solid var(--border-color, #eee)',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                }}
+              >
+                <span style={{ fontSize: '1.8rem', lineHeight: 1, flexShrink: 0 }}>{item.icon}</span>
+                <div>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.3rem', color: 'var(--text-primary, #1a1a1a)' }}>{item.title}</h3>
+                  <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary, #666)', lineHeight: 1.5, margin: 0 }}>{item.desc}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <Link href="/blog" style={{
+              display: 'inline-block',
+              padding: '12px 32px',
+              borderRadius: '50px',
+              background: 'var(--primary, #369632)',
+              color: '#fff',
+              textDecoration: 'none',
+              fontWeight: 700,
+              fontSize: '0.95rem',
+            }}>
+              View All Blog Posts →
+            </Link>
           </div>
         </div>
       </section>
@@ -185,8 +264,10 @@ export default function AboutPage() {
               <p className="footer-tagline" style={{ marginTop: '1rem' }}>Smarter price comparison for every shopper in Pakistan.</p>
               <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
                 <Link href="/about" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>About Us</Link>
+                <Link href="/blog" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Blog</Link>
                 <Link href="/contact" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Contact Us</Link>
                 <Link href="/privacy-policy" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Privacy Policy</Link>
+                <Link href="/terms-and-conditions" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Terms & Conditions</Link>
               </div>
             </div>
           </div>
