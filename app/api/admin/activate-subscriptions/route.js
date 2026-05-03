@@ -56,17 +56,24 @@ export async function POST(request) {
 
     console.log(`[AutoActivate] Activated ${ids.length} subscriber(s):`, pendingSubs.map(s => s.email));
 
-    // Send activation emails to all newly activated subscribers (fire-and-forget)
+    // Send activation emails to all newly activated subscribers
+    const emailResults = [];
     for (const sub of pendingSubs) {
-      sendSubscriptionActiveEmail(sub.email, sub.name, expiresAt.toISOString()).catch(err =>
-        console.error(`[AutoActivate] Activation email failed for ${sub.email}:`, err.message)
-      );
+      try {
+        const result = await sendSubscriptionActiveEmail(sub.email, sub.name, expiresAt.toISOString());
+        console.log(`[AutoActivate] Activation email sent to ${sub.email}:`, result);
+        emailResults.push({ email: sub.email, sent: true });
+      } catch (err) {
+        console.error(`[AutoActivate] Activation email failed for ${sub.email}:`, err.message);
+        emailResults.push({ email: sub.email, sent: false, error: err.message });
+      }
     }
 
     return NextResponse.json({
       success: true,
       activated: ids.length,
       emails: pendingSubs.map(s => s.email),
+      emailResults,
     });
   } catch (error) {
     console.error('[AutoActivate] Error:', error.message);

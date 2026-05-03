@@ -137,8 +137,32 @@ export default function AdminPage() {
     }
   }
 
-  async function handleActivateSubscriber() {
-    if (!confirm(`Are you sure you want to activate all pending subscribers?`)) return;
+  async function handleActivateSingle(email) {
+    if (!confirm(`Activate subscription for ${email}?`)) return;
+    if (!secretKey) {
+      showToast('Please enter Secret Key for this operation', 'error');
+      return;
+    }
+    setLoading(true);
+    try {
+      const data = await fetchJson('/api/admin/activate-subscriber', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      showToast(`✅ ${data.message}`, 'success');
+      loadSubscribers();
+      loadStats();
+    } catch (error) {
+      console.error(error);
+      showToast(error.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleActivateAll() {
+    if (!confirm(`Are you sure you want to activate ALL pending subscribers?`)) return;
     if (!secretKey) {
       showToast('Please enter Secret Key for this operation', 'error');
       return;
@@ -471,7 +495,14 @@ export default function AdminPage() {
           <div className="admin-table-wrapper" style={{ marginBottom: '40px' }}>
             <div className="admin-table-header">
               <h3>Premium Subscribers</h3>
-              <span>{subscribers.length} total</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span>{subscribers.length} total</span>
+                {subscribers.some(s => s.status === 'pending') && (
+                  <button className="button button-primary" style={{ padding: '4px 14px', fontSize: '12px' }} onClick={handleActivateAll} disabled={loading}>
+                    Activate All Pending
+                  </button>
+                )}
+              </div>
             </div>
             <div className="admin-table">
               {loadingSubscribers ? (
@@ -519,7 +550,7 @@ export default function AdminPage() {
                               <button 
                                 className="button button-primary" 
                                 style={{ padding: '4px 12px', fontSize: '12px' }}
-                                onClick={() => handleActivateSubscriber(sub.email)}
+                                onClick={() => handleActivateSingle(sub.email)}
                               >
                                 Activate
                               </button>

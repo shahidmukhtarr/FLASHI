@@ -9,13 +9,12 @@ const config: CapacitorConfig = {
   server: {
     url: 'https://flashi.pk',
     cleartext: true,
-    // Allow navigation to external store links (Daraz, PriceOye, etc.)
+    // Only allow navigation to our own domain inside the WebView.
+    // External store links (Daraz, PriceOye, etc.) will automatically
+    // open in the system browser so the user can tap back to return.
     allowNavigation: [
       'flashi.pk',
       '*.flashi.pk',
-      '*.daraz.pk',
-      '*.priceoye.pk',
-      '*.mega.pk',
       '*.google.com',
       '*.googleapis.com',
       '*.googlesyndication.com',
