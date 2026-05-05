@@ -12,17 +12,27 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const post = blogPosts.find((p) => p.slug === slug);
   if (!post) return { title: 'Post Not Found - FLASHI Blog' };
+  const seoTitle = post.seoTitle || `${post.title} - FLASHI Blog`;
+  const seoDesc  = post.metaDescription || post.excerpt;
+  const keywords = post.secondaryKeywords
+    ? [post.primaryKeyword, ...post.secondaryKeywords].join(', ')
+    : `${post.category}, flashi pakistan, price comparison pakistan, ${post.slug.replace(/-/g, ' ')}`;
   return {
-    title: `${post.title} - FLASHI Blog`,
-    description: post.excerpt,
-    keywords: `${post.category}, flashi, pakistan, online shopping, ${post.slug.replace(/-/g, ', ')}`,
+    title: seoTitle,
+    description: seoDesc,
+    keywords,
     robots: 'index, follow',
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
+      title: seoTitle,
+      description: seoDesc,
       type: 'article',
       locale: 'en_PK',
       siteName: 'FLASHI',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: seoTitle,
+      description: seoDesc,
     },
   };
 }
@@ -46,6 +56,28 @@ export default async function BlogPostPage({ params }) {
     ...blogPosts.filter((p) => p.slug !== slug && p.category !== post.category),
   ].slice(0, 3);
 
+  /* JSON-LD structured data */
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.seoTitle || post.title,
+    description: post.metaDescription || post.excerpt,
+    author: { '@type': 'Organization', name: 'FLASHI' },
+    publisher: { '@type': 'Organization', name: 'FLASHI', url: 'https://flashi.pk' },
+    datePublished: post.date,
+    url: `https://flashi.pk/blog/${post.slug}`,
+  };
+
+  const faqSchema = post.faqs && post.faqs.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: post.faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: { '@type': 'Answer', text: faq.a },
+    })),
+  } : null;
+
   return (
     <main>
       {/* Header */}
@@ -65,6 +97,18 @@ export default async function BlogPostPage({ params }) {
           <Link href="/contact" className="contact-btn">Contact Us</Link>
         </div>
       </header>
+
+      {/* JSON-LD Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
 
       {/* Hero */}
       <section style={{
@@ -157,6 +201,53 @@ export default async function BlogPostPage({ params }) {
               Compare Prices Now →
             </Link>
           </div>
+
+          {/* Internal Links Box */}
+          {post.internalLinks && post.internalLinks.length > 0 && (
+            <div style={{
+              background: 'var(--bg-secondary, #f8f9fa)',
+              border: '1px solid var(--border-color, #eee)',
+              borderRadius: '14px', padding: '1.5rem', marginTop: '2.5rem',
+            }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.8rem', color: 'var(--text-primary, #1a1a1a)' }}>
+                📚 Related Reading
+              </h3>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {post.internalLinks.map((link, i) => (
+                  <li key={i}>
+                    <Link
+                      href={`/blog/${link.slug}`}
+                      style={{ color: post.color, textDecoration: 'none', fontSize: '0.95rem', fontWeight: 500 }}
+                    >
+                      → {link.anchor}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* FAQ Section */}
+          {post.faqs && post.faqs.length > 0 && (
+            <div style={{ marginTop: '3rem' }}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1.2rem' }}>
+                Frequently Asked Questions
+              </h2>
+              {post.faqs.map((faq, i) => (
+                <div key={i} style={{
+                  borderBottom: '1px solid var(--border-color, #eee)',
+                  paddingBottom: '1.2rem', marginBottom: '1.2rem',
+                }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text-primary, #1a1a1a)' }}>
+                    {faq.q}
+                  </h3>
+                  <p style={{ fontSize: '0.97rem', color: 'var(--text-secondary, #555)', lineHeight: 1.7, margin: 0 }}>
+                    {faq.a}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
