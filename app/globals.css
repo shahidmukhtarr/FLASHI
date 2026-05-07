@@ -3545,6 +3545,10 @@ textarea:focus-visible {
     height: 50px;
     bottom: 80px;
     right: 18px;
+    z-index: 1001;
+  }
+  html.is-app .whatsapp-float {
+    bottom: calc(85px + var(--safe-area-bottom, env(safe-area-inset-bottom, 0px)));
   }
   .whatsapp-float svg {
     width: 24px;
