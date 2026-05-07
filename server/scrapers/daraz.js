@@ -109,8 +109,13 @@ export async function searchProducts(query, limit = 30) {
       } else if (itemUrl.startsWith('//')) {
         url = `https:${itemUrl}`;
       } else {
-        url = `${STORE_URL}${itemUrl}`;
+        url = `${STORE_URL}${itemUrl.startsWith('/') ? '' : '/'}${itemUrl}`;
       }
+
+      // Fix for Daraz App deep linking: URLs like `/products/-i123.html` break the Android app's router
+      // by failing regex matching. Ensure there's a dummy slug like `/products/item-i123.html`.
+      url = url.replace(/\/products\/-i(\d+)\.html/, '/products/item-i$1.html');
+
 
       // Rating & reviews
       const rating = parseFloat(item.ratingScore) || 0;

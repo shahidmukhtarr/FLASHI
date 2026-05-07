@@ -260,6 +260,14 @@ export async function GET(request) {
       products = res.products || [];
     }
 
+    // Sanitize Daraz URLs — fix broken deep links like /products/-i12345.html
+    products = products.map(p => {
+      if (p.url && typeof p.url === 'string') {
+        p.url = p.url.replace(/\/products\/-i(\d+)\.html/, '/products/item-i$1.html');
+      }
+      return p;
+    });
+
     return NextResponse.json({ success: true, products });
   } catch (error) {
     console.error('[Sales API] Error scraping category:', error.message);

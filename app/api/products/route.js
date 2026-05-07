@@ -54,9 +54,28 @@ export async function GET(request) {
     // and should only appear in the /special-discounts Sales page for subscribers
     if (data.products) {
       data.products = data.products.filter(p => {
-        if (!p.originalPrice || p.originalPrice <= p.price) return true;
-        const discountPct = ((p.originalPrice - p.price) / p.originalPrice) * 100;
+        const parsePrice = (val) => {
+          if (typeof val === 'number') return val;
+          if (!val || typeof val !== 'string') return NaN;
+          return Number(val.replace(/[^0-9.]/g, ''));
+        };
+        const price = parsePrice(p.price);
+        const origPrice = parsePrice(p.originalPrice);
+        
+        if (isNaN(origPrice) || isNaN(price) || origPrice <= price) return true;
+        const discountPct = ((origPrice - price) / origPrice) * 100;
         return discountPct < 15;
+      });
+    }
+
+    // Step 4: Sanitize product URLs — fix broken Daraz deep links from cached data
+    // Daraz URLs like /products/-i12345.html crash their app router; adding a slug fixes it
+    if (data.products) {
+      data.products = data.products.map(p => {
+        if (p.url && typeof p.url === 'string') {
+          p.url = p.url.replace(/\/products\/-i(\d+)\.html/, '/products/item-i$1.html');
+        }
+        return p;
       });
     }
 

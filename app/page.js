@@ -92,7 +92,6 @@ export default function HomePage() {
   const [statusMessage, setStatusMessage] = useState('');
   const [contactForm, setContactForm] = useState({ name: '', email: '', subject: 'General Inquiry', message: '' });
   const [submitting, setSubmitting] = useState(false);
-  const [showPremiumPopup, setShowPremiumPopup] = useState(false);
   const [user, setUser] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginForm, setLoginForm] = useState({ name: '', email: '', password: '' });
@@ -104,13 +103,6 @@ export default function HomePage() {
   const sortedProducts = useMemo(() => sortProducts(products, sortKey), [products, sortKey]);
   const priceStats = useMemo(() => getPriceStats(sortedProducts), [sortedProducts]);
 
-  useEffect(() => {
-    const hasSeen = localStorage.getItem('flashi_premium_popup');
-    if (!hasSeen) {
-      const timer = setTimeout(() => setShowPremiumPopup(true), 1500);
-      return () => clearTimeout(timer);
-    }
-  }, []);
 
   useEffect(() => {
     // Check local storage for user
@@ -133,10 +125,6 @@ export default function HomePage() {
     }
   }, []);
 
-  function closePremiumPopup() {
-    localStorage.setItem('flashi_premium_popup', 'true');
-    setShowPremiumPopup(false);
-  }
 
   useEffect(() => {
     const handleOpenLogin = () => {
@@ -168,6 +156,16 @@ export default function HomePage() {
 
   function showToast(message, type = 'info') {
     setToast({ message, type });
+  }
+
+  function trackDownload(source = 'main') {
+    try {
+      fetch('/api/admin/downloads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source }),
+      }).catch(() => {});
+    } catch {}
   }
 
   async function fetchJson(url) {
@@ -234,8 +232,15 @@ export default function HomePage() {
         const data = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=1000`);
         // Filter out discounted sale products (>15% off) from normal search — these are premium-only
         const filteredProducts = (data.products || []).filter(p => {
-          if (!p.originalPrice || p.originalPrice <= p.price) return true;
-          const discountPct = ((p.originalPrice - p.price) / p.originalPrice) * 100;
+          const parsePrice = (val) => {
+            if (typeof val === 'number') return val;
+            if (!val || typeof val !== 'string') return NaN;
+            return Number(val.replace(/[^0-9.]/g, ''));
+          };
+          const price = parsePrice(p.price);
+          const origPrice = parsePrice(p.originalPrice);
+          if (isNaN(origPrice) || isNaN(price) || origPrice <= price) return true;
+          const discountPct = ((origPrice - price) / origPrice) * 100;
           return discountPct < 15;
         });
         setProducts(filteredProducts);
@@ -253,8 +258,15 @@ export default function HomePage() {
                 const newData = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=1000`);
                 // Filter out discounted sale products (>15% off) from normal search — premium-only
                 const newFiltered = (newData.products || []).filter(p => {
-                  if (!p.originalPrice || p.originalPrice <= p.price) return true;
-                  const discountPct = ((p.originalPrice - p.price) / p.originalPrice) * 100;
+                  const parsePrice = (val) => {
+                    if (typeof val === 'number') return val;
+                    if (!val || typeof val !== 'string') return NaN;
+                    return Number(val.replace(/[^0-9.]/g, ''));
+                  };
+                  const price = parsePrice(p.price);
+                  const origPrice = parsePrice(p.originalPrice);
+                  if (isNaN(origPrice) || isNaN(price) || origPrice <= price) return true;
+                  const discountPct = ((origPrice - price) / origPrice) * 100;
                   return discountPct < 15;
                 });
                 setProducts(newFiltered);
@@ -439,12 +451,12 @@ export default function HomePage() {
         <div className="container">
           <div className="hero-layout">
             <div className="hero-content">
-              <div className="hero-badge">Search smarter, shop better</div>
+              <div className="hero-badge">🇵🇰 Pakistan's #1 Price Comparison Platform</div>
               <h1 className="hero-title">
-                FLASHI - Find The Best Lowest Prices Across Pakistan.
+                FLASHI - Find Lowest Prices Across Online Pakistani Stores.
               </h1>
               <p className="hero-subtitle">
-                Search any product and instantly compare prices from Pakistan's top stores in one place.
+                Search any product — from phones to fashion — and find the lowest price from Daraz, PriceOye, Limelight, Sapphire & more. Trusted by 500+ smart shoppers across Pakistan.
               </p>
 
               <div className="search-container" id="search-container">
@@ -472,17 +484,6 @@ export default function HomePage() {
                   ))}
                 </div>
 
-                {/* APK Download pill — hero area */}
-                <div className="hero-app-download">
-                  <a href="/flashi-mobile.apk" download="FLASHI.apk" className="hero-apk-btn" id="hero-apk-download">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-                      <line x1="12" y1="18" x2="12" y2="18"/>
-                    </svg>
-                    <span>Download Android App</span>
-                    <span className="hero-apk-badge">Free</span>
-                  </a>
-                </div>
 
                 <div className="trust-section">
                   <div className="trust-label"><h2>Most Popular Stores</h2></div>
@@ -518,6 +519,34 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ Social Proof Bar ═══ */}
+      <section className="social-proof" id="social-proof">
+        <div className="container">
+          <div className="social-proof-grid">
+            <div className="sp-item">
+              <span className="sp-value">500+</span>
+              <span className="sp-label">Active Users</span>
+            </div>
+            <div className="sp-divider" />
+            <div className="sp-item">
+              <span className="sp-value">7+</span>
+              <span className="sp-label">Stores Compared</span>
+            </div>
+            <div className="sp-divider" />
+            <div className="sp-item">
+              <div className="sp-stars">★★★★★</div>
+              <span className="sp-value">4.8/5</span>
+              <span className="sp-label">User Rating</span>
+            </div>
+            <div className="sp-divider" />
+            <div className="sp-item">
+              <span className="sp-value">Rs. 2.5M+</span>
+              <span className="sp-label">Saved by Users</span>
             </div>
           </div>
         </div>
@@ -655,6 +684,7 @@ export default function HomePage() {
         )
       )}
 
+
       {/* Ad Banner */}
       <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--spacing-md) 0 0' }}>
         <BannerAd />
@@ -664,6 +694,42 @@ export default function HomePage() {
       <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--spacing-sm) 0' }}>
         <NativeBannerAd />
       </div>
+
+
+      {/* ═══ App Screenshots Section ═══ */}
+      <section className="screenshots-section" id="app-preview">
+        <div className="container">
+          <div className="section-header-center">
+            <div className="hero-badge">📱 See It In Action</div>
+            <h2 className="section-title">A Smarter Way to <span className="highlight-text">Shop Pakistan</span></h2>
+            <p className="section-subtitle">Search once, compare prices from every major store — all in one beautiful interface.</p>
+          </div>
+          <div className="screenshots-container">
+            <img
+              src="/flashi-app-preview.png"
+              alt="FLASHI App - Compare prices across Pakistani stores"
+              className="screenshot-mockup"
+              width="800"
+              height="600"
+              loading="lazy"
+            />
+          </div>
+          <div className="screenshot-features">
+            <div className="ss-feature">
+              <span className="ss-feature-icon">🔍</span>
+              <span>Search any product</span>
+            </div>
+            <div className="ss-feature">
+              <span className="ss-feature-icon">📊</span>
+              <span>Side-by-side comparison</span>
+            </div>
+            <div className="ss-feature">
+              <span className="ss-feature-icon">💰</span>
+              <span>Instant savings</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ═══ APK Download Section ═══ */}
       <section className="app-download-section" id="download-app">
@@ -694,11 +760,12 @@ export default function HomePage() {
                 download="FLASHI.apk"
                 className="apk-download-btn"
                 id="main-apk-download"
+                onClick={() => trackDownload('main-section')}
               >
                 <svg className="apk-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="7 10 12 15 17 10"/>
-                  <line x1="12" y1="15" x2="12" y2="3"/>
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
                 <div className="apk-btn-text">
                   <span className="apk-btn-label">Download APK</span>
@@ -756,6 +823,83 @@ export default function HomePage() {
               <div className="step-icon">🔔</div>
               <h3>Get sale alerts</h3>
               <p>Upgrade to Premium and never miss a flash sale or price drop again.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ Premium Pricing Section ═══ */}
+      <section className="pricing-section" id="pricing">
+        <div className="container">
+          <div className="section-header-center">
+            <div className="hero-badge">💎 Go Premium</div>
+            <h2 className="section-title">Unlock <span className="highlight-text">Exclusive Deals</span> Others Miss</h2>
+            <p className="section-subtitle">Premium members save 3x more with early access to flash sales and price drops from Limelight, Sapphire & more.</p>
+          </div>
+          <div className="pricing-grid">
+            {/* Free Plan */}
+            <div className="pricing-card">
+              <div className="pricing-header">
+                <div className="pricing-name">Free</div>
+                <div className="pricing-price">Rs. 0<span className="pricing-period">/forever</span></div>
+                <p className="pricing-tagline">Great for casual shoppers</p>
+              </div>
+              <ul className="pricing-features">
+                <li className="pricing-feature">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Search & compare across 7+ stores
+                </li>
+                <li className="pricing-feature">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Paste URL price lookup
+                </li>
+                <li className="pricing-feature">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Mobile app access
+                </li>
+                <li className="pricing-feature disabled">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  Flash sale alerts
+                </li>
+                <li className="pricing-feature disabled">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  Exclusive Limelight & Sapphire deals
+                </li>
+              </ul>
+              <a href="/" className="pricing-btn pricing-btn-outline">Start Free</a>
+            </div>
+
+            {/* Premium Plan */}
+            <div className="pricing-card popular">
+              <div className="pricing-badge">🔥 MOST POPULAR</div>
+              <div className="pricing-header">
+                <div className="pricing-name">Premium</div>
+                <div className="pricing-price">Rs. 250<span className="pricing-period">/month</span></div>
+                <p className="pricing-tagline">For serious deal hunters</p>
+              </div>
+              <ul className="pricing-features">
+                <li className="pricing-feature">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Everything in Free
+                </li>
+                <li className="pricing-feature">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  🔥 Exclusive flash sale alerts
+                </li>
+                <li className="pricing-feature">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Limelight & Sapphire sale access
+                </li>
+                <li className="pricing-feature">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Email price drop notifications
+                </li>
+                <li className="pricing-feature">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Priority WhatsApp support
+                </li>
+              </ul>
+              <a href="/subscribe" className="pricing-btn">Get Premium →</a>
             </div>
           </div>
         </div>
@@ -853,71 +997,71 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="footer">
+      <footer className="footer" style={{ borderTop: '1px solid var(--border-color)', padding: 'var(--spacing-2xl) 0', background: 'white' }}>
         <div className="container">
-          <div className="footer-content" style={{ justifyContent: 'center' }}>
-            <div className="footer-brand" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-              <div className="footer-logo-wrap" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--spacing-xl)' }}>
+            <div className="footer-brand">
+              <a href="/" className="logo">
                 <span className="logo-icon">
-                  <img src="/logo.png" alt="FLASHI" width="30" height="30" style={{ borderRadius: '6px' }} />
+                  <img src="/logo.png" alt="FLASHI" width="32" height="32" style={{ borderRadius: '6px' }} />
                 </span>
                 <span className="logo-text">FLASHI</span>
-              </div>
-              <p className="footer-tagline" style={{ marginTop: '1rem' }}>Smart Shopping for every shopper in Pakistan.</p>
-              <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
-                <a href="/about" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>About Us</a>
-                <a href="/blog" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Blog</a>
-                <a href="/contact" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Contact Us</a>
-                <a href="/privacy-policy" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Privacy Policy</a>
-                <a href="/terms-and-conditions" style={{ color: 'var(--text-secondary, #666)', textDecoration: 'none', fontSize: '0.9rem' }}>Terms & Conditions</a>
-              </div>
+              </a>
+              <p className="footer-desc" style={{ marginTop: 'var(--spacing-md)', color: 'var(--secondary-text)', fontSize: 'var(--font-size-sm)' }}>
+                Pakistan's smarter shopping companion. Compare prices across all major stores and never overpay again.
+              </p>
               <div className="social-links" style={{ marginTop: '1.2rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <a href="https://www.instagram.com/flashipk/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: 'var(--text-secondary, #666)', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#E1306C'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary, #666)'}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                  </svg>
+                <a href="https://www.instagram.com/flashipk/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: 'var(--text-secondary, #666)' }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                 </a>
               </div>
             </div>
+            <div className="footer-links-col">
+              <h4 className="footer-title">Platform</h4>
+              <ul className="footer-links" style={{ listStyle: 'none' }}>
+                <li><a href="/">Home</a></li>
+                <li><a href="/special-discounts">Sale Alerts</a></li>
+                <li><a href="/subscribe">Premium</a></li>
+                <li><a href="/flashi-mobile.apk" download onClick={() => trackDownload('footer')}>Download App</a></li>
+              </ul>
+            </div>
+            <div className="footer-links-col">
+              <h4 className="footer-title">Support</h4>
+              <ul className="footer-links" style={{ listStyle: 'none' }}>
+                <li><a href="/contact">Contact Us</a></li>
+                <li><a href="/blog">Blog</a></li>
+                <li><a href="/about">About Us</a></li>
+              </ul>
+            </div>
+            <div className="footer-links-col">
+              <h4 className="footer-title">Legal</h4>
+              <ul className="footer-links" style={{ listStyle: 'none' }}>
+                <li><a href="/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/terms-and-conditions">Terms & Conditions</a></li>
+              </ul>
+            </div>
           </div>
-          <div className="footer-bottom">
+          <div className="footer-bottom" style={{ marginTop: 'var(--spacing-xl)', paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-color)', textAlign: 'center' }}>
             <p>&copy; {new Date().getFullYear()} FLASHI. All rights reserved.</p>
           </div>
         </div>
       </footer>
 
-      {showPremiumPopup && (
-        <div className="modal-overlay" onClick={closePremiumPopup}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
-            <button className="modal-close" onClick={closePremiumPopup}>×</button>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>✨</div>
-            <h3>Upgrade to FLASHI Premium</h3>
-            <p style={{ marginBottom: '24px', lineHeight: '1.6' }}>
-              Get exclusive sale alerts from Limelight & Sapphire and price drop notifications across all stores!
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <a href="/subscribe" className="submit-btn" style={{ display: 'inline-block', textDecoration: 'none', width: '100%', padding: '12px 0' }}>
-                Learn More
-              </a>
-              <button
-                onClick={closePremiumPopup}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--text-secondary, #666)',
-                  textDecoration: 'underline',
-                  cursor: 'pointer',
-                  fontSize: '0.9rem'
-                }}
-              >
-                Skip for now
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ═══ Floating WhatsApp Button ═══ */}
+      <a
+        href="https://wa.me/923194781148?text=Hi%20FLASHI!%20I%20need%20help%20with%20price%20comparison."
+        target="_blank"
+        rel="noopener noreferrer"
+        className="whatsapp-float"
+        aria-label="Chat on WhatsApp"
+        id="whatsapp-support"
+      >
+        <svg viewBox="0 0 32 32" width="30" height="30" fill="white">
+          <path d="M16.004 0h-.008C7.174 0 0 7.176 0 16.004c0 3.5 1.128 6.744 3.046 9.378L1.054 31.29l6.118-1.958A15.9 15.9 0 0 0 16.004 32C24.826 32 32 24.826 32 16.004S24.826 0 16.004 0zm9.334 22.618c-.39 1.1-1.932 2.014-3.166 2.28-.846.18-1.95.324-5.668-1.218-4.762-1.974-7.826-6.804-8.064-7.118-.228-.314-1.928-2.568-1.928-4.898s1.218-3.476 1.652-3.952c.434-.476.948-.594 1.264-.594.314 0 .632.002.908.016.292.016.684-.11 1.07.816.39.94 1.326 3.232 1.442 3.466.118.234.196.508.04.82-.158.314-.236.508-.472.784-.234.274-.494.612-.706.822-.234.234-.478.49-.206.96s1.208 1.994 2.594 3.228c1.782 1.588 3.282 2.082 3.75 2.316.468.234.742.196 1.014-.118.274-.314 1.176-1.372 1.49-1.844.314-.472.632-.392 1.064-.234.434.156 2.724 1.284 3.19 1.518.468.234.78.352.896.548.118.196.118 1.138-.272 2.238z"/>
+        </svg>
+      </a>
+
+
 
       {showLoginModal && (
         <div className="modal-overlay" onClick={() => setShowLoginModal(false)}>

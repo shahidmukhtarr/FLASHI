@@ -51,6 +51,7 @@ export default function AdminPage() {
   const [loadingSubscribers, setLoadingSubscribers] = useState(false);
   const [toast, setToast] = useState(null);
   const [secretKey, setSecretKey] = useState('');
+  const [downloadCount, setDownloadCount] = useState(0);
 
   const filteredProducts = useMemo(() => sortProducts(products, sort), [products, sort]);
 
@@ -59,6 +60,7 @@ export default function AdminPage() {
     loadStats();
     loadScheduler();
     loadSubscribers();
+    loadDownloadCount();
   }, []);
 
   useEffect(() => {
@@ -134,6 +136,15 @@ export default function AdminPage() {
       showToast('Failed to load subscribers', 'error');
     } finally {
       setLoadingSubscribers(false);
+    }
+  }
+
+  async function loadDownloadCount() {
+    try {
+      const data = await fetchJson('/api/admin/downloads');
+      setDownloadCount(data.count || 0);
+    } catch (error) {
+      console.error('Failed to load download count', error);
     }
   }
 
@@ -489,6 +500,21 @@ export default function AdminPage() {
               <div style={{ fontSize: '12px', marginTop: '5px', color: 'var(--secondary-text)' }}>
                 Current Price: <strong>Rs. {stats?.currentPrice ?? '500'}</strong>
               </div>
+            </div>
+            <div className="admin-card" style={{ borderTop: '4px solid #25d366' }}>
+              <h3>📥 APK Downloads</h3>
+              <p>{downloadCount}</p>
+              <div style={{ fontSize: '12px', marginTop: '5px', color: 'var(--secondary-text)' }}>
+                Total download button clicks
+              </div>
+              <button
+                className="button button-secondary"
+                type="button"
+                onClick={loadDownloadCount}
+                style={{ marginTop: '8px', padding: '4px 12px', fontSize: '11px' }}
+              >
+                Refresh
+              </button>
             </div>
           </div>
 
