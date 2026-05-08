@@ -16,15 +16,28 @@ export async function GET(request) {
 
     // Auto-detect store from query
     const storeKeywords = [
+      { kw: 'daraz.pk', name: 'Daraz' },
+      { kw: 'daraz pk', name: 'Daraz' },
       { kw: 'daraz', name: 'Daraz' },
+      { kw: 'priceoye.pk', name: 'PriceOye' },
+      { kw: 'priceoye pk', name: 'PriceOye' },
       { kw: 'priceoye', name: 'PriceOye' },
       { kw: 'mega.pk', name: 'Mega.pk' },
+      { kw: 'mega pk', name: 'Mega.pk' },
       { kw: 'mega', name: 'Mega.pk' },
+      { kw: 'shophive.com', name: 'Shophive' },
       { kw: 'shophive', name: 'Shophive' },
+      { kw: 'naheed.pk', name: 'Naheed' },
       { kw: 'naheed', name: 'Naheed' },
+      { kw: 'highfy.pk', name: 'Highfy' },
       { kw: 'highfy', name: 'Highfy' },
+      { kw: 'limelight.pk', name: 'Limelight' },
       { kw: 'limelight', name: 'Limelight' },
+      { kw: 'sapphireonline.pk', name: 'Sapphire' },
+      { kw: 'sapphireonline', name: 'Sapphire' },
+      { kw: 'sapphire.pk', name: 'Sapphire' },
       { kw: 'sapphire', name: 'Sapphire' },
+      { kw: 'stationers.pk', name: 'Stationers.pk' },
       { kw: 'stationers', name: 'Stationers.pk' }
     ];
 
