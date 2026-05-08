@@ -391,20 +391,20 @@ export default function HomePage() {
           padding: '2rem',
           textAlign: 'center'
         }}>
-          <img src="/logo.png" alt="FLASHI" width="80" height="80" style={{ borderRadius: '16px', marginBottom: '1.5rem', boxShadow: 'var(--shadow-md)' }} />
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--primary-text)' }}>Welcome to FLASHI</h1>
-          <p style={{ color: 'var(--secondary-text)', marginBottom: '2.5rem', fontSize: '1.1rem' }}>Pakistan's smartest Smart Shopping platform</p>
+          <img src="/logo.png" alt="FLASHI" width="80" height="80" style={{ borderRadius: '20px', marginBottom: '1.5rem', boxShadow: '0 12px 40px rgba(46, 125, 50, 0.2)', animation: 'splashLogo 0.6s cubic-bezier(0.16, 1, 0.3, 1) both' }} />
+          <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--primary-text)', animation: 'splashFade 0.6s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both' }}>Welcome to FLASHI</h1>
+          <p style={{ color: 'var(--secondary-text)', marginBottom: '2.5rem', fontSize: '1.1rem', animation: 'splashFade 0.6s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both' }}>Pakistan's smartest Smart Shopping platform</p>
 
           <button
             onClick={() => { setShowMobileSplash(false); setShowLoginModal(true); setIsRegisterMode(true); }}
-            style={{ width: '100%', maxWidth: '300px', padding: '16px', background: 'var(--gradient-primary)', color: 'white', border: 'none', borderRadius: 'var(--radius-full)', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1rem', cursor: 'pointer' }}
+            style={{ width: '100%', maxWidth: '300px', padding: '16px', background: 'var(--gradient-primary)', color: 'white', border: 'none', borderRadius: 'var(--radius-full)', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1rem', cursor: 'pointer', boxShadow: '0 8px 25px rgba(46, 125, 50, 0.3)', animation: 'splashFade 0.6s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both' }}
           >
             Create an Account
           </button>
 
           <button
             onClick={() => { setShowMobileSplash(false); setShowLoginModal(true); setIsRegisterMode(false); }}
-            style={{ width: '100%', maxWidth: '300px', padding: '16px', background: 'white', color: 'var(--primary-text)', border: '2px solid var(--border-color)', borderRadius: 'var(--radius-full)', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1.5rem', cursor: 'pointer' }}
+            style={{ width: '100%', maxWidth: '300px', padding: '16px', background: 'var(--secondary-bg)', color: 'var(--primary-text)', border: '2px solid var(--border-color)', borderRadius: 'var(--radius-full)', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1.5rem', cursor: 'pointer', animation: 'splashFade 0.6s 0.5s cubic-bezier(0.16, 1, 0.3, 1) both' }}
           >
             Log In
           </button>
@@ -414,7 +414,7 @@ export default function HomePage() {
               localStorage.setItem('flashi_skip_login', 'true');
               setShowMobileSplash(false);
             }}
-            style={{ background: 'transparent', border: 'none', color: 'var(--secondary-text)', fontWeight: '600', textDecoration: 'underline', padding: '8px', cursor: 'pointer' }}
+            style={{ background: 'transparent', border: 'none', color: 'var(--secondary-text)', fontWeight: '600', textDecoration: 'underline', padding: '8px', cursor: 'pointer', animation: 'splashFade 0.6s 0.6s cubic-bezier(0.16, 1, 0.3, 1) both' }}
           >
             Continue without login
           </button>
@@ -625,7 +625,7 @@ export default function HomePage() {
                     <div className="price-range-values">
                       <span className="price-range-value price-low">Lowest: {formatPrice(priceStats.min)}</span>
                       <span className="price-range-value price-high">Highest: {formatPrice(priceStats.max)}</span>
-                      <span className="price-range-value" style={{ color: '#588157' }}>
+                      <span className="price-range-value" style={{ color: '#2e7d32' }}>
                         Save up to {formatPrice(priceStats.savings)}
                       </span>
                     </div>
@@ -997,7 +997,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="footer" style={{ borderTop: '1px solid var(--border-color)', padding: 'var(--spacing-2xl) 0', background: 'white' }}>
+      <footer className="footer" style={{ borderTop: '1px solid var(--border-color)', padding: 'var(--spacing-2xl) 0' }}>
         <div className="container">
           <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--spacing-xl)' }}>
             <div className="footer-brand">
