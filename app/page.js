@@ -999,7 +999,7 @@ export default function HomePage() {
 
       <footer className="footer" style={{ borderTop: '1px solid var(--border-color)', padding: 'var(--spacing-2xl) 0' }}>
         <div className="container">
-          <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--spacing-xl)' }}>
+          <div className="footer-grid">
             <div className="footer-brand">
               <a href="/" className="logo">
                 <span className="logo-icon">
@@ -1011,14 +1011,14 @@ export default function HomePage() {
                 Pakistan's smarter shopping companion. Compare prices across all major stores and never overpay again.
               </p>
               <div className="social-links" style={{ marginTop: '1.2rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <a href="https://www.instagram.com/flashipk/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: 'var(--text-secondary, #666)' }}>
+                <a href="https://www.instagram.com/flashipk/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="footer-link">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                 </a>
               </div>
             </div>
             <div className="footer-links-col">
               <h4 className="footer-title">Platform</h4>
-              <ul className="footer-links" style={{ listStyle: 'none' }}>
+              <ul className="footer-links">
                 <li><a href="/">Home</a></li>
                 <li><a href="/special-discounts">Sale Alerts</a></li>
                 <li><a href="/subscribe">Premium</a></li>
@@ -1027,7 +1027,7 @@ export default function HomePage() {
             </div>
             <div className="footer-links-col">
               <h4 className="footer-title">Support</h4>
-              <ul className="footer-links" style={{ listStyle: 'none' }}>
+              <ul className="footer-links">
                 <li><a href="/contact">Contact Us</a></li>
                 <li><a href="/blog">Blog</a></li>
                 <li><a href="/about">About Us</a></li>
@@ -1035,13 +1035,13 @@ export default function HomePage() {
             </div>
             <div className="footer-links-col">
               <h4 className="footer-title">Legal</h4>
-              <ul className="footer-links" style={{ listStyle: 'none' }}>
+              <ul className="footer-links">
                 <li><a href="/privacy-policy">Privacy Policy</a></li>
                 <li><a href="/terms-and-conditions">Terms & Conditions</a></li>
               </ul>
             </div>
           </div>
-          <div className="footer-bottom" style={{ marginTop: 'var(--spacing-xl)', paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-color)', textAlign: 'center' }}>
+          <div className="footer-bottom">
             <p>&copy; {new Date().getFullYear()} FLASHI. All rights reserved.</p>
           </div>
         </div>

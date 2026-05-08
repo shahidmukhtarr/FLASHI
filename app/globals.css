@@ -1881,6 +1881,19 @@ html.is-app .header-actions {
   gap: var(--spacing-md);
 }
 
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.footer-title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  color: var(--primary-text);
+}
+
 .footer-brand h3 {
   font-size: var(--font-size-lg);
   font-weight: 700;
@@ -1894,17 +1907,22 @@ html.is-app .header-actions {
 
 .footer-links {
   display: flex;
-  gap: var(--spacing-lg);
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
-.footer-link {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: var(--font-size-sm);
+.footer-links a, .footer-link {
+  color: var(--secondary-text);
+  font-size: var(--font-size-base);
   transition: color var(--transition-fast);
+  text-decoration: none;
 }
 
-.footer-link:hover {
-  color: var(--light-text);
+.footer-links a:hover, .footer-link:hover {
+  color: var(--accent-primary);
 }
 
 .footer-bottom {
@@ -2321,14 +2339,32 @@ html.is-app .header-actions {
     text-align: center;
   }
 
-  .footer-links {
-    justify-content: center;
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+  }
+  
+  .footer-brand {
+    grid-column: 1 / -1;
   }
 }
 
 @media (max-width: 480px) {
   .container {
     padding: 0 var(--spacing-sm);
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footer-brand .social-links {
+    justify-content: center;
+  }
+
+  .footer-links {
+    align-items: center;
   }
 
   .hero-title {
@@ -3529,11 +3565,11 @@ textarea:focus-visible {
   height: 58px;
   bottom: 32px;
   right: 28px;
-  background-color: #25d366;
+  background: var(--gradient-primary);
   color: #FFF;
   border-radius: 50%;
   text-align: center;
-  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.4);
+  box-shadow: 0 4px 14px rgba(46, 125, 50, 0.3);
   z-index: 999;
   display: flex;
   align-items: center;
@@ -3545,7 +3581,7 @@ textarea:focus-visible {
 .whatsapp-float:hover {
   transform: scale(1.12);
   color: white;
-  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+  box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
 }
 
 @keyframes whatsapp-pulse {
@@ -3784,10 +3820,10 @@ html.is-app .mobile-bottom-nav {
   color: var(--secondary-text) !important;
   border-top-color: var(--border-color) !important;
 }
-.footer-tagline, .footer-link {
+.footer-tagline, .footer-links a, .footer-link {
   color: var(--secondary-text) !important;
 }
-.footer-link:hover {
+.footer-links a:hover, .footer-link:hover {
   color: var(--accent-primary) !important;
 }
 
