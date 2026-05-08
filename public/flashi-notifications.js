@@ -27,13 +27,9 @@
         return;
       }
 
-      // Check if we already scheduled today
-      const today = new Date().toDateString();
-      const lastScheduled = localStorage.getItem(SCHEDULE_KEY);
-      if (lastScheduled === today) {
-        console.log('[FlashiNotif] Already scheduled for today, skipping');
-        return;
-      }
+      // We no longer skip if already scheduled today.
+      // Some Android OS battery managers clear alarms when the app is killed.
+      // Rescheduling on every app launch ensures notifications remain registered.
 
       // Request permission
       const permResult = await LocalNotifications.requestPermissions();
@@ -77,8 +73,8 @@
       const now = new Date();
       const notificationsToSchedule = [];
 
-      // Get today's (unread) notifications
-      const todayNotifs = data.notifications.filter(n => !n.read);
+      // Get today's (unread) notifications and sort them chronologically (earliest first)
+      const todayNotifs = data.notifications.filter(n => !n.read).reverse();
 
       for (let i = 0; i < Math.min(todayNotifs.length, 5); i++) {
         const notif = todayNotifs[i];
@@ -142,8 +138,7 @@
         console.log('[FlashiNotif] No future notifications to schedule today');
       }
 
-      // Mark today as scheduled
-      localStorage.setItem(SCHEDULE_KEY, today);
+      // Removed localStorage lastScheduled setter
 
       // Listen for notification clicks — navigate to the deal
       LocalNotifications.addListener('localNotificationActionPerformed', (action) => {
