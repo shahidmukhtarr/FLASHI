@@ -58,6 +58,10 @@ export default function RootLayout({ children }) {
           strategy="afterInteractive"
           crossOrigin="anonymous"
         />
+        <Script
+          src="/flashi-notifications.js"
+          strategy="afterInteractive"
+        />
       </head>
       <body suppressHydrationWarning>
         <script dangerouslySetInnerHTML={{

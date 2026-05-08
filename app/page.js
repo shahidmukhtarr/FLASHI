@@ -164,8 +164,8 @@ export default function HomePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ source }),
-      }).catch(() => {});
-    } catch {}
+      }).catch(() => { });
+    } catch { }
   }
 
   async function fetchJson(url) {
@@ -709,8 +709,6 @@ export default function HomePage() {
               src="/flashi-app-preview.png"
               alt="FLASHI App - Compare prices across Pakistani stores"
               className="screenshot-mockup"
-              width="800"
-              height="600"
               loading="lazy"
             />
           </div>
@@ -884,7 +882,7 @@ export default function HomePage() {
                 </li>
                 <li className="pricing-feature">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  🔥 Exclusive flash sale alerts
+                  Exclusive flash sale alerts
                 </li>
                 <li className="pricing-feature">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -1057,7 +1055,7 @@ export default function HomePage() {
         id="whatsapp-support"
       >
         <svg viewBox="0 0 32 32" width="30" height="30" fill="white">
-          <path d="M16.004 0h-.008C7.174 0 0 7.176 0 16.004c0 3.5 1.128 6.744 3.046 9.378L1.054 31.29l6.118-1.958A15.9 15.9 0 0 0 16.004 32C24.826 32 32 24.826 32 16.004S24.826 0 16.004 0zm9.334 22.618c-.39 1.1-1.932 2.014-3.166 2.28-.846.18-1.95.324-5.668-1.218-4.762-1.974-7.826-6.804-8.064-7.118-.228-.314-1.928-2.568-1.928-4.898s1.218-3.476 1.652-3.952c.434-.476.948-.594 1.264-.594.314 0 .632.002.908.016.292.016.684-.11 1.07.816.39.94 1.326 3.232 1.442 3.466.118.234.196.508.04.82-.158.314-.236.508-.472.784-.234.274-.494.612-.706.822-.234.234-.478.49-.206.96s1.208 1.994 2.594 3.228c1.782 1.588 3.282 2.082 3.75 2.316.468.234.742.196 1.014-.118.274-.314 1.176-1.372 1.49-1.844.314-.472.632-.392 1.064-.234.434.156 2.724 1.284 3.19 1.518.468.234.78.352.896.548.118.196.118 1.138-.272 2.238z"/>
+          <path d="M16.004 0h-.008C7.174 0 0 7.176 0 16.004c0 3.5 1.128 6.744 3.046 9.378L1.054 31.29l6.118-1.958A15.9 15.9 0 0 0 16.004 32C24.826 32 32 24.826 32 16.004S24.826 0 16.004 0zm9.334 22.618c-.39 1.1-1.932 2.014-3.166 2.28-.846.18-1.95.324-5.668-1.218-4.762-1.974-7.826-6.804-8.064-7.118-.228-.314-1.928-2.568-1.928-4.898s1.218-3.476 1.652-3.952c.434-.476.948-.594 1.264-.594.314 0 .632.002.908.016.292.016.684-.11 1.07.816.39.94 1.326 3.232 1.442 3.466.118.234.196.508.04.82-.158.314-.236.508-.472.784-.234.274-.494.612-.706.822-.234.234-.478.49-.206.96s1.208 1.994 2.594 3.228c1.782 1.588 3.282 2.082 3.75 2.316.468.234.742.196 1.014-.118.274-.314 1.176-1.372 1.49-1.844.314-.472.632-.392 1.064-.234.434.156 2.724 1.284 3.19 1.518.468.234.78.352.896.548.118.196.118 1.138-.272 2.238z" />
         </svg>
       </a>
 
