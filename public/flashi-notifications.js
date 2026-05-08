@@ -15,7 +15,7 @@
   // Only run inside the Capacitor app
   if (!window.Capacitor) return;
 
-  const SCHEDULE_KEY = 'flashi_notif_scheduled_date';
+  const SCHEDULE_KEY = 'flashi_notif_scheduled_v2';
   const API_BASE = 'https://flashi.pk';
 
   async function initNotifications() {
