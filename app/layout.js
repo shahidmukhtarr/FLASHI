@@ -2,6 +2,7 @@ import './globals.css';
 import './download.css';
 import MobileBottomNav from './components/MobileBottomNav';
 import DeviceDetector from './components/DeviceDetector';
+import PullToRefresh from './components/PullToRefresh';
 import Script from 'next/script';
 
 // Initialize services on server startup (skip during build time)
@@ -77,7 +78,9 @@ export default function RootLayout({ children }) {
           })();
         `}} />
         <DeviceDetector />
-        {children}
+        <PullToRefresh>
+          {children}
+        </PullToRefresh>
         <MobileBottomNav />
       </body>
     </html>

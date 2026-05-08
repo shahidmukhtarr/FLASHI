@@ -47,6 +47,8 @@ export default function SalesClient() {
   const [user, setUser] = useState(null);
   const [isPremium, setIsPremium] = useState(false);
   const [authChecking, setAuthChecking] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 100;
 
   useEffect(() => {
     const storedUser = localStorage.getItem('flashi_user');
@@ -74,6 +76,7 @@ export default function SalesClient() {
 
   const handleStoreClick = async (store) => {
     setSelectedStore(store);
+    setCurrentPage(1);
 
     if (productsCache[store.name]) {
       return; // Already fetched
@@ -114,9 +117,12 @@ export default function SalesClient() {
 
   const handleBack = () => {
     setSelectedStore(null);
+    setCurrentPage(1);
   };
 
   const currentProducts = selectedStore ? productsCache[selectedStore.name] : [];
+  const totalPages = Math.ceil((currentProducts?.length || 0) / ITEMS_PER_PAGE);
+  const paginatedProducts = currentProducts?.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   if (authChecking) {
     return (
@@ -261,7 +267,7 @@ export default function SalesClient() {
               </div>
             ) : (
               <div className="products-grid">
-                {currentProducts?.map((product, index) => (
+                {paginatedProducts?.map((product, index) => (
                   <article className="product-card" key={`${product.store}-${index}`}>
                     <div className="store-badge" style={{ background: product.storeColor || '#6366f1' }}>
                       {product.store}
@@ -325,6 +331,50 @@ export default function SalesClient() {
                     <p style={{ color: 'var(--text-secondary)' }}>Check back later for new discounts and sales on {selectedStore.name}.</p>
                   </div>
                 )}
+              </div>
+            )}
+            
+            {!loading && totalPages > 1 && (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '3rem', gap: '1rem' }}>
+                <button
+                  onClick={() => {
+                    setCurrentPage(prev => Math.max(prev - 1, 1));
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  disabled={currentPage === 1}
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
+                    background: currentPage === 1 ? '#f1f5f9' : 'var(--primary, #369632)',
+                    color: currentPage === 1 ? '#94a3b8' : '#fff',
+                    cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Previous
+                </button>
+                <span style={{ fontWeight: 'bold', color: 'var(--text-secondary)' }}>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => {
+                    setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  disabled={currentPage === totalPages}
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
+                    background: currentPage === totalPages ? '#f1f5f9' : 'var(--primary, #369632)',
+                    color: currentPage === totalPages ? '#94a3b8' : '#fff',
+                    cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Next
+                </button>
               </div>
             )}
           </>

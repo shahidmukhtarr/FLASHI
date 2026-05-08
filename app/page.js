@@ -345,10 +345,8 @@ export default function HomePage() {
           setLoginForm(prev => ({ ...prev, name: '' }));
         } else {
           const userData = { full_name: data.user?.name || loginForm.name, email: loginForm.email };
-          setUser(userData);
           localStorage.setItem('flashi_user', JSON.stringify(userData));
-          setShowLoginModal(false);
-          showToast(`Welcome back, ${userData.full_name}!`, 'success');
+          window.location.reload();
         }
       } else {
         throw new Error(data.error || (isRegisterMode ? 'Registration failed' : 'Login failed'));
