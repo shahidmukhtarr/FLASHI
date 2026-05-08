@@ -106,6 +106,7 @@ export default function SubscribePage() {
     setUser(null);
     setSubscriptionStatus(null);
     localStorage.removeItem('flashi_user');
+    localStorage.setItem('flashi_skip_login', 'true');
     setFormData(prev => ({ ...prev, name: '', email: '' }));
   }
 

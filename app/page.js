@@ -362,6 +362,7 @@ export default function HomePage() {
   function signOut() {
     setUser(null);
     localStorage.removeItem('flashi_user');
+    localStorage.setItem('flashi_skip_login', 'true');
     showToast('Logged out successfully', 'success');
   }
 

@@ -24,6 +24,7 @@ export default function MobileBottomNav() {
 
   const handleLogout = () => {
     localStorage.removeItem('flashi_user');
+    localStorage.setItem('flashi_skip_login', 'true');
     setUser(null);
     window.location.reload();
   };

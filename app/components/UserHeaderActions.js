@@ -22,6 +22,7 @@ export default function UserHeaderActions({ onLogin }) {
 
   const handleLogout = () => {
     localStorage.removeItem('flashi_user');
+    localStorage.setItem('flashi_skip_login', 'true');
     setUser(null);
     window.location.reload();
   };
