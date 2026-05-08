@@ -187,27 +187,25 @@ function generateDailyNotifications(email) {
     const notifDate = new Date(today);
     notifDate.setHours(hours[i], Math.floor(seededRandom(seed + 8) * 45), 0, 0);
 
-    // Only include notifications that are in the past (already "sent")
-    if (notifDate <= new Date()) {
-      notifications.push({
-        id: `notif_${dayOfYear}_${i}`,
-        type: template.type,
-        icon: template.icon,
-        title,
-        body,
-        store,
-        product,
-        discount,
-        timestamp: notifDate.toISOString(),
-        read: false,
-        actionUrl: ['motivation', 'hope', 'hustle'].includes(template.type)
-          ? null
-          : template.type === 'store_sale' || template.type === 'flash_sale'
-            ? '/special-discounts'
-            : `/?q=${encodeURIComponent(product)}`,
-        store: ['motivation', 'hope', 'hustle'].includes(template.type) ? null : store,
-      });
-    }
+    // Return all notifications (including future ones) so the mobile app can schedule them
+    notifications.push({
+      id: `notif_${dayOfYear}_${i}`,
+      type: template.type,
+      icon: template.icon,
+      title,
+      body,
+      store,
+      product,
+      discount,
+      timestamp: notifDate.toISOString(),
+      read: false,
+      actionUrl: ['motivation', 'hope', 'hustle'].includes(template.type)
+        ? null
+        : template.type === 'store_sale' || template.type === 'flash_sale'
+          ? '/special-discounts'
+          : `/?q=${encodeURIComponent(product)}`,
+      store: ['motivation', 'hope', 'hustle'].includes(template.type) ? null : store,
+    });
   }
 
   // Also include yesterday's notifications (so there's always content)
