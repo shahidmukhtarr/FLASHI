@@ -218,31 +218,32 @@ export default function SalesClient() {
         ) : (
           <>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                 <button 
                   onClick={handleBack}
                   style={{
                     background: '#f1f5f9',
                     border: 'none',
-                    padding: '10px 20px',
+                    padding: '10px 16px',
                     borderRadius: '8px',
                     cursor: 'pointer',
                     fontWeight: 'bold',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
-                    color: '#334155'
+                    color: '#334155',
+                    whiteSpace: 'nowrap'
                   }}
                 >
                   ← Back to Stores
                 </button>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'nowrap' }}>
                   <img 
                     src={`https://www.google.com/s2/favicons?domain=${selectedStore.domain}&sz=64`} 
                     alt={selectedStore.name} 
-                    style={{ width: '32px', height: '32px', borderRadius: '50%' }} 
+                    style={{ width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0 }} 
                   />
-                  <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: 0 }}>{selectedStore.name} Sale</h2>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0, whiteSpace: 'nowrap' }}>{selectedStore.name} Sale</h2>
                 </div>
               </div>
               
