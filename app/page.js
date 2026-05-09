@@ -695,38 +695,7 @@ export default function HomePage() {
       </div>
 
 
-      {/* ═══ App Screenshots Section ═══ */}
-      <section className="screenshots-section" id="app-preview">
-        <div className="container">
-          <div className="section-header-center">
-            <div className="hero-badge">📱 See It In Action</div>
-            <h2 className="section-title">A Smarter Way to <span className="highlight-text">Shop Pakistan</span></h2>
-            <p className="section-subtitle">Search once, compare prices from every major store — all in one beautiful interface.</p>
-          </div>
-          <div className="screenshots-container">
-            <img
-              src="/flashi-app-preview.png"
-              alt="FLASHI App - Compare prices across Pakistani stores"
-              className="screenshot-mockup"
-              loading="lazy"
-            />
-          </div>
-          <div className="screenshot-features">
-            <div className="ss-feature">
-              <span className="ss-feature-icon">🔍</span>
-              <span>Search any product</span>
-            </div>
-            <div className="ss-feature">
-              <span className="ss-feature-icon">📊</span>
-              <span>Side-by-side comparison</span>
-            </div>
-            <div className="ss-feature">
-              <span className="ss-feature-icon">💰</span>
-              <span>Instant savings</span>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* ═══ APK Download Section ═══ */}
       <section className="app-download-section" id="download-app">
