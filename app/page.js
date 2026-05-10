@@ -794,6 +794,90 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ═══ Customer Reviews Section ═══ */}
+      <section className="reviews-section" id="reviews">
+        <div className="container">
+          <div className="section-header-center">
+            <h2 className="section-title">Loved by <span className="highlight-text">Smart Shoppers</span></h2>
+            <p className="section-subtitle">Join thousands of Pakistanis who are saving money every day.</p>
+          </div>
+          <div className="reviews-grid">
+            {/* Review 1 - Normal */}
+            <div className="review-card">
+              <div className="review-header">
+                <img src="https://i.pravatar.cc/150?u=fatima" alt="Fatima R." className="review-avatar" />
+                <div className="review-author-info">
+                  <span className="review-author-name">Fatima Raheem </span>
+                  <span className="review-author-type">Shopper</span>
+                </div>
+              </div>
+              <div className="review-stars">★★★★☆</div>
+              <p className="review-content">Mera naya hair straightener pe Rs. 2,000 save ho gaye! Flashi ne bataya ke Daraz pe local market se bohat sasta mil raha tha. Pakistani shoppers ke liye best app hai.</p>
+            </div>
+
+            {/* Review 2 - Premium */}
+            <div className="review-card premium-review">
+              <div className="premium-review-badge">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                Premium Member
+              </div>
+              <div className="review-header">
+                <img src="https://i.pravatar.cc/150?u=usman" alt="Usman A." className="review-avatar" />
+                <div className="review-author-info">
+                  <span className="review-author-name">Usman Ahmed </span>
+                  <span className="review-author-type">Tech Enthusiast</span>
+                </div>
+              </div>
+              <div className="review-stars">★★★★★</div>
+              <p className="review-content">The Premium flash alerts are insane. Grabbed an Infinix Note 40 before it went out of stock. Paid for itself 10x over.</p>
+            </div>
+
+            {/* Review 3 - Normal */}
+            <div className="review-card">
+              <div className="review-header">
+                <img src="https://i.pravatar.cc/150?u=bilal" alt="Bilal K." className="review-avatar" />
+                <div className="review-author-info">
+                  <span className="review-author-name">Bilal Khan</span>
+                  <span className="review-author-type">Shopper</span>
+                </div>
+              </div>
+              <div className="review-stars">★★★★★</div>
+              <p className="review-content">Ab main kuch bhi kharidne se pehle yahan prices compare karta hoon. Use karna bohat asaan aur fast hai. Ab 5 alag apps check karne ki zaroorat nahi parti.</p>
+            </div>
+
+            {/* Review 4 - Premium */}
+            <div className="review-card premium-review">
+              <div className="premium-review-badge">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                Premium Member
+              </div>
+              <div className="review-header">
+                <img src="https://i.pravatar.cc/150?u=ayesha" alt="Ayesha M." className="review-avatar" />
+                <div className="review-author-info">
+                  <span className="review-author-name">Ayesha Mumtaz</span>
+                  <span className="review-author-type">Fashion Shopper</span>
+                </div>
+              </div>
+              <div className="review-stars">★★★★★</div>
+              <p className="review-content">Got early access to Sapphire's winter clearance through the premium alert. Absolutely loved the speed and the savings. Highly recommended!</p>
+            </div>
+
+            {/* Review 5 - Normal */}
+            <div className="review-card">
+              <div className="review-header">
+                <img src="https://i.pravatar.cc/150?u=alis" alt="Ali S." className="review-avatar" />
+                <div className="review-author-info">
+                  <span className="review-author-name">Ali Sher </span>
+                  <span className="review-author-type">Shopper</span>
+                </div>
+              </div>
+              <div className="review-stars">★★★★☆</div>
+              <p className="review-content">Mobile accessories ki prices compare karne ke liye zabardast platform hai. Mujhe power bank local market se Rs. 1,500 sasta mil gaya yahan se.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ Premium Pricing Section ═══ */}
       <section className="pricing-section" id="pricing">
         <div className="container">
