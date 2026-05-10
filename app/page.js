@@ -977,7 +977,7 @@ export default function HomePage() {
                 Pakistan's smarter shopping companion. Compare prices across all major stores and never overpay again.
               </p>
               <div className="social-links" style={{ marginTop: '1.2rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <a href="https://www.instagram.com/flashipk/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="footer-link">
+                <a href="https://www.instagram.com/flashi.pk/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="footer-link">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                 </a>
               </div>
