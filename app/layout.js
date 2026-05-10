@@ -30,13 +30,22 @@ export const viewport = {
 
 export const metadata = {
   metadataBase: new URL('https://flashi.pk'),
-  title: 'Flashi – Pakistan First Smart Shopping Platform.',
-  description: "Search any product and instantly compare prices from Pakistan's top stores in one place..",
-  keywords: 'price comparison app Pakistan, discount app Pakistan, cheap shopping Pakistan, flashi app, flashi Pakistan, flashi pk, flashi Pakistan, flashi app, flashi pk, flashi deals, flashi discounts, flashi price comparison, flashi shopping app, flashi online deals Pakistan, flashi savings app',
+  title: 'Compare Prices in Pakistan — Smart Watches, Earbuds, Gadgets | Flashi',
+  description: 'Compare prices from 50+ Pakistani stores including Daraz, PriceOye & more. Find lowest prices on earbuds, smart watches, chargers, gaming accessories & mobile gadgets. Save up to Rs. 5,000 with Flashi.pk',
+  keywords: 'compare prices pakistan, price comparison pakistan, earbuds price in pakistan, smart watch price in pakistan, charger price pakistan, gaming accessories pakistan, mobile accessories pakistan, best deals pakistan, online shopping pakistan, cheapest prices pakistan, budget electronics pakistan, gadgets pakistan',
   robots: 'index, follow',
   openGraph: {
-    title: 'Flashi – Price Comparison App in Pakistan',
-    description: 'Find the best deals and discounts with Flashi.',
+    title: 'Compare Prices from 50+ Pakistani Stores — Earbuds, Smart Watches & More | Flashi',
+    description: 'Find the lowest prices on earbuds, smart watches, chargers & gadgets in Pakistan. Compare across Daraz, PriceOye, Mega.pk & 50+ stores instantly.',
+    images: ['/logo.png'],
+    type: 'website',
+    locale: 'en_PK',
+    siteName: 'Flashi',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Compare Prices in Pakistan — Smart Watches, Earbuds, Gadgets | Flashi',
+    description: 'Find the lowest prices on earbuds, smart watches, chargers & gadgets. Compare across 50+ Pakistani stores.',
     images: ['/logo.png'],
   },
   alternates: {
@@ -50,10 +59,51 @@ export const metadata = {
   }
 };
 
+// JSON-LD Structured Data for SEO
+function JsonLdSchema() {
+  const schemas = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Flashi',
+      url: 'https://flashi.pk',
+      logo: 'https://flashi.pk/logo.png',
+      description: "Pakistan's #1 price comparison platform. Compare prices from 50+ stores including Daraz, PriceOye, Mega.pk & more.",
+      sameAs: ['https://www.instagram.com/flashi.pk/'],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'customer service',
+        url: 'https://flashi.pk/contact',
+        availableLanguage: ['English', 'Urdu'],
+      },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Flashi',
+      url: 'https://flashi.pk',
+      description: 'Compare prices across 50+ Pakistani online stores',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: 'https://flashi.pk/?q={search_term_string}',
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ];
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas) }}
+    />
+  );
+}
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <JsonLdSchema />
         <Script
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6296239062398160"
           strategy="afterInteractive"

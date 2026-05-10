@@ -2,16 +2,17 @@ import Link from 'next/link';
 import SalesNavLink from '../components/SalesNavLink';
 
 export const metadata = {
-  title: 'About Us - FLASHI | Pakistan\'s Price Comparison Engine',
-  description: 'Learn about FLASHI — Pakistan\'s smartest price comparison platform. We help millions of Pakistani shoppers find the best deals across top stores like Daraz, PriceOye, Mega.pk, and more.',
-  keywords: 'about flashi, flashi pakistan, price comparison pakistan, flashi team, about us, flashi about',
+  title: 'About Flashi — Pakistan\'s #1 Price Comparison Platform',
+  description: 'Learn about Flashi — Pakistan\'s smartest price comparison platform. Compare prices across Daraz, PriceOye, Mega.pk & 50+ stores. Find the best deals on gadgets, earbuds, smart watches & more.',
+  keywords: 'about flashi, price comparison platform pakistan, compare prices online pakistan, best deals pakistan, flashi team',
   robots: 'index, follow',
+  alternates: { canonical: 'https://flashi.pk/about' },
   openGraph: {
-    title: 'About Us - FLASHI | Pakistan\'s Price Comparison Engine',
-    description: 'Learn about FLASHI — Pakistan\'s smartest price comparison platform.',
+    title: 'About Flashi — Pakistan\'s #1 Price Comparison Platform',
+    description: 'Compare prices from 50+ Pakistani stores. Find the lowest prices on gadgets, earbuds & smart watches.',
     type: 'website',
     locale: 'en_PK',
-    siteName: 'FLASHI',
+    siteName: 'Flashi',
   },
 };
 

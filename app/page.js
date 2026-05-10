@@ -557,6 +557,43 @@ export default function HomePage() {
         </div>
       )}
 
+      {/* ═══ Browse Categories Section ═══ */}
+      {products.length === 0 && !loading && (
+        <section className="categories-section" id="browse-categories">
+          <div className="container">
+            <h2 className="section-title" style={{ textAlign: 'center', marginBottom: '0.5rem' }}>Browse by <span className="highlight-text">Category</span></h2>
+            <p style={{ textAlign: 'center', color: 'var(--secondary-text)', marginBottom: '0' }}>Compare prices across Pakistan&apos;s most popular gadget categories</p>
+            <div className="categories-grid">
+              <a href="/smart-watches" className="category-card">
+                <span className="category-card-emoji">⌚</span>
+                <span className="category-card-name">Smart Watches</span>
+                <span className="category-card-desc">Compare prices from Rs. 1,500</span>
+              </a>
+              <a href="/wireless-earbuds" className="category-card">
+                <span className="category-card-emoji">🎧</span>
+                <span className="category-card-name">Wireless Earbuds</span>
+                <span className="category-card-desc">Budget picks from Rs. 800</span>
+              </a>
+              <a href="/chargers-power-banks" className="category-card">
+                <span className="category-card-emoji">🔌</span>
+                <span className="category-card-name">Chargers & Power Banks</span>
+                <span className="category-card-desc">Fast chargers & power banks</span>
+              </a>
+              <a href="/gaming-accessories" className="category-card">
+                <span className="category-card-emoji">🎮</span>
+                <span className="category-card-name">Gaming Accessories</span>
+                <span className="category-card-desc">Headsets, mice, keyboards</span>
+              </a>
+              <a href="/mobile-accessories" className="category-card">
+                <span className="category-card-emoji">📱</span>
+                <span className="category-card-name">Mobile Accessories</span>
+                <span className="category-card-desc">Covers, cables & more</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
       {loading ? (
         <section className="loading-section">
           <div className="container">
@@ -1072,7 +1109,18 @@ export default function HomePage() {
                 <li><a href="/">Home</a></li>
                 <li><a href="/special-discounts">Sale Alerts</a></li>
                 <li><a href="/subscribe">Premium</a></li>
+                <li><a href="/blog">Blog &amp; Guides</a></li>
                 <li><a href="/flashi-mobile.apk" download onClick={() => trackDownload('footer')}>Download App</a></li>
+              </ul>
+            </div>
+            <div className="footer-links-col">
+              <h4 className="footer-title">Categories</h4>
+              <ul className="footer-links">
+                <li><a href="/smart-watches">Smart Watches</a></li>
+                <li><a href="/wireless-earbuds">Wireless Earbuds</a></li>
+                <li><a href="/chargers-power-banks">Chargers &amp; Power Banks</a></li>
+                <li><a href="/gaming-accessories">Gaming Accessories</a></li>
+                <li><a href="/mobile-accessories">Mobile Accessories</a></li>
               </ul>
             </div>
             <div className="footer-links-col">

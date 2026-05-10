@@ -4,7 +4,7 @@ export default function robots() {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/special-discounts'],
+        disallow: ['/api/', '/admin/'],
       },
     ],
     sitemap: 'https://flashi.pk/sitemap.xml',
