@@ -1,5 +1,3 @@
-import blogPosts from './blog/blogData';
-
 const BASE_URL = 'https://flashi.pk';
 
 export default function sitemap() {
@@ -10,12 +8,6 @@ export default function sitemap() {
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1.0,
-    },
-    {
-      url: `${BASE_URL}/blog`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
     },
     {
       url: `${BASE_URL}/about`,
@@ -49,13 +41,5 @@ export default function sitemap() {
     },
   ];
 
-  // Dynamic blog post pages
-  const blogPages = blogPosts.map((post) => ({
-    url: `${BASE_URL}/blog/${post.slug}`,
-    lastModified: new Date(post.date || new Date()),
-    changeFrequency: 'monthly',
-    priority: 0.8,
-  }));
-
-  return [...staticPages, ...blogPages];
+  return staticPages;
 }

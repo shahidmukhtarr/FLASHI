@@ -1079,7 +1079,7 @@ export default function HomePage() {
               <h4 className="footer-title">Support</h4>
               <ul className="footer-links">
                 <li><a href="/contact">Contact Us</a></li>
-                <li><a href="/blog">Blog</a></li>
+
                 <li><a href="/about">About Us</a></li>
               </ul>
             </div>
