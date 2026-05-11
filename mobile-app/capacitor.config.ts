@@ -9,6 +9,12 @@ const config: CapacitorConfig = {
   server: {
     url: 'https://flashi.pk',
     cleartext: true,
+    // When the live URL can't be reached (no internet, server down, etc.)
+    // show our branded offline page instead of Android's ugly error screen.
+    errorPath: '/index.html',
+    // Use HTTPS scheme for the local WebView server to avoid mixed-content
+    // issues when the live site redirects or loads sub-resources.
+    androidScheme: 'https',
     // Only allow navigation to our own domain inside the WebView.
     // External store links (Daraz, PriceOye, etc.) will automatically
     // open in the system browser so the user can tap back to return.

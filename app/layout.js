@@ -125,6 +125,13 @@ export default function RootLayout({ children }) {
             } else {
               document.documentElement.classList.add('is-browser');
             }
+
+            // Register service worker for offline fallback
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').catch(function() {});
+              });
+            }
           })();
         `}} />
         <DeviceDetector />

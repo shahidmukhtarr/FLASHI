@@ -16,26 +16,27 @@
       min-height: 100vh;
       overflow: hidden;
     }
-    .loader-container {
+    .container {
       text-align: center;
-      animation: fadeIn 0.5s ease-in;
+      padding: 2rem;
+      max-width: 400px;
     }
     .logo {
       width: 100px;
       height: 100px;
       margin-bottom: 24px;
       border-radius: 22px;
-      box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 8px 32px rgba(46, 125, 50, 0.3);
     }
     h1 {
       font-size: 28px;
       font-weight: 700;
       margin-bottom: 8px;
-      background: linear-gradient(135deg, #6366f1, #a855f7);
+      background: linear-gradient(135deg, #2e7d32, #4caf50);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    p {
+    .subtitle {
       font-size: 14px;
       color: #94a3b8;
       margin-bottom: 32px;
@@ -43,12 +44,121 @@
     .spinner {
       width: 40px;
       height: 40px;
-      border: 3px solid rgba(99, 102, 241, 0.2);
-      border-top-color: #6366f1;
+      border: 3px solid rgba(46, 125, 50, 0.2);
+      border-top-color: #2e7d32;
       border-radius: 50%;
-      margin: 0 auto;
+      margin: 0 auto 24px;
       animation: spin 0.8s linear infinite;
     }
+
+    /* ── Offline / Error state ── */
+    .offline-state {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+    .offline-state.visible {
+      display: block;
+    }
+    .loading-state {
+      display: block;
+      animation: fadeIn 0.5s ease-in;
+    }
+    .loading-state.hidden {
+      display: none;
+    }
+
+    .offline-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .offline-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .offline-msg {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+    .retry-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 36px;
+      background: linear-gradient(135deg, #2e7d32, #4caf50);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(46, 125, 50, 0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .retry-btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 4px 15px rgba(46, 125, 50, 0.25);
+    }
+    .retry-btn.retrying {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .retry-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: none;
+    }
+    .retry-btn.retrying .retry-spinner {
+      display: inline-block;
+    }
+    .retry-btn.retrying .retry-text {
+      display: none;
+    }
+
+    .tips {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .tips-title {
+      font-size: 12px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .tips ul {
+      list-style: none;
+      text-align: left;
+    }
+    .tips li {
+      font-size: 13px;
+      color: #94a3b8;
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tips li::before {
+      content: '•';
+      color: #4caf50;
+      font-weight: bold;
+    }
+    .attempt-count {
+      margin-top: 16px;
+      font-size: 12px;
+      color: #475569;
+    }
+
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -59,11 +169,123 @@
   </style>
 </head>
 <body>
-  <div class="loader-container">
-    <img src="logo.png" alt="Flashi Logo" class="logo" onerror="this.style.display='none'" />
-    <h1>Flashi</h1>
-    <p>Loading your smart shopping experience...</p>
-    <div class="spinner"></div>
+  <div class="container">
+    <!-- Loading state (shown first) -->
+    <div class="loading-state" id="loadingState">
+      <img src="logo.png" alt="Flashi Logo" class="logo" onerror="this.style.display='none'" />
+      <h1>Flashi</h1>
+      <p class="subtitle">Loading your smart shopping experience...</p>
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Offline state (shown when server unreachable) -->
+    <div class="offline-state" id="offlineState">
+      <span class="offline-icon">📡</span>
+      <img src="logo.png" alt="Flashi Logo" class="logo" style="width:72px;height:72px;" onerror="this.style.display='none'" />
+      <div class="offline-title">Connection Issue</div>
+      <p class="offline-msg">
+        Unable to connect to Flashi. This usually happens when your internet
+        connection is weak or the server is waking up. Please try again.
+      </p>
+      <button class="retry-btn" id="retryBtn" onclick="retryConnection()">
+        <span class="retry-text">↻ Try Again</span>
+        <span class="retry-spinner"></span>
+      </button>
+      <div class="tips">
+        <div class="tips-title">Quick fixes</div>
+        <ul>
+          <li>Check your Wi-Fi or mobile data</li>
+          <li>Turn airplane mode on/off</li>
+          <li>Wait a few seconds and retry</li>
+        </ul>
+      </div>
+      <div class="attempt-count" id="attemptCount"></div>
+    </div>
   </div>
+
+  <script>
+    var LIVE_URL = 'https://flashi.pk';
+    var MAX_AUTO_RETRIES = 3;
+    var RETRY_DELAY_MS = 3000;
+    var LOAD_TIMEOUT_MS = 15000;
+    var attempts = 0;
+
+    /**
+     * Try to reach the live server.
+     * If reachable → redirect the WebView to it.
+     * If not → show the offline UI.
+     */
+    function checkServer() {
+      attempts++;
+      var controller = new AbortController();
+      var timeoutId = setTimeout(function() { controller.abort(); }, LOAD_TIMEOUT_MS);
+
+      fetch(LIVE_URL + '/api/health', {
+        method: 'GET',
+        mode: 'no-cors',   // just need to know it's reachable
+        cache: 'no-store',
+        signal: controller.signal
+      })
+      .then(function() {
+        clearTimeout(timeoutId);
+        // Server is reachable — navigate there
+        window.location.replace(LIVE_URL);
+      })
+      .catch(function() {
+        clearTimeout(timeoutId);
+        if (attempts <= MAX_AUTO_RETRIES) {
+          // Auto-retry silently
+          setTimeout(checkServer, RETRY_DELAY_MS);
+        } else {
+          showOffline();
+        }
+      });
+    }
+
+    function showOffline() {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('offlineState').classList.add('visible');
+      updateAttemptCount();
+    }
+
+    function showLoading() {
+      document.getElementById('offlineState').classList.remove('visible');
+      document.getElementById('loadingState').classList.remove('hidden');
+    }
+
+    function retryConnection() {
+      var btn = document.getElementById('retryBtn');
+      btn.classList.add('retrying');
+      showLoading();
+      attempts = 0;
+
+      // Small delay so user sees feedback
+      setTimeout(function() {
+        checkServer();
+        // If still no luck after timeout, re-show offline
+        setTimeout(function() {
+          btn.classList.remove('retrying');
+        }, LOAD_TIMEOUT_MS + 1000);
+      }, 500);
+    }
+
+    function updateAttemptCount() {
+      var el = document.getElementById('attemptCount');
+      if (attempts > MAX_AUTO_RETRIES) {
+        el.textContent = 'Tried ' + attempts + ' times • Tap retry to try again';
+      }
+    }
+
+    // Also listen for online/offline events
+    window.addEventListener('online', function() {
+      // Device came back online — auto-retry
+      attempts = 0;
+      showLoading();
+      checkServer();
+    });
+
+    // Start checking as soon as the page loads
+    checkServer();
+  </script>
 </body>
 </html>
