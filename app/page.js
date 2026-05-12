@@ -140,16 +140,31 @@ export default function HomePage() {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible' && products.length === 0) {
+        // 1. Try sessionStorage cache (fast, same session)
         const cached = loadSearchCache();
         if (cached && cached.products?.length > 0) {
           setQuery(cached.q);
           setProducts(cached.products);
           setMeta(cached.meta || '');
-          // Also keep URL in sync
           const url = new URL(window.location);
           url.searchParams.set('q', cached.q);
           window.history.replaceState({}, '', url.toString());
+          return;
         }
+        // 2. Fallback: localStorage last search (survives app kill)
+        try {
+          const raw = localStorage.getItem(LAST_SEARCH_KEY);
+          if (raw) {
+            const data = JSON.parse(raw);
+            if (data.q && data.ts && (Date.now() - data.ts < 30 * 60 * 1000)) {
+              setQuery(data.q);
+              handleSearch(data.q, false);
+              const url = new URL(window.location);
+              url.searchParams.set('q', data.q);
+              window.history.replaceState({}, '', url.toString());
+            }
+          }
+        } catch (_) {}
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -178,7 +193,24 @@ export default function HomePage() {
     }
 
     // Check if we should show mobile splash
-    if (window.innerWidth <= 768 && !isUserLoggedIn && !skippedLogin) {
+    // Don't show if there's a pending search to restore (user is returning from store)
+    let hasPendingSearch = false;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('q')) {
+        hasPendingSearch = true;
+      } else {
+        const raw = localStorage.getItem(LAST_SEARCH_KEY);
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (data.q && data.ts && (Date.now() - data.ts < 30 * 60 * 1000)) {
+            hasPendingSearch = true;
+          }
+        }
+      }
+    } catch (_) {}
+
+    if (window.innerWidth <= 768 && !isUserLoggedIn && !skippedLogin && !hasPendingSearch) {
       setShowMobileSplash(true);
     }
   }, []);
@@ -208,6 +240,32 @@ export default function HomePage() {
         setQuery(q);
         handleSearch(q, false);
       }
+    } else {
+      // No ?q= in URL — check localStorage for last search (survives app kills)
+      // This handles the case where Android kills the WebView and restarts at flashi.pk
+      try {
+        const raw = localStorage.getItem(LAST_SEARCH_KEY);
+        if (raw) {
+          const data = JSON.parse(raw);
+          // Only restore if within 30 minutes
+          if (data.q && data.ts && (Date.now() - data.ts < 30 * 60 * 1000)) {
+            setQuery(data.q);
+            // Try sessionStorage cache first for instant display
+            const cached = loadSearchCache();
+            if (cached && cached.q === data.q && cached.products?.length > 0) {
+              setProducts(cached.products);
+              setMeta(cached.meta || '');
+            } else {
+              // No session cache — fetch fresh
+              handleSearch(data.q, false);
+            }
+            // Put ?q= back in URL so bookmarking / sharing works
+            const url = new URL(window.location);
+            url.searchParams.set('q', data.q);
+            window.history.replaceState({}, '', url.toString());
+          }
+        }
+      } catch (_) {}
     }
 
     if (login === 'true') {
