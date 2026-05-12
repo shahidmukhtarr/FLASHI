@@ -512,8 +512,8 @@ export default function HomePage() {
                       <span className="brand-logo-name">Sapphire</span>
                     </div>
                     <div className="trust-logo-card">
-                      <img src="https://www.google.com/s2/favicons?domain=stationers.pk&sz=128" alt="Stationers.pk" className="brand-logo-img" />
-                      <span className="brand-logo-name">Stationers</span>
+                      <img src="https://www.google.com/s2/favicons?domain=khaadi.com&sz=128" alt="Khaadi" className="brand-logo-img" />
+                      <span className="brand-logo-name">Khaadi</span>
                     </div>
                   </div>
                 </div>
