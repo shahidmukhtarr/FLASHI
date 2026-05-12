@@ -401,7 +401,7 @@ export default function SubscribePage() {
                 </div>
                 <div className="sub-faq-item">
                   <h4>Can I cancel anytime?</h4>
-                  <p>Note: You can't cancel once purchased. Contact us to cancel it. Thank you.</p>
+                  <p>You can cancel it anytime, just contact us.</p>
                 </div>
               </div>
             </div>
