@@ -76,8 +76,11 @@ function toastClass(type) {
   return `toast ${type}`;
 }
 
-// ── Search result cache helpers (sessionStorage) ──────────────────────────
+// ── Search result cache helpers ─────────────────────────────────────────────
+// sessionStorage: same-session restore (fast, cleared when tab/app closes)
+// localStorage:   cross-session restore (survives app kill → used by index.html)
 const SEARCH_CACHE_KEY = 'flashi_search_cache';
+const LAST_SEARCH_KEY  = 'flashi_last_search';
 
 function saveSearchCache(q, prods, metaStr) {
   try {
@@ -97,6 +100,13 @@ function loadSearchCache() {
     }
     return cached;
   } catch (_) { return null; }
+}
+
+/** Persist the last query to localStorage so index.html can restore it on cold start. */
+function saveLastSearch(q) {
+  try {
+    localStorage.setItem(LAST_SEARCH_KEY, JSON.stringify({ q, ts: Date.now() }));
+  } catch (_) {}
 }
 
 export default function HomePage() {
@@ -307,6 +317,7 @@ export default function HomePage() {
         setMeta(metaStr);
         // ── Cache results for app-resume restore ──
         saveSearchCache(searchTerm, filteredProducts, metaStr);
+        saveLastSearch(searchTerm);
 
         if (data.needsLiveScrape) {
           setLiveLoading(true);
@@ -336,6 +347,7 @@ export default function HomePage() {
                 setMeta(newMetaStr);
                 // ── Update cache with fresh live results ──
                 saveSearchCache(searchTerm, newFiltered, newMetaStr);
+                saveLastSearch(searchTerm);
               }
             })
             .catch(console.error)

@@ -215,6 +215,22 @@
      * If reachable → redirect the WebView to it.
      * If not → show the offline UI.
      */
+    /**
+     * Read the last search query from localStorage (saved by page.js).
+     * Returns the query string if it exists and is < 30 minutes old, else null.
+     */
+    function getLastSearch() {
+      try {
+        var raw = localStorage.getItem('flashi_last_search');
+        if (!raw) return null;
+        var data = JSON.parse(raw);
+        if (!data.q || !data.ts) return null;
+        // Only restore if within 30 minutes
+        if (Date.now() - data.ts > 30 * 60 * 1000) return null;
+        return data.q;
+      } catch (e) { return null; }
+    }
+
     function checkServer() {
       attempts++;
       var controller = new AbortController();
@@ -228,8 +244,12 @@
       })
       .then(function() {
         clearTimeout(timeoutId);
-        // Server is reachable — navigate there
-        window.location.replace(LIVE_URL);
+        // Server is reachable — navigate there, restoring last search if available
+        var lastQuery = getLastSearch();
+        var target = lastQuery
+          ? LIVE_URL + '/?q=' + encodeURIComponent(lastQuery)
+          : LIVE_URL;
+        window.location.replace(target);
       })
       .catch(function() {
         clearTimeout(timeoutId);
