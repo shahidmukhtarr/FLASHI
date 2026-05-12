@@ -455,7 +455,7 @@ export default function HomePage() {
                 FLASHI - Find Lowest Prices Across Online Pakistani Stores.
               </h1>
               <p className="hero-subtitle">
-                Search any product — from phones to fashion — and find the lowest price from Daraz, PriceOye, Limelight, Sapphire & more. Trusted by 500+ smart shoppers across Pakistan.
+                Search any product — from phones to fashion — and find the lowest price from Daraz, PriceOye, Limelight, Sapphire, Khaadi & more. Trusted by 500+ smart shoppers across Pakistan.
               </p>
 
               <div className="search-container" id="search-container">
@@ -921,7 +921,7 @@ export default function HomePage() {
           <div className="section-header-center">
             <div className="hero-badge">💎 Go Premium</div>
             <h2 className="section-title">Unlock <span className="highlight-text">Exclusive Deals</span> Others Miss</h2>
-            <p className="section-subtitle">Premium members save 3x more with early access to flash sales and price drops from Limelight, Sapphire & more.</p>
+            <p className="section-subtitle">Premium members save 3x more with early access to flash sales and price drops from Limelight, Sapphire, Khaadi, J. & more.</p>
           </div>
           <div className="pricing-grid">
             {/* Free Plan */}
@@ -950,7 +950,7 @@ export default function HomePage() {
                 </li>
                 <li className="pricing-feature disabled">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                  Exclusive Limelight & Sapphire deals
+                  Exclusive Limelight, Khaadi, J. & Sapphire deals
                 </li>
               </ul>
               <a href="/" className="pricing-btn pricing-btn-outline">Start Free</a>
@@ -975,7 +975,7 @@ export default function HomePage() {
                 </li>
                 <li className="pricing-feature">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  Limelight & Sapphire sale access
+                  Limelight, Sapphire, Khaadi & J. sale access
                 </li>
                 <li className="pricing-feature">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>

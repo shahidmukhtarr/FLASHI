@@ -172,7 +172,7 @@ export default function SubscribePage() {
             Never Miss a <span className="sub-highlight">Deal</span> Again
           </h1>
           <p className="sub-hero-subtitle">
-            Get exclusive price drop alerts, sale notifications from Limelight & Sapphire,
+            Get exclusive price drop alerts, sale notifications from Limelight, Sapphire, Khaadi, J. & Uniworth,
             and early access to the best deals across all stores — delivered straight to you.
           </p>
         </div>
@@ -249,7 +249,7 @@ export default function SubscribePage() {
                   <div className="sub-feature-item">
                     <span className="sub-feature-icon"></span>
                     <div>
-                      <strong>Limelight & Sapphire Sale Alerts</strong>
+                      <strong>Limelight, Sapphire, Khaadi & J. Sale Alerts</strong>
                       <p>Be the first to know about flash sales, clearance events, and new collection launches</p>
                     </div>
                   </div>
@@ -397,7 +397,7 @@ export default function SubscribePage() {
                 </div>
                 <div className="sub-faq-item">
                   <h4>What notifications will I receive?</h4>
-                  <p>Price drop alerts, flash sale notifications from Limelight & Sapphire, and curated daily deals from all stores.</p>
+                  <p>Price drop alerts, flash sale notifications from Limelight, Sapphire, Khaadi, J. & Uniworth, and curated daily deals from all stores.</p>
                 </div>
                 <div className="sub-faq-item">
                   <h4>Can I cancel anytime?</h4>

@@ -4,13 +4,13 @@ import SalesClient from './SalesClient';
 import UserHeaderActions from '../components/UserHeaderActions';
 
 export const metadata = {
-  title: 'Flash Sales & Special Discounts in Pakistan — Limelight, Sapphire, Daraz | Flashi',
-  description: 'Get exclusive access to active flash sales and special discounts from Limelight, Sapphire, Daraz, Naheed & Highfy. Premium members get early sale alerts. Compare deals on Flashi.pk',
+  title: 'Flash Sales & Special Discounts in Pakistan — Limelight, Sapphire, Khaadi, J., Daraz | Flashi',
+  description: 'Get exclusive access to active flash sales and special discounts from Limelight, Sapphire, Khaadi, J., Uniworth, Daraz, Naheed & Highfy. Premium members get early sale alerts. Compare deals on Flashi.pk',
   keywords: 'flash sales pakistan, special discounts pakistan, limelight sale today, sapphire sale pakistan, daraz flash sale, online sale pakistan, best deals pakistan today',
   robots: 'index, follow',
   alternates: { canonical: 'https://flashi.pk/special-discounts' },
   openGraph: {
-    title: 'Flash Sales & Discounts in Pakistan — Limelight, Sapphire, Daraz | Flashi',
+    title: 'Flash Sales & Discounts in Pakistan — Limelight, Sapphire, Khaadi, J., Daraz | Flashi',
     description: 'Active flash sales from top Pakistani brands. Premium alerts so you never miss a deal.',
     type: 'website',
     locale: 'en_PK',
