@@ -3,6 +3,7 @@ import './download.css';
 import MobileBottomNav from './components/MobileBottomNav';
 import DeviceDetector from './components/DeviceDetector';
 import PullToRefresh from './components/PullToRefresh';
+import AnnouncementBar from './components/AnnouncementBar';
 import Script from 'next/script';
 
 // Initialize services on server startup (skip during build time)
@@ -134,6 +135,7 @@ export default function RootLayout({ children }) {
             }
           })();
         `}} />
+        <AnnouncementBar />
         <DeviceDetector />
         <PullToRefresh>
           {children}

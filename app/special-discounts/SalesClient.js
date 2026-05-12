@@ -12,31 +12,49 @@ const storesConfig = [
     name: 'Limelight',
     url: 'https://www.limelight.pk/collections/sale',
     domain: 'limelight.pk',
-    offer: 'Special Sale Collection'
+    offer: 'Sale Collection'
   },
   {
     name: 'Sapphire',
     url: 'https://pk.sapphireonline.pk/collections/sale',
     domain: 'sapphireonline.pk',
-    offer: 'Discounted Items'
+    offer: 'Sale Collection'
   },
   {
     name: 'Daraz',
     url: 'https://www.daraz.pk/catalog/?q=sale&_keyori=ss&from=input&spm=a2a0e.searchlist.search.go.6a091e2c9n2w8F',
     domain: 'daraz.pk',
-    offer: 'Flash Sales & Deals'
+    offer: 'Sale Collection'
   },
   {
     name: 'Naheed',
     url: 'https://www.naheed.pk/special-offers?utm_source=website&utm_medium=onsalefloatingicon&utm_campaign=generic',
     domain: 'naheed.pk',
-    offer: 'Special Offers'
+    offer: 'Sale Collection'
   },
   {
     name: 'Highfy',
     url: 'https://highfy.pk/collections/flat-50-sku',
     domain: 'highfy.pk',
     offer: 'Flat 50% Off'
+  },
+  {
+    name: 'J.',
+    url: 'https://www.junaidjamshed.com/pages/sale',
+    domain: 'junaidjamshed.com',
+    offer: 'Junaid Jamshed Sale'
+  },
+  {
+    name: 'Khaadi',
+    url: 'https://pk.khaadi.com/sale/',
+    domain: 'khaadi.com',
+    offer: 'Up to 50% Off'
+  },
+  {
+    name: 'Uniworth',
+    url: 'https://uniworthshop.com/collections/sale',
+    domain: 'uniworthshop.com',
+    offer: 'Mid Summer Sale'
   }
 ];
 
@@ -85,7 +103,7 @@ export default function SalesClient() {
     setLoading(true);
     try {
       const res = await fetch(`/api/sales?url=${encodeURIComponent(store.url)}`);
-      
+
       if (!res.ok) {
         if (res.status >= 502 && res.status <= 504) {
           throw new Error('Internet Connection Timed Out');
@@ -165,14 +183,14 @@ export default function SalesClient() {
   return (
     <section style={{ padding: '80px 0', background: 'var(--bg-primary, #fff)' }}>
       <div className="container">
-        
+
         {!selectedStore ? (
           <>
             <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
               <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 1rem 0' }}>Select a Store</h2>
               <p style={{ color: 'var(--text-secondary)' }}>Click on any store below to instantly browse their active sale collection directly here.</p>
             </div>
-            
+
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
@@ -181,7 +199,7 @@ export default function SalesClient() {
               margin: '0 auto'
             }}>
               {storesConfig.map(store => (
-                <div 
+                <div
                   key={store.name}
                   onClick={() => handleStoreClick(store)}
                   className="step-card"
@@ -195,10 +213,10 @@ export default function SalesClient() {
                     border: '1px solid var(--border-color)',
                   }}
                 >
-                  <img 
-                    src={`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`} 
-                    alt={store.name} 
-                    style={{ width: '48px', height: '48px', marginBottom: '0.8rem', borderRadius: '50%' }} 
+                  <img
+                    src={`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`}
+                    alt={store.name}
+                    style={{ width: '48px', height: '48px', marginBottom: '0.8rem', borderRadius: '50%' }}
                   />
                   <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', fontWeight: 700 }}>{store.name}</h3>
                   <div style={{
@@ -219,7 +237,7 @@ export default function SalesClient() {
           <>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                <button 
+                <button
                   onClick={handleBack}
                   style={{
                     background: '#f1f5f9',
@@ -238,15 +256,15 @@ export default function SalesClient() {
                   ← Back to Stores
                 </button>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'nowrap' }}>
-                  <img 
-                    src={`https://www.google.com/s2/favicons?domain=${selectedStore.domain}&sz=64`} 
-                    alt={selectedStore.name} 
-                    style={{ width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0 }} 
+                  <img
+                    src={`https://www.google.com/s2/favicons?domain=${selectedStore.domain}&sz=64`}
+                    alt={selectedStore.name}
+                    style={{ width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0 }}
                   />
                   <h2 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0, whiteSpace: 'nowrap' }}>{selectedStore.name} Sale</h2>
                 </div>
               </div>
-              
+
               {loading && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#f8f9fa', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.9rem' }}>
                   <span className="live-dot" style={{ display: 'inline-block', width: '8px', height: '8px', background: '#eab308', borderRadius: '50%', animation: 'pulse 1.5s infinite' }}></span>
@@ -324,7 +342,7 @@ export default function SalesClient() {
                     </div>
                   </article>
                 ))}
-                
+
                 {currentProducts?.length === 0 && !loading && (
                   <div style={{ textAlign: 'center', padding: '4rem 0', gridColumn: '1 / -1' }}>
                     <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🛒</div>
@@ -334,7 +352,7 @@ export default function SalesClient() {
                 )}
               </div>
             )}
-            
+
             {!loading && totalPages > 1 && (
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '3rem', gap: '1rem' }}>
                 <button

@@ -201,6 +201,167 @@ async function fetchHighfySale(url, limit = 500) {
   }
 }
 
+async function fetchJunaidJamshedSale(url, limit = 500) {
+  // J. / Junaid Jamshed is a Shopify store
+  try {
+    const apiUrl = `https://www.junaidjamshed.com/collections/sale/products.json?limit=250`;
+    const res = await fetchWithRetry(() => axios.get(apiUrl, {
+      headers: { ...getRequestHeaders(), Accept: 'application/json' },
+      timeout: 15000,
+    }), 3, 3000);
+    const items = res.data?.products || [];
+    return items.slice(0, limit).map(p => {
+      const variant = p.variants?.[0] || {};
+      const price = parseFloat(variant.price || '0');
+      const comparePrice = parseFloat(variant.compare_at_price || '0');
+      let image = p.images?.[0]?.src || '';
+      if (image.startsWith('//')) image = 'https:' + image;
+      return {
+        title: sanitizeText(p.title),
+        price,
+        originalPrice: comparePrice > price ? comparePrice : null,
+        image,
+        url: `https://www.junaidjamshed.com/products/${p.handle}`,
+        store: 'J.', storeColor: '#1b3a2d', inStock: variant.available !== false,
+      };
+    }).filter(p => p.title && p.price > 0);
+  } catch (e) {
+    // Fallback: HTML scraping
+    try {
+      const res = await fetchWithRetry(() => axios.get(url, {
+        headers: getRequestHeaders(), timeout: 15000,
+      }), 3, 3000);
+      const $ = cheerio.load(res.data);
+      const products = [];
+      $('.grid__item, .product-item, .card-wrapper').each((i, el) => {
+        if (products.length >= limit) return false;
+        const $el = $(el);
+        const titleEl = $el.find('a.full-unstyled-link, .card__heading a, h3 a, h2 a').first();
+        const title = sanitizeText(titleEl.text());
+        if (!title) return;
+        let link = titleEl.attr('href') || '';
+        if (link && !link.startsWith('http')) link = `https://www.junaidjamshed.com${link}`;
+        let image = $el.find('img').first().attr('data-src') || $el.find('img').first().attr('src') || '';
+        if (image && image.startsWith('//')) image = 'https:' + image;
+        const price = parsePrice($el.find('.price-item--sale, .price__sale .price-item').first().text());
+        if (!price) return;
+        const originalPrice = parsePrice($el.find('.price-item--regular').first().text());
+        products.push({ title, price, originalPrice: originalPrice || null, image, url: link, store: 'J.', storeColor: '#1b3a2d', inStock: true });
+      });
+      return products;
+    } catch {
+      return [];
+    }
+  }
+}
+
+async function fetchKhaadiSale(url, limit = 500) {
+  // Khaadi is NOT a Shopify store — HTML scraping
+  try {
+    const response = await fetchWithRetry(() => axios.get(url, {
+      headers: getRequestHeaders(), timeout: 20000,
+    }), 3, 3000);
+    const $ = cheerio.load(response.data);
+    const products = [];
+
+    // Khaadi product tiles
+    $('.product-tile, .product-item, .product-grid-item').each((i, el) => {
+      if (products.length >= limit) return false;
+      const $el = $(el);
+
+      const titleEl = $el.find('.pdp-link a, .product-item-link, .product-name a, a.link, h3 a, h2 a').filter((_, e) => {
+        const t = $(e).text().trim();
+        return t.length > 0 && t.length < 150;
+      }).first();
+
+      const title = sanitizeText(titleEl.text());
+      if (!title) return;
+
+      let link = titleEl.attr('href') || '';
+      if (link && !link.startsWith('http')) link = `https://pk.khaadi.com${link}`;
+
+      let image = $el.find('img.tile-image, img.product-image-photo, img').first().attr('data-src')
+        || $el.find('img.tile-image, img.product-image-photo, img').first().attr('src') || '';
+      if (image && image.startsWith('//')) image = 'https:' + image;
+
+      const salesPriceContent = $el.find('.price .sales .value, .price .sale .value').attr('content');
+      const salesPriceText = $el.find('.price .sales, .price .sale, .special-price .price').first().text();
+      let price = salesPriceContent ? parseFloat(salesPriceContent) : parsePrice(salesPriceText);
+      if (price && price > 500000) price = Math.round(price / 100);
+      if (!price || price <= 0) return;
+
+      const oldPriceContent = $el.find('.price .strike-through .value').attr('content');
+      const oldPriceText = $el.find('.price .strike-through, .old-price .price').first().text();
+      let originalPrice = oldPriceContent ? parseFloat(oldPriceContent) : parsePrice(oldPriceText);
+      if (originalPrice && originalPrice > 500000) originalPrice = Math.round(originalPrice / 100);
+
+      products.push({
+        title, price, originalPrice: (originalPrice && originalPrice > price) ? originalPrice : null,
+        image, url: link, store: 'Khaadi', storeColor: '#9c7b3c', inStock: true,
+      });
+    });
+
+    return products;
+  } catch {
+    return [];
+  }
+}
+
+async function fetchUniworthSale(url, limit = 500) {
+  // Uniworth is a Shopify store
+  try {
+    const collectionHandle = url.split('/collections/')[1]?.split('?')[0] || 'sale';
+    const apiUrl = `https://uniworthshop.com/collections/${collectionHandle}/products.json?limit=250`;
+    const res = await fetchWithRetry(() => axios.get(apiUrl, {
+      headers: { ...getRequestHeaders(), Accept: 'application/json' },
+      timeout: 15000,
+    }), 3, 3000);
+    const items = res.data?.products || [];
+    return items.slice(0, limit).map(p => {
+      const variant = p.variants?.[0] || {};
+      const price = parseFloat(variant.price || '0');
+      const comparePrice = parseFloat(variant.compare_at_price || '0');
+      let image = p.images?.[0]?.src || '';
+      if (image.startsWith('//')) image = 'https:' + image;
+      return {
+        title: sanitizeText(p.title),
+        price,
+        originalPrice: comparePrice > price ? comparePrice : null,
+        image,
+        url: `https://uniworthshop.com/products/${p.handle}`,
+        store: 'Uniworth', storeColor: '#1a237e', inStock: variant.available !== false,
+      };
+    }).filter(p => p.title && p.price > 0);
+  } catch (e) {
+    // Fallback HTML
+    try {
+      const res = await fetchWithRetry(() => axios.get(url, {
+        headers: getRequestHeaders(), timeout: 15000,
+      }), 3, 3000);
+      const $ = cheerio.load(res.data);
+      const products = [];
+      $('.grid__item, .product-item, .card-wrapper').each((i, el) => {
+        if (products.length >= limit) return false;
+        const $el = $(el);
+        const titleEl = $el.find('.product-item__title, .card__heading a, h3 a').first();
+        const title = sanitizeText(titleEl.text());
+        if (!title) return;
+        let link = titleEl.attr('href') || '';
+        if (link && !link.startsWith('http')) link = `https://uniworthshop.com${link}`;
+        let image = $el.find('img').first().attr('data-src') || $el.find('img').first().attr('src') || '';
+        if (image && image.startsWith('//')) image = 'https:' + image;
+        const price = parsePrice($el.find('.price-item--sale, .price__sale').first().text());
+        if (!price) return;
+        const originalPrice = parsePrice($el.find('.price-item--regular').first().text());
+        products.push({ title, price, originalPrice: originalPrice || null, image, url: link, store: 'Uniworth', storeColor: '#1a237e', inStock: true });
+      });
+      return products;
+    } catch {
+      return [];
+    }
+  }
+}
+
 async function fetchDarazSale(url, limit = 500) {
   try {
     // Daraz flash sale pages are JS-rendered and can't be scraped via HTML.
@@ -252,6 +413,12 @@ export async function GET(request) {
       products = await fetchNaheedSale(targetUrl, limit);
     } else if (targetUrl.includes('highfy.pk')) {
       products = await fetchHighfySale(targetUrl, limit);
+    } else if (targetUrl.includes('junaidjamshed.com')) {
+      products = await fetchJunaidJamshedSale(targetUrl, limit);
+    } else if (targetUrl.includes('khaadi.com')) {
+      products = await fetchKhaadiSale(targetUrl, limit);
+    } else if (targetUrl.includes('uniworthshop.com')) {
+      products = await fetchUniworthSale(targetUrl, limit);
     } else if (targetUrl.includes('daraz.pk')) {
       products = await fetchDarazSale(targetUrl, limit);
     } else {
