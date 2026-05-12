@@ -76,6 +76,29 @@ function toastClass(type) {
   return `toast ${type}`;
 }
 
+// ── Search result cache helpers (sessionStorage) ──────────────────────────
+const SEARCH_CACHE_KEY = 'flashi_search_cache';
+
+function saveSearchCache(q, prods, metaStr) {
+  try {
+    sessionStorage.setItem(SEARCH_CACHE_KEY, JSON.stringify({ q, products: prods, meta: metaStr, ts: Date.now() }));
+  } catch (_) {}
+}
+
+function loadSearchCache() {
+  try {
+    const raw = sessionStorage.getItem(SEARCH_CACHE_KEY);
+    if (!raw) return null;
+    const cached = JSON.parse(raw);
+    // Cache valid for 10 minutes
+    if (Date.now() - cached.ts > 10 * 60 * 1000) {
+      sessionStorage.removeItem(SEARCH_CACHE_KEY);
+      return null;
+    }
+    return cached;
+  } catch (_) { return null; }
+}
+
 export default function HomePage() {
   const [query, setQuery] = useState('');
   const [products, setProducts] = useState([]);
@@ -102,6 +125,31 @@ export default function HomePage() {
 
   const sortedProducts = useMemo(() => sortProducts(products, sortKey), [products, sortKey]);
   const priceStats = useMemo(() => getPriceStats(sortedProducts), [sortedProducts]);
+
+  // ── Restore search results when user returns to the app (e.g. from store) ──
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && products.length === 0) {
+        const cached = loadSearchCache();
+        if (cached && cached.products?.length > 0) {
+          setQuery(cached.q);
+          setProducts(cached.products);
+          setMeta(cached.meta || '');
+          // Also keep URL in sync
+          const url = new URL(window.location);
+          url.searchParams.set('q', cached.q);
+          window.history.replaceState({}, '', url.toString());
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    // Also handle Capacitor app resume
+    window.addEventListener('resume', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('resume', handleVisibilityChange);
+    };
+  }, [products]);
 
 
   useEffect(() => {
@@ -137,10 +185,21 @@ export default function HomePage() {
     const params = new URLSearchParams(window.location.search);
     const q = params.get('q');
     const login = params.get('login');
+
     if (q) {
-      setQuery(q);
-      handleSearch(q, false);
+      // First: instantly restore from cache so the user sees results immediately
+      const cached = loadSearchCache();
+      if (cached && cached.q === q && cached.products?.length > 0) {
+        setQuery(q);
+        setProducts(cached.products);
+        setMeta(cached.meta || '');
+      } else {
+        // No cache — do a fresh search
+        setQuery(q);
+        handleSearch(q, false);
+      }
     }
+
     if (login === 'true') {
       handleOpenLogin();
     }
@@ -243,8 +302,11 @@ export default function HomePage() {
           const discountPct = ((origPrice - price) / origPrice) * 100;
           return discountPct < 15;
         });
+        const metaStr = `${data.total || 0} result${data.total === 1 ? '' : 's'}`;
         setProducts(filteredProducts);
-        setMeta(`${data.total || 0} result${data.total === 1 ? '' : 's'}`);
+        setMeta(metaStr);
+        // ── Cache results for app-resume restore ──
+        saveSearchCache(searchTerm, filteredProducts, metaStr);
 
         if (data.needsLiveScrape) {
           setLiveLoading(true);
@@ -269,8 +331,11 @@ export default function HomePage() {
                   const discountPct = ((origPrice - price) / origPrice) * 100;
                   return discountPct < 15;
                 });
+                const newMetaStr = `${newFiltered.length} result${newFiltered.length === 1 ? '' : 's'}`;
                 setProducts(newFiltered);
-                setMeta(`${newFiltered.length} result${newFiltered.length === 1 ? '' : 's'}`);
+                setMeta(newMetaStr);
+                // ── Update cache with fresh live results ──
+                saveSearchCache(searchTerm, newFiltered, newMetaStr);
               }
             })
             .catch(console.error)
@@ -688,7 +753,15 @@ export default function HomePage() {
                       )}
                     </div>
                     <div className="product-info">
-                      <a href={product.url} target="_blank" rel="noreferrer" className="product-title">
+                      <a
+                        href={product.url}
+                        rel="noreferrer"
+                        className="product-title"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(product.url, '_system') || window.open(product.url, '_blank');
+                        }}
+                      >
                         {product.title}
                       </a>
                       <div className="product-price-row">
@@ -707,7 +780,15 @@ export default function HomePage() {
                             {product.inStock !== false ? 'In Stock' : 'Out of Stock'}
                           </span>
                         </div>
-                        <a href={product.url} target="_blank" rel="noreferrer" className="product-visit-btn">
+                        <a
+                          href={product.url}
+                          rel="noreferrer"
+                          className="product-visit-btn"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            window.open(product.url, '_system') || window.open(product.url, '_blank');
+                          }}
+                        >
                           Visit Store →
                         </a>
                       </div>
