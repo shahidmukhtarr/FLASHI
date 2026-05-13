@@ -101,8 +101,9 @@ export async function searchProducts(query, limit = 30) {
       // Image
       const image = item.image || '';
 
-      // URL: item.itemUrl can be relative (/products/...), protocol-relative (//www.daraz.pk/...), or absolute
       const itemUrl = item.itemUrl || '';
+      if (!itemUrl) continue;
+
       let url;
       if (itemUrl.startsWith('http')) {
         url = itemUrl;
@@ -112,9 +113,8 @@ export async function searchProducts(query, limit = 30) {
         url = `${STORE_URL}${itemUrl.startsWith('/') ? '' : '/'}${itemUrl}`;
       }
 
-      // Fix for Daraz App deep linking: URLs like `/products/-i123.html` break the Android app's router
-      // by failing regex matching. Ensure there's a dummy slug like `/products/item-i123.html`.
-      url = url.replace(/\/products\/-i(\d+)\.html/, '/products/item-i$1.html');
+      // Ensure URL doesn't have double slashes like https://www.daraz.pk//products/
+      url = url.replace(/([^:]\/)\/+/g, "$1");
 
 
       // Rating & reviews

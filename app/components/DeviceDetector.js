@@ -1,8 +1,47 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 export default function DeviceDetector() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && pathname !== null) {
+      const qs = searchParams ? searchParams.toString() : '';
+      const currentPath = pathname + (qs ? '?' + qs : '');
+
+      const ua = navigator.userAgent;
+      const isWebView = 
+        /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(ua) || 
+        /Android.*wv/i.test(ua) || 
+        /FBAN|FBAV/i.test(ua) ||
+        window.Capacitor ||
+        window.webkit?.messageHandlers?.capacitor;
+
+      if (!sessionStorage.getItem('flashi_session_started')) {
+        sessionStorage.setItem('flashi_session_started', 'true');
+        
+        // If we are in the mobile app and landed on home directly from a cold start,
+        // restore the last visited page (workaround for APK index.html redirecting to /).
+        if (isWebView && (currentPath === '/' || currentPath.startsWith('/?q='))) {
+          try {
+            const lastPath = localStorage.getItem('flashi_last_path');
+            if (lastPath && lastPath !== '/' && !lastPath.startsWith('/?q=') && lastPath !== currentPath) {
+              window.location.replace(lastPath);
+              return; // Redirecting away, do not overwrite last_path
+            }
+          } catch (e) {}
+        }
+      }
+
+      try {
+        localStorage.setItem('flashi_last_path', currentPath);
+      } catch (e) {}
+    }
+  }, [pathname, searchParams]);
+
   useEffect(() => {
     // Only run on client after hydration
     const detect = () => {

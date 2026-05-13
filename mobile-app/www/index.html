@@ -231,6 +231,12 @@
       } catch (e) { return null; }
     }
 
+    function getLastPath() {
+      try {
+        return localStorage.getItem('flashi_last_path');
+      } catch (e) { return null; }
+    }
+
     function checkServer() {
       attempts++;
       var controller = new AbortController();
@@ -244,11 +250,17 @@
       })
       .then(function() {
         clearTimeout(timeoutId);
-        // Server is reachable — navigate there, restoring last search if available
+        // Server is reachable — navigate there, restoring last path or search if available
+        var lastPath = getLastPath();
         var lastQuery = getLastSearch();
-        var target = lastQuery
-          ? LIVE_URL + '/?q=' + encodeURIComponent(lastQuery)
-          : LIVE_URL;
+        
+        var target = LIVE_URL;
+        if (lastPath && lastPath !== '/') {
+          target = LIVE_URL + lastPath;
+        } else if (lastQuery) {
+          target = LIVE_URL + '/?q=' + encodeURIComponent(lastQuery);
+        }
+        
         window.location.replace(target);
       })
       .catch(function() {

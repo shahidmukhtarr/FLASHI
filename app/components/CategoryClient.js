@@ -205,7 +205,16 @@ export default function CategoryClient({
                       )}
                     </div>
                     <div className="product-info">
-                      <a href={product.url} target="_blank" rel="noreferrer" className="product-title">
+                      <a 
+                        href={product.url} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        className="product-title"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(product.url, '_system') || window.open(product.url, '_blank');
+                        }}
+                      >
                         {product.title}
                       </a>
                       <div className="product-price-row">
@@ -224,7 +233,16 @@ export default function CategoryClient({
                             {product.inStock !== false ? 'In Stock' : 'Out of Stock'}
                           </span>
                         </div>
-                        <a href={product.url} target="_blank" rel="noreferrer" className="product-visit-btn">
+                        <a 
+                          href={product.url} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          className="product-visit-btn"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            window.open(product.url, '_system') || window.open(product.url, '_blank');
+                          }}
+                        >
                           Visit Store →
                         </a>
                       </div>
