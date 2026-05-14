@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createJazzCashPayment, createEasyPaisaPayment, generateTxnRef } from '../../../../server/services/payment.js';
 import { saveSubscription, getCurrentSubscriptionPrice } from '../../../../server/services/db.js';
+import { sendSubscriptionRequestEmail } from '../../../../server/services/emailService.js';
 
 /**
  * POST /api/payment/create
@@ -27,6 +28,14 @@ export async function POST(request) {
       paymentRef: txnRef,
       amount,
     });
+
+    // Send "Request Received" email
+    try {
+      await sendSubscriptionRequestEmail(email, name, phone, txnRef, amount);
+      console.log(`[Payment] ✉️ Request email sent to ${email}`);
+    } catch (emailErr) {
+      console.error(`[Payment] ❌ Failed to send request email to ${email}:`, emailErr.message);
+    }
 
     let paymentData;
 

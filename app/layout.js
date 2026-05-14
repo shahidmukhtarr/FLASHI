@@ -32,7 +32,7 @@ export const viewport = {
 
 export const metadata = {
   metadataBase: new URL('https://flashi.pk'),
-  title: 'Compare Prices in Pakistan — Smart Watches, Earbuds, Gadgets | Flashi',
+  title: 'FLASHI - Pakistan\'s First Smart Shopping Platform',
   description: 'Compare prices from 50+ Pakistani stores including Daraz, PriceOye & more. Find lowest prices on earbuds, smart watches, chargers, gaming accessories & mobile gadgets. Save up to Rs. 5,000 with Flashi.pk',
   keywords: 'compare prices pakistan, price comparison pakistan, earbuds price in pakistan, smart watch price in pakistan, charger price pakistan, gaming accessories pakistan, mobile accessories pakistan, best deals pakistan, online shopping pakistan, cheapest prices pakistan, budget electronics pakistan, gadgets pakistan',
   robots: 'index, follow',
@@ -46,7 +46,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Compare Prices in Pakistan — Smart Watches, Earbuds, Gadgets | Flashi',
+    title: 'FLASHI - Pakistan\'s First Smart Shopping Platform',
     description: 'Find the lowest prices on earbuds, smart watches, chargers & gadgets. Compare across 50+ Pakistani stores.',
     images: ['/logo.png'],
   },

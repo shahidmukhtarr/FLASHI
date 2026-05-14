@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { verifyJazzCashResponse, verifyEasyPaisaResponse } from '../../../../server/services/payment.js';
 import { updateSubscriptionStatus, getSubscriptionByEmail } from '../../../../server/services/db.js';
 import { getSupabaseClient } from '../../../../server/services/db.js';
+import { sendSubscriptionActiveEmail } from '../../../../server/services/emailService.js';
 
 /**
  * POST /api/payment/return
@@ -52,8 +53,31 @@ export async function POST(request) {
     if (paymentResult.isSuccess) {
       // Auto-activate the subscription
       if (email) {
+        const client = getSupabaseClient();
+        let subscriberName = '';
+        
+        if (client) {
+          const { data: sub } = await client
+            .from('subscribers')
+            .select('name, status')
+            .eq('email', email)
+            .limit(1);
+          if (sub?.[0]) subscriberName = sub[0].name;
+        }
+
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 30);
+
         await updateSubscriptionStatus(email, 'active', 30);
         console.log(`[Payment] ✅ Subscription activated for ${email}`);
+
+        // Send activation email
+        try {
+          await sendSubscriptionActiveEmail(email, subscriberName, expiresAt.toISOString());
+          console.log(`[Payment] ✉️ Activation email sent to ${email}`);
+        } catch (emailErr) {
+          console.error(`[Payment] ❌ Failed to send activation email to ${email}:`, emailErr.message);
+        }
       }
       return redirectToSubscribe('success', 'Payment successful! Your subscription is now active.');
     } else {
