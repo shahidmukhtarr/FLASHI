@@ -36,7 +36,7 @@ async function getTransporter() {
 
 // ─── Helper: Send Mail ─────────────────────────────────────────────────────────
 
-async function sendMail({ to, subject, html, text }) {
+export async function sendMail({ to, subject, html, text }) {
   try {
     const mail = await getTransporter();
     const info = await mail.sendMail({
@@ -59,7 +59,7 @@ async function sendMail({ to, subject, html, text }) {
 
 // ─── Base Layout ────────────────────────────────────────────────────────────────
 
-function baseLayout(title, bodyContent) {
+export function baseLayout(title, bodyContent) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -100,7 +100,7 @@ function baseLayout(title, bodyContent) {
 
 // ─── Reusable button ────────────────────────────────────────────────────────────
 
-function ctaButton(label, href) {
+export function ctaButton(label, href) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:28px auto 0;">
   <tr><td style="background:linear-gradient(135deg,#6d28d9,#8b5cf6);border-radius:10px;padding:14px 36px;">
     <a href="${href}" style="color:#fff;text-decoration:none;font-size:15px;font-weight:700;letter-spacing:0.5px;">${label}</a>

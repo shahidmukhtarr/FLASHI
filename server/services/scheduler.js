@@ -1,5 +1,6 @@
 import { searchAllStores, scrapeAllCategoryLinks } from './scraperEngine.js';
 import { delay } from '../utils/helpers.js';
+import { notifyActiveSubscribers } from './notificationService.js';
 
 const defaultQueries = [
   // Smartphones
@@ -71,6 +72,10 @@ const QUERY_CSV = process.env.SCRAPER_QUERIES || defaultQueries.join(',');
 const JOB_QUERIES = QUERY_CSV.split(',').map(q => q.trim()).filter(Boolean);
 const INTERVAL_MINUTES = parseInt(process.env.SCRAPER_INTERVAL_MINUTES, 10) || 180;
 const INTERVAL_MS = Math.max(INTERVAL_MINUTES, 30) * 60 * 1000; // Minimum 30 minutes enforced
+// Notify subscribers every N scheduler runs (default: every 3rd run = ~every 9 hrs at 180min interval)
+const NOTIFY_EVERY_RUNS = parseInt(process.env.SCHEDULER_NOTIFY_EVERY_RUNS, 10) || 3;
+// Minimum new products saved in a run before we bother sending a notification
+const NOTIFY_MIN_NEW_PRODUCTS = parseInt(process.env.SCHEDULER_NOTIFY_MIN_NEW, 10) || 10;
 
 // How many queries to run before pausing for a cooldown
 const BATCH_SIZE = parseInt(process.env.SCRAPER_BATCH_SIZE, 10) || 5;
@@ -244,6 +249,15 @@ export async function runBackgroundScrape() {
     lastRunResult = runResult;
 
     console.log(`[Scheduler] ✅ Background scrape ${aborted ? 'PARTIALLY' : 'FULLY'} finished: queries=${results.length}, scraped=${totalScraped}, saved=${totalSaved}, updated=${totalUpdated}`);
+
+    // Auto-notify active subscribers every NOTIFY_EVERY_RUNS runs when enough new products were saved
+    if (!aborted && runCount % NOTIFY_EVERY_RUNS === 0 && totalSaved >= NOTIFY_MIN_NEW_PRODUCTS) {
+      console.log(`[Scheduler] 🔔 Triggering subscriber notifications (run #${runCount}, ${totalSaved} new products found)`);
+      // Fire-and-forget — don't block or delay the scrape cycle
+      notifyActiveSubscribers('price_drop', { query: 'latest deals across all stores' }).catch(err => {
+        console.error('[Scheduler] Subscriber notification failed:', err.message);
+      });
+    }
 
     // Try to free memory after a big run
     await tryGarbageCollect();
