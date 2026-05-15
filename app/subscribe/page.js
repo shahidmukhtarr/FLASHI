@@ -19,8 +19,15 @@ export default function SubscribePage() {
   const [subscriptionStatus, setSubscriptionStatus] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [currentPrice, setCurrentPrice] = useState(500);
+  const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
+    const storedFavs = localStorage.getItem('flashi_favorites');
+    if (storedFavs) {
+      try {
+        setFavorites(JSON.parse(storedFavs));
+      } catch(e) {}
+    }
     // Fetch current price
     fetch('/api/subscription/price')
       .then(res => res.json())
@@ -172,8 +179,8 @@ export default function SubscribePage() {
             Never Miss a <span className="sub-highlight">Deal</span> Again
           </h1>
           <p className="sub-hero-subtitle">
-            Get exclusive price drop alerts, sale notifications from Limelight, Sapphire, Khaadi, J. & Uniworth,
-            and early access to the best deals across all stores — delivered straight to you.
+            Get exclusive price drop alerts, sale notifications from Limelight, Sapphire, Khaadi, J., Uniworth, Outfitters, Stylo & Nishat Linen,
+            and early access to the best deals across all stores (Daraz, PriceOye, Mega.pk, Shophive, Naheed, Highfy, Stationers.pk) — delivered straight to you.
           </p>
         </div>
       </section>
@@ -249,7 +256,7 @@ export default function SubscribePage() {
                   <div className="sub-feature-item">
                     <span className="sub-feature-icon"></span>
                     <div>
-                      <strong>Limelight, Sapphire, Khaadi & J. Sale Alerts</strong>
+                      <strong>Limelight, Sapphire, Khaadi, J., Uniworth, Outfitters, Stylo & Nishat Linen Sale Alerts</strong>
                       <p>Be the first to know about flash sales, clearance events, and new collection launches</p>
                     </div>
                   </div>
@@ -257,7 +264,7 @@ export default function SubscribePage() {
                     <span className="sub-feature-icon"></span>
                     <div>
                       <strong>Exclusive Deals & Discounts</strong>
-                      <p>Curated deals from Daraz, PriceOye, Mega.pk, Shophive, Naheed, Highfy & more</p>
+                      <p>Curated deals from Daraz, PriceOye, Mega.pk, Shophive, Naheed, Highfy, Stationers.pk & more</p>
                     </div>
                   </div>
                   <div className="sub-feature-item">

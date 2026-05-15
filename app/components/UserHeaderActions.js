@@ -47,9 +47,9 @@ export default function UserHeaderActions({ onLogin }) {
   if (user) {
     return (
       <div className="header-actions">
-        <button className="google-login-btn" onClick={handleLogout} style={{ border: '1px solid var(--accent-error)', color: 'var(--accent-error)' }}>
-          <span>Logout</span>
-        </button>
+        <Link href="/dashboard" className="go-home-btn" style={{ background: 'var(--gradient-primary)', color: 'white', padding: '8px 16px', borderRadius: 'var(--radius-full)', fontWeight: '600', fontSize: '14px', boxShadow: 'var(--shadow-sm)', border: 'none', textDecoration: 'none' }}>
+          <span>Dashboard</span>
+        </Link>
       </div>
     );
   }

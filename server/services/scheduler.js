@@ -40,9 +40,31 @@ const defaultQueries = [
   'Mechanical keyboard',
   'Gaming mouse Logitech',
   'Gaming monitor',
-  // Legacy
+  // Audio
   'Wireless headphones',
   'Canon DSLR',
+  // Men Fashion (Outfitters, Limelight, Sapphire, Nishat)
+  'men kurta',
+  'men t-shirt',
+  'men shalwar kameez',
+  'men polo shirt',
+  'men trousers',
+  // Women Fashion (Outfitters, Limelight, Sapphire, Nishat)
+  'women lawn suit',
+  'women pret',
+  'women unstitched',
+  'women kurta',
+  'women casual shirt',
+  // Shoes (Stylo)
+  'women shoes',
+  'ladies heels',
+  'women sandals',
+  'women sneakers',
+  'men shoes',
+  // Accessories (Nishat, Highfy)
+  'women handbag',
+  'women scarf',
+  'women jewellery',
 ];
 
 const QUERY_CSV = process.env.SCRAPER_QUERIES || defaultQueries.join(',');

@@ -7,6 +7,9 @@ import * as highfy from '../scrapers/highfy.js';
 import * as limelight from '../scrapers/limelight.js';
 import * as sapphire from '../scrapers/sapphire.js';
 import * as stationers from '../scrapers/stationers.js';
+import * as outfitters from '../scrapers/outfitters.js';
+import * as stylo from '../scrapers/stylo.js';
+import * as nishatlinen from '../scrapers/nishatlinen.js';
 import { identifyStore, delay, sanitizeText, getRequestHeaders } from '../utils/helpers.js';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
@@ -23,6 +26,9 @@ const stores = [
   { adapter: limelight, name: 'Limelight', domain: 'limelight.pk' },
   { adapter: sapphire, name: 'Sapphire', domain: 'sapphireonline.pk' },
   { adapter: stationers, name: 'Stationers.pk', domain: 'stationers.pk' },
+  { adapter: outfitters, name: 'Outfitters', domain: 'outfitters.com.pk' },
+  { adapter: stylo, name: 'Stylo', domain: 'stylo.pk' },
+  { adapter: nishatlinen, name: 'Nishat Linen', domain: 'nishatlinen.com' },
 ];
 
 const ACCESSORY_KEYWORDS = ['cover', 'case', 'protector', 'screen protector', 'tempered glass', 'cable', 'charger', 'adapter', 'strap', 'pouch', 'handsfree', 'earphone', 'skin', 'lens', 'smartwatch', 'earbuds', 'buds', 'trimmer', 'speaker', 'powerbank', 'power bank', 'holder', 'stand', 'ring light', 'selfie stick', 'hanger', 'coat hanger', 'button', 'thread', 'hook', 'pin', 'needle', 'box', 'organizer', 'rack', 'storage bag', 'shoe bag', 'dust bag', 'shoe tree', 'boot shaper', 'shoe rack', 'display stand', 'shoe horn', 'sticker', 'shoelace', 'insole'];
@@ -134,18 +140,18 @@ function isRelevantProduct(title, query) {
     'camera': ['dslr', 'mirrorless'],
     'printer': ['laser printer', 'inkjet'],
     // Pakistani fashion
-    'lawn': ['lawn suit', 'lawn shirt', 'lawn fabric', 'cotton lawn'],
+    'lawn': ['lawn suit', 'lawn shirt', 'lawn fabric', 'cotton lawn', 'suit', 'printed suit', '2 piece', '3 piece'],
     'kurti': ['kurta', 'short kurta', 'long kurta', 'printed kurta', 'shirt'],
     'kurta': ['kurti', 'kameez', 'shirt'],
     'shirt': ['kurta', 'kurti', 'kameez', 'top', 'suit', 'dress'],
-    'pret': ['ready to wear', 'stitched', 'pret wear'],
-    'stitched': ['pret', 'ready to wear', 'stitched suit'],
-    'unstitched': ['fabric', 'unstitched suit', 'lawn fabric'],
+    'pret': ['ready to wear', 'stitched', 'pret wear', 'suit', 'kurti', 'kurta'],
+    'stitched': ['pret', 'ready to wear', 'stitched suit', 'suit'],
+    'unstitched': ['fabric', 'unstitched suit', 'lawn fabric', 'suit', 'printed suit', '2 piece', '3 piece', 'pack suit'],
     'dupatta': ['chunri', 'shawl', 'scarf'],
     'shalwar': ['trouser', 'trousers', 'palazzo'],
     'trouser': ['shalwar', 'palazzo', 'capri', 'culottes', 'pants'],
     'palazzo': ['wide leg', 'culottes', 'shalwar'],
-    'suit': ['2 piece', '3 piece', 'two piece', 'three piece', 'set', 'shirt', 'kurta'],
+    'suit': ['2 piece', '3 piece', 'two piece', 'three piece', 'set', 'shirt', 'kurta', 'pack suit', 'printed suit'],
     'embroidered': ['embroidery', 'zari', 'gota', 'thread work'],
     'chiffon': ['georgette', 'organza', 'silk'],
     'bridal': ['wedding', 'shaadi', 'bride', 'dulhan'],
@@ -156,6 +162,11 @@ function isRelevantProduct(title, query) {
     'handbag': ['bag', 'purse', 'clutch', 'tote'],
     'scarf': ['dupatta', 'stole', 'shawl'],
     'shawl': ['scarf', 'stole', 'wrap'],
+    'shoes': ['footwear', 'sneakers', 'sneaker', 'sandals', 'trainers', 'slippers', 'khussa', 'heels', 'pumps', 'wedges'],
+    'sneakers': ['shoes', 'trainers', 'footwear', 'sneaker'],
+    'heels': ['pumps', 'wedges', 'stiletto', 'court shoes', 'shoes'],
+    'sandals': ['slippers', 'chappal', 'flip flops', 'shoes'],
+    'khussa': ['ethnic shoes', 'traditional shoes', 'mojri'],
     'pen': ['ballpen', 'gel pen', 'ink pen', 'writing instrument'],
     'notebook': ['diary', 'notepad', 'journal'],
     'stationery': ['school supplies', 'office supplies', 'art supplies'],
@@ -304,7 +315,14 @@ export async function searchAllStores(query, limit = 150) {
     { kw: 'sapphire.pk', name: 'Sapphire' },
     { kw: 'sapphire', name: 'Sapphire' },
     { kw: 'stationers.pk', name: 'Stationers.pk' },
-    { kw: 'stationers', name: 'Stationers.pk' }
+    { kw: 'stationers', name: 'Stationers.pk' },
+    { kw: 'outfitters.com.pk', name: 'Outfitters' },
+    { kw: 'outfitters', name: 'Outfitters' },
+    { kw: 'stylo.pk', name: 'Stylo' },
+    { kw: 'stylo', name: 'Stylo' },
+    { kw: 'nishatlinen.com', name: 'Nishat Linen' },
+    { kw: 'nishat linen', name: 'Nishat Linen' },
+    { kw: 'nishat', name: 'Nishat Linen' },
   ];
 
   const queryLower = trimmedQuery.toLowerCase();
@@ -323,7 +341,7 @@ export async function searchAllStores(query, limit = 150) {
 
   console.log(`[ScraperEngine] Searching ${targetStoreName ? targetStoreName : 'all stores'} for: "${trimmedQuery}"`);
 
-  const timeout = 30000; // 30 second timeout per store
+  const timeout = 45000; // 45 second timeout per store
 
   const storesToSearch = targetStoreName 
     ? stores.filter(s => s.name === targetStoreName) 

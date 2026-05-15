@@ -86,6 +86,9 @@ export function identifyStore(url) {
     if (hostname.includes('limelight.pk')) return 'limelight';
     if (hostname.includes('sapphireonline.pk')) return 'sapphire';
     if (hostname.includes('stationers.pk')) return 'stationers';
+    if (hostname.includes('outfitters.com.pk')) return 'outfitters';
+    if (hostname.includes('stylo.pk')) return 'stylo';
+    if (hostname.includes('nishatlinen.com')) return 'nishatlinen';
 
     return null;
   } catch {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import FavoriteButton from './FavoriteButton';
 
 function formatPrice(value) {
   if (value == null || Number.isNaN(Number(value))) return 'N/A';
@@ -197,6 +198,7 @@ export default function CategoryClient({
                     <div className="store-badge" style={{ background: product.storeColor || '#6366f1' }}>
                       {product.store}
                     </div>
+                    <FavoriteButton product={product} />
                     <div className="product-image-wrap">
                       {product.image ? (
                         <img src={product.image} alt={`${product.title} price in Pakistan`} className="product-image" loading="lazy" />

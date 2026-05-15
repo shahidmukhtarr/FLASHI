@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
+import FavoriteButton from '../components/FavoriteButton';
 function formatPrice(value) {
   if (value == null || Number.isNaN(Number(value))) return 'N/A';
   return `Rs. ${Math.round(Number(value)).toLocaleString('en-PK')}`;
@@ -19,6 +19,18 @@ const storesConfig = [
     url: 'https://pk.sapphireonline.pk/collections/sale',
     domain: 'sapphireonline.pk',
     offer: 'Sale Collection'
+  },
+  {
+    name: 'Stylo ',
+    url: 'https://stylo.pk/collections/sale',
+    domain: 'stylo.pk',
+    offer: 'Sale Collection'
+  },
+  {
+    name: 'Nishat ',
+    url: 'https://nishatlinen.com/collections/sale26',
+    domain: 'nishatlinen.com',
+    offer: 'Summer Sale'
   },
   {
     name: 'Daraz',
@@ -102,7 +114,10 @@ export default function SalesClient() {
 
     setLoading(true);
     try {
-      const res = await fetch(`/api/sales?url=${encodeURIComponent(store.url)}`);
+      const fetchUrl = store.urls
+        ? `/api/sales?urls=${encodeURIComponent(store.urls.join(','))}`
+        : `/api/sales?url=${encodeURIComponent(store.url)}`;
+      const res = await fetch(fetchUrl);
 
       if (!res.ok) {
         if (res.status >= 502 && res.status <= 504) {
@@ -191,44 +206,20 @@ export default function SalesClient() {
               <p style={{ color: 'var(--text-secondary)' }}>Click on any store below to instantly browse their active sale collection directly here.</p>
             </div>
 
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-              gap: '1rem',
-              maxWidth: '1000px',
-              margin: '0 auto'
-            }}>
+            <div className="sales-store-grid">
               {storesConfig.map(store => (
                 <div
                   key={store.name}
                   onClick={() => handleStoreClick(store)}
-                  className="step-card"
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    padding: '1.5rem 1rem',
-                    cursor: 'pointer',
-                    textAlign: 'center',
-                    border: '1px solid var(--border-color)',
-                  }}
+                  className="sales-store-card"
                 >
                   <img
                     src={`https://www.google.com/s2/favicons?domain=${store.domain}&sz=128`}
                     alt={store.name}
-                    style={{ width: '48px', height: '48px', marginBottom: '0.8rem', borderRadius: '50%' }}
+                    className="sales-store-icon"
                   />
-                  <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', fontWeight: 700 }}>{store.name}</h3>
-                  <div style={{
-                    background: '#e8f5e9',
-                    color: '#2e7d32',
-                    padding: '6px 16px',
-                    borderRadius: '20px',
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                  }}>
-                    {store.offer}
-                  </div>
+                  <h3 className="sales-store-name">{store.name}</h3>
+                  <div className="sales-store-offer">{store.offer}</div>
                 </div>
               ))}
             </div>
@@ -291,10 +282,11 @@ export default function SalesClient() {
                     <div className="store-badge" style={{ background: product.storeColor || '#6366f1' }}>
                       {product.store}
                     </div>
+                    <FavoriteButton product={product} />
                     {product.originalPrice && product.originalPrice > product.price && (
                       <div style={{
                         position: 'absolute',
-                        top: '10px',
+                        top: '45px',
                         right: '10px',
                         background: '#ef4444',
                         color: 'white',
@@ -316,10 +308,10 @@ export default function SalesClient() {
                       )}
                     </div>
                     <div className="product-info">
-                      <a 
-                        href={product.url} 
-                        target="_blank" 
-                        rel="noreferrer" 
+                      <a
+                        href={product.url}
+                        target="_blank"
+                        rel="noreferrer"
                         className="product-title"
                         onClick={(e) => {
                           e.preventDefault();
@@ -344,10 +336,10 @@ export default function SalesClient() {
                             {product.inStock !== false ? 'In Stock' : 'Out of Stock'}
                           </span>
                         </div>
-                        <a 
-                          href={product.url} 
-                          target="_blank" 
-                          rel="noreferrer" 
+                        <a
+                          href={product.url}
+                          target="_blank"
+                          rel="noreferrer"
                           className="product-visit-btn"
                           onClick={(e) => {
                             e.preventDefault();

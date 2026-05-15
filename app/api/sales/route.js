@@ -393,18 +393,97 @@ async function fetchDarazSale(url, limit = 500) {
   }
 }
 
+// Generic Shopify collection scraper — works for Outfitters, Stylo, Nishat Linen
+async function fetchShopifyCollection(collectionUrl, storeName, storeColor, baseUrl, limit = 500) {
+  try {
+    const handle = collectionUrl.split('/collections/')[1]?.split('?')[0] || 'all';
+    const apiUrl = `${baseUrl}/collections/${handle}/products.json?limit=250`;
+    const res = await fetchWithRetry(() => axios.get(apiUrl, {
+      headers: { ...getRequestHeaders(), Accept: 'application/json' },
+      timeout: 15000,
+    }), 3, 3000);
+    const items = res.data?.products || [];
+    return items.slice(0, limit).map(p => {
+      const variant = p.variants?.[0] || {};
+      const price = parseFloat(variant.price || '0');
+      const comparePrice = parseFloat(variant.compare_at_price || '0');
+      let image = p.images?.[0]?.src || '';
+      if (image.startsWith('//')) image = 'https:' + image;
+      return {
+        title: sanitizeText(p.title),
+        price,
+        originalPrice: comparePrice > price ? comparePrice : null,
+        image,
+        url: `${baseUrl}/products/${p.handle}`,
+        store: storeName, storeColor, inStock: variant.available !== false,
+      };
+    }).filter(p => p.title && p.price > 0);
+  } catch {
+    return [];
+  }
+}
+
+async function fetchOutfittersSale(url, limit = 500) {
+  return fetchShopifyCollection(url, 'Outfitters', '#1a1a1a', 'https://outfitters.com.pk', limit);
+}
+
+async function fetchStyloCollection(url, limit = 500) {
+  return fetchShopifyCollection(url, 'Stylo', '#c8102e', 'https://stylo.pk', limit);
+}
+
+async function fetchNishatLinenCollection(url, limit = 500) {
+  return fetchShopifyCollection(url, 'Nishat Linen', '#2c5f8a', 'https://nishatlinen.com', limit);
+}
+
 export async function GET(request) {
   try {
     const url = new URL(request.url);
     const targetUrl = url.searchParams.get('url');
+    const multiUrls = url.searchParams.get('urls'); // comma-separated multi-collection
 
-    if (!targetUrl) {
+    if (!targetUrl && !multiUrls) {
       return NextResponse.json({ error: 'URL parameter is required' }, { status: 400 });
     }
 
     const limit = 500;
-    let products = [];
 
+    // Multi-URL mode: fetch each collection and merge, deduplicating by title
+    if (multiUrls) {
+      const urlList = multiUrls.split(',').map(u => u.trim()).filter(Boolean);
+      const seen = new Set();
+      let allProducts = [];
+
+      for (const u of urlList) {
+        let products = [];
+        if (u.includes('outfitters.com.pk')) {
+          products = await fetchOutfittersSale(u, limit);
+        } else if (u.includes('stylo.pk')) {
+          products = await fetchStyloCollection(u, limit);
+        } else if (u.includes('nishatlinen.com')) {
+          products = await fetchNishatLinenCollection(u, limit);
+        } else {
+          const { scrapeCategoryUrl } = await import('../../../server/services/scraperEngine.js');
+          const res = await scrapeCategoryUrl(u, limit);
+          products = res.products || [];
+        }
+        for (const p of products) {
+          const key = p.url || p.title;
+          if (!seen.has(key)) { seen.add(key); allProducts.push(p); }
+        }
+      }
+
+      allProducts = allProducts.map(p => {
+        if (p.url && typeof p.url === 'string') {
+          p.url = p.url.replace(/\/products\/-i(\d+)\.html/, '/products/item-i$1.html');
+        }
+        return p;
+      });
+
+      return NextResponse.json({ success: true, products: allProducts });
+    }
+
+    // Single URL mode
+    let products = [];
     if (targetUrl.includes('limelight.pk')) {
       products = await fetchLimelightSale(targetUrl, limit);
     } else if (targetUrl.includes('sapphireonline.pk')) {
@@ -421,6 +500,12 @@ export async function GET(request) {
       products = await fetchUniworthSale(targetUrl, limit);
     } else if (targetUrl.includes('daraz.pk')) {
       products = await fetchDarazSale(targetUrl, limit);
+    } else if (targetUrl.includes('outfitters.com.pk')) {
+      products = await fetchOutfittersSale(targetUrl, limit);
+    } else if (targetUrl.includes('stylo.pk')) {
+      products = await fetchStyloCollection(targetUrl, limit);
+    } else if (targetUrl.includes('nishatlinen.com')) {
+      products = await fetchNishatLinenCollection(targetUrl, limit);
     } else {
       const { scrapeCategoryUrl } = await import('../../../server/services/scraperEngine.js');
       const res = await scrapeCategoryUrl(targetUrl, limit);

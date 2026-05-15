@@ -679,6 +679,102 @@ export const CATEGORY_PAGE_CONFIG = [
     title: 'Calligraphy',
     keywords: ['calligraphy', 'calligraphy pen', 'lettering', 'brush pen'],
   },
+
+  // ───── OUTFITTERS (Shopify fashion — men & women) ─────
+  {
+    store: 'Outfitters',
+    url: 'https://outfitters.com.pk/collections/men-view-all-collection',
+    title: 'Men Collection',
+    keywords: ['men clothing', 'mens fashion', 'men t-shirt', 'men shirt', 'men polo', 'men trousers', 'men jeans', 'men activewear', 'men footwear', 'men shorts', 'men pret', 'men kurta', 'gents'],
+  },
+  {
+    store: 'Outfitters',
+    url: 'https://outfitters.com.pk/collections/women-view-all-collection',
+    title: 'Women Collection',
+    keywords: ['women clothing', 'ladies fashion', 'women shirt', 'women dress', 'women top', 'women trousers', 'women activewear', 'women pret', 'girls clothing'],
+  },
+  {
+    store: 'Outfitters',
+    url: 'https://outfitters.com.pk/collections/men-t-shirts',
+    title: 'Men T-Shirts',
+    keywords: ['men t-shirt', 'tshirt', 't shirt', 'graphic tee', 'polo', 'men tee'],
+  },
+  {
+    store: 'Outfitters',
+    url: 'https://outfitters.com.pk/collections/men-footwear',
+    title: 'Men Footwear',
+    keywords: ['men shoes', 'men footwear', 'men sneakers', 'men sandals', 'men slippers'],
+  },
+
+  // ───── STYLO (Shopify — shoes & fashion) ─────
+  {
+    store: 'Stylo',
+    url: 'https://stylo.pk/collections/women-shoes',
+    title: 'Women Shoes',
+    keywords: ['women shoes', 'ladies shoes', 'girls shoes', 'female shoes', 'heels', 'sandals', 'slippers', 'court shoes', 'wedges', 'footwear women'],
+  },
+  {
+    store: 'Stylo',
+    url: 'https://stylo.pk/collections/summer-shoes',
+    title: 'Summer Shoes',
+    keywords: ['summer shoes', 'summer sandals', 'summer footwear', 'flats', 'chappal', 'slippers summer'],
+  },
+  {
+    store: 'Stylo',
+    url: 'https://stylo.pk/collections/heels',
+    title: 'Heels',
+    keywords: ['heels', 'high heels', 'block heels', 'stiletto', 'ladies heels', 'women heels'],
+  },
+  {
+    store: 'Stylo',
+    url: 'https://stylo.pk/collections/sandals',
+    title: 'Sandals',
+    keywords: ['sandals', 'flat sandals', 'strappy sandals', 'women sandals', 'ladies sandals'],
+  },
+  {
+    store: 'Stylo',
+    url: 'https://stylo.pk/collections/men-shoes',
+    title: 'Men Shoes',
+    keywords: ['men shoes', 'gents shoes', 'male shoes', 'men sandals', 'men slippers', 'men footwear'],
+  },
+  {
+    store: 'Stylo',
+    url: 'https://stylo.pk/collections/stylo-ready-to-wear',
+    title: 'Pret Wear',
+    keywords: ['pret', 'ready to wear', 'women pret', 'ladies pret', 'kurti', 'stitched suit'],
+  },
+
+  // ───── NISHAT LINEN (Shopify — fabric & fashion) ─────
+  {
+    store: 'Nishat Linen',
+    url: 'https://nishatlinen.com/collections/women',
+    title: 'Women Collection',
+    keywords: ['nishat women', 'women lawn', 'nishat pret', 'women unstitched', 'women suit', 'ladies suit', 'women ready to wear', 'nishat clothing'],
+  },
+  {
+    store: 'Nishat Linen',
+    url: 'https://nishatlinen.com/collections/men',
+    title: 'Men Collection',
+    keywords: ['nishat men', 'men shalwar kameez', 'men unstitched', 'men stitched', 'gents suit', 'men kurta nishat'],
+  },
+  {
+    store: 'Nishat Linen',
+    url: 'https://nishatlinen.com/collections/unstitched',
+    title: 'Unstitched Lawn',
+    keywords: ['lawn unstitched', 'unstitched suit', 'nishat unstitched', 'nishat lawn', 'fabric suit', 'printed suit'],
+  },
+  {
+    store: 'Nishat Linen',
+    url: 'https://nishatlinen.com/collections/ready-to-wear-1',
+    title: 'Ready To Wear',
+    keywords: ['nishat ready to wear', 'nishat pret', 'stitched suit', 'printed pret', 'embroidered pret'],
+  },
+  {
+    store: 'Nishat Linen',
+    url: 'https://nishatlinen.com/collections/accessories',
+    title: 'Accessories',
+    keywords: ['nishat accessories', 'nishat bag', 'nishat footwear', 'nishat khussa', 'nishat heels', 'nishat scarf'],
+  },
 ];
 
 export function getRelevantCategoryUrls(query) {

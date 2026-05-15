@@ -5,7 +5,7 @@ export async function GET(request) {
   try {
     const url = new URL(request.url);
     const q = url.searchParams.get('q');
-    const limit = Number(url.searchParams.get('limit') || 8);
+    const limit = Number(url.searchParams.get('limit') || 24);
 
     if (!q || q.trim().length < 2) {
       return NextResponse.json({ error: 'Search query must be at least 2 characters' }, { status: 400 });

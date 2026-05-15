@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import SalesNavLink from './components/SalesNavLink';
 import UserHeaderActions from './components/UserHeaderActions';
+import FavoriteButton from './components/FavoriteButton';
 import { BannerAd, NativeBannerAd, DisplayAd } from './components/AdScripts';
 
 const API_BASE = '/api';
@@ -109,6 +110,8 @@ function saveLastSearch(q) {
   } catch (_) {}
 }
 
+const PRODUCTS_PER_PAGE = 24;
+
 export default function HomePage() {
   const [query, setQuery] = useState('');
   const [products, setProducts] = useState([]);
@@ -117,6 +120,7 @@ export default function HomePage() {
   const [view, setView] = useState('grid');
   const [meta, setMeta] = useState('');
   const [toast, setToast] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [searchMode, setSearchMode] = useState('db');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -135,6 +139,14 @@ export default function HomePage() {
 
   const sortedProducts = useMemo(() => sortProducts(products, sortKey), [products, sortKey]);
   const priceStats = useMemo(() => getPriceStats(sortedProducts), [sortedProducts]);
+  const totalPages = Math.ceil(sortedProducts.length / PRODUCTS_PER_PAGE);
+  const paginatedProducts = useMemo(
+    () => sortedProducts.slice((currentPage - 1) * PRODUCTS_PER_PAGE, currentPage * PRODUCTS_PER_PAGE),
+    [sortedProducts, currentPage]
+  );
+
+  // Reset to page 1 whenever results or sort order changes
+  useEffect(() => { setCurrentPage(1); }, [sortedProducts]);
 
   // ── Restore search results when user returns to the app (e.g. from store) ──
   useEffect(() => {
@@ -339,6 +351,7 @@ export default function HomePage() {
     setStatusMessage(isUrl ? 'Fetching product details...' : DB_WAIT_MESSAGE);
     setProducts([]);
     setMeta('');
+    setCurrentPage(1);
 
     setSearchMode(isUrl ? 'url' : 'db');
 
@@ -357,18 +370,23 @@ export default function HomePage() {
         setMeta(data.product?.title ? `Product details for "${data.product.title}"` : 'Product lookup result');
       } else {
         const data = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=1000`);
-        // Filter out discounted sale products (>15% off) from normal search — these are premium-only
+        const salesPageStores = ['Limelight', 'Sapphire', 'Stylo', 'Nishat Linen', 'Daraz', 'Naheed', 'Highfy', 'J.', 'Khaadi', 'Uniworth'];
         const filteredProducts = (data.products || []).filter(p => {
-          const parsePrice = (val) => {
-            if (typeof val === 'number') return val;
-            if (!val || typeof val !== 'string') return NaN;
-            return Number(val.replace(/[^0-9.]/g, ''));
-          };
-          const price = parsePrice(p.price);
-          const origPrice = parsePrice(p.originalPrice);
-          if (isNaN(origPrice) || isNaN(price) || origPrice <= price) return true;
-          const discountPct = ((origPrice - price) / origPrice) * 100;
-          return discountPct < 15;
+          const isSalesStore = salesPageStores.some(s => (p.store || '').toLowerCase().includes(s.toLowerCase()));
+          if (isSalesStore) {
+            const parsePrice = (val) => {
+              if (typeof val === 'number') return val;
+              if (!val || typeof val !== 'string') return NaN;
+              return Number(val.replace(/[^0-9.]/g, ''));
+            };
+            const price = parsePrice(p.price);
+            const origPrice = parsePrice(p.originalPrice);
+            if (!isNaN(origPrice) && !isNaN(price) && origPrice > price) {
+              const discountPct = ((origPrice - price) / origPrice) * 100;
+              if (discountPct > 25) return false;
+            }
+          }
+          return true;
         });
         const metaStr = `${data.total || 0} result${data.total === 1 ? '' : 's'}`;
         setProducts(filteredProducts);
@@ -387,18 +405,23 @@ export default function HomePage() {
               if (liveData.success) {
                 // Re-fetch products to get the newly added items
                 const newData = await fetchJson(`${API_BASE}/products?q=${encodeURIComponent(searchTerm)}&limit=1000`);
-                // Filter out discounted sale products (>15% off) from normal search — premium-only
+                const salesPageStores = ['Limelight', 'Sapphire', 'Stylo', 'Nishat Linen', 'Daraz', 'Naheed', 'Highfy', 'J.', 'Khaadi', 'Uniworth'];
                 const newFiltered = (newData.products || []).filter(p => {
-                  const parsePrice = (val) => {
-                    if (typeof val === 'number') return val;
-                    if (!val || typeof val !== 'string') return NaN;
-                    return Number(val.replace(/[^0-9.]/g, ''));
-                  };
-                  const price = parsePrice(p.price);
-                  const origPrice = parsePrice(p.originalPrice);
-                  if (isNaN(origPrice) || isNaN(price) || origPrice <= price) return true;
-                  const discountPct = ((origPrice - price) / origPrice) * 100;
-                  return discountPct < 15;
+                  const isSalesStore = salesPageStores.some(s => (p.store || '').toLowerCase().includes(s.toLowerCase()));
+                  if (isSalesStore) {
+                    const parsePrice = (val) => {
+                      if (typeof val === 'number') return val;
+                      if (!val || typeof val !== 'string') return NaN;
+                      return Number(val.replace(/[^0-9.]/g, ''));
+                    };
+                    const price = parsePrice(p.price);
+                    const origPrice = parsePrice(p.originalPrice);
+                    if (!isNaN(origPrice) && !isNaN(price) && origPrice > price) {
+                      const discountPct = ((origPrice - price) / origPrice) * 100;
+                      if (discountPct > 25) return false;
+                    }
+                  }
+                  return true;
                 });
                 const newMetaStr = `${newFiltered.length} result${newFiltered.length === 1 ? '' : 's'}`;
                 setProducts(newFiltered);
@@ -808,13 +831,14 @@ export default function HomePage() {
               )}
 
               <div className={`products-grid ${view === 'list' ? 'list-view' : ''}`}>
-                {sortedProducts.map((product, index) => (
+                {paginatedProducts.map((product, index) => (
                   <article
                     className={`product-card ${priceStats?.min === product.price ? 'cheapest' : ''}`}
                     key={`${product.id}-${index}`}>
                     <div className="store-badge" style={{ background: product.storeColor || '#6366f1' }}>
                       {product.store}
                     </div>
+                    <FavoriteButton product={product} />
                     <div className="product-image-wrap">
                       {product.image ? (
                         <img src={product.image} alt={product.title} className="product-image" />
@@ -866,6 +890,65 @@ export default function HomePage() {
                   </article>
                 ))}
               </div>
+
+              {/* ── Pagination ── */}
+              {totalPages > 1 && (
+                <div className="pagination-container">
+                  <div className="pagination-info">
+                    Showing {(currentPage - 1) * PRODUCTS_PER_PAGE + 1}–{Math.min(currentPage * PRODUCTS_PER_PAGE, sortedProducts.length)} of {sortedProducts.length} results
+                  </div>
+                  <div className="pagination-controls">
+                    <button
+                      className="pagination-btn"
+                      onClick={() => { setCurrentPage(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      disabled={currentPage === 1}
+                      aria-label="First page"
+                    >«</button>
+                    <button
+                      className="pagination-btn"
+                      onClick={() => { setCurrentPage(p => p - 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      disabled={currentPage === 1}
+                      aria-label="Previous page"
+                    >‹</button>
+
+                    {/* Page number buttons — show max 5 around current */}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
+                      .reduce((acc, p, idx, arr) => {
+                        if (idx > 0 && p - arr[idx - 1] > 1) acc.push('...');
+                        acc.push(p);
+                        return acc;
+                      }, [])
+                      .map((item, i) =>
+                        item === '...' ? (
+                          <span key={`ellipsis-${i}`} className="pagination-ellipsis">…</span>
+                        ) : (
+                          <button
+                            key={item}
+                            className={`pagination-btn pagination-num ${item === currentPage ? 'active' : ''}`}
+                            onClick={() => { setCurrentPage(item); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                            aria-label={`Page ${item}`}
+                            aria-current={item === currentPage ? 'page' : undefined}
+                          >{item}</button>
+                        )
+                      )
+                    }
+
+                    <button
+                      className="pagination-btn"
+                      onClick={() => { setCurrentPage(p => p + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      disabled={currentPage === totalPages}
+                      aria-label="Next page"
+                    >›</button>
+                    <button
+                      className="pagination-btn"
+                      onClick={() => { setCurrentPage(totalPages); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      disabled={currentPage === totalPages}
+                      aria-label="Last page"
+                    >»</button>
+                  </div>
+                </div>
+              )}
             </div>
           </section>
         )
