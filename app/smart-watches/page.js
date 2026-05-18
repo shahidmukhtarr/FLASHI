@@ -1,9 +1,10 @@
 import CategoryClient from '../components/CategoryClient';
+import { fetchProductsForCategory } from '../../server/services/productFetcher';
 
 export const metadata = {
   title: 'Smart Watch Price in Pakistan 2026 — Compare Lowest Prices | Flashi',
   description: 'Compare smart watch prices from Daraz, PriceOye & 50+ Pakistani stores. Find the best smart watch deals starting from Rs. 1,500. Budget smart watches, fitness bands & more. Updated daily on Flashi.pk',
-  keywords: 'smart watch price in pakistan, best smart watch under 5000, cheapest smart watch pakistan, fitness band price pakistan, smart watch for girls pakistan, amazfit watch price, xiaomi smart watch pakistan',
+  keywords: 'smart watch price in pakistan, best smart watch under 5000, cheapest smart watch pakistan, fitness band price pakistan, smart watch for girls pakistan, amazfit watch price, xiaomi smart watch pakistan, zero lifestyle smart watch, ronin smart watch, apple watch pakistan, samsung galaxy watch price',
   alternates: {
     canonical: 'https://flashi.pk/smart-watches',
   },
@@ -48,6 +49,7 @@ const relatedCategories = [
   { name: 'Mobile Accessories', href: '/mobile-accessories', emoji: '📱' },
   { name: 'Chargers & Power Banks', href: '/chargers-power-banks', emoji: '🔌' },
   { name: 'Gaming Accessories', href: '/gaming-accessories', emoji: '🎮' },
+  { name: 'Fashion & Clothing', href: '/fashion-clothing', emoji: '👗' },
 ];
 
 const breadcrumbSchema = {
@@ -65,14 +67,39 @@ const faqSchema = {
   mainEntity: faqs.map(faq => ({
     '@type': 'Question',
     name: faq.question,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: faq.answer,
-    },
+    acceptedAnswer: { '@type': 'Answer', text: faq.answer },
   })),
 };
 
-export default function SmartWatchesPage() {
+const popularBrands = [
+  'Apple Watch', 'Samsung Galaxy Watch', 'Amazfit', 'Xiaomi Mi Band', 'Haylou',
+  'Zero Lifestyle', 'Ronin', 'Fitbit', 'Huawei Watch', 'Realme Watch',
+  'Noise', 'Fire-Boltt', 'Mibro', 'Kieslect', 'Colmi',
+];
+
+const popularStores = [
+  'Daraz', 'PriceOye', 'Mega.pk', 'Shophive', 'Naheed',
+];
+
+const seoKeywords = [
+  'smart watch price in pakistan',
+  'best smart watch under 5000',
+  'zero lifestyle smart watch',
+  'ronin smart watch price',
+  'apple watch price pakistan',
+  'samsung galaxy watch price',
+  'amazfit watch pakistan',
+  'xiaomi mi band price',
+  'fitness band under 3000',
+  'smart watch for girls pakistan',
+  'budget smartwatch pakistan',
+  'heart rate monitor watch',
+];
+
+const seoContent = `Compare smart watch and fitness band prices across Pakistan's top online stores on Flashi. Whether you want a budget fitness tracker under Rs. 3,000 or a premium Apple Watch or Samsung Galaxy Watch — Flashi compares prices from Daraz, PriceOye, Mega.pk, Shophive and 50+ stores instantly. Find the best deals on Amazfit, Xiaomi Mi Band, Zero Lifestyle, Ronin, Haylou, and more. Updated daily with the latest prices so you always get the lowest price on smart watches in Pakistan.`;
+
+export default async function SmartWatchesPage() {
+  const initialProducts = await fetchProductsForCategory(searchQueries);
   return (
     <CategoryClient
       categoryName="Smart Watches"
@@ -84,6 +111,11 @@ export default function SmartWatchesPage() {
       relatedCategories={relatedCategories}
       breadcrumbSchema={breadcrumbSchema}
       faqSchema={faqSchema}
+      popularBrands={popularBrands}
+      popularStores={popularStores}
+      seoKeywords={seoKeywords}
+      seoContent={seoContent}
+      initialProducts={initialProducts}
     />
   );
 }

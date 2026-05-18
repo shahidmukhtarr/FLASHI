@@ -34,7 +34,7 @@ export const CATEGORY_PAGE_CONFIG = [
     store: 'Daraz',
     title: 'Headphones & Headsets',
     url: 'https://www.daraz.pk/catalog?q=Headphones%20%26%20Headsets',
-    keywords: ['headphones', 'headset', 'earphones', 'earbuds', 'handsfree', 'airpods', 'bluetooth headphones', 'wireless earbuds', 'gaming headset'],
+    keywords: ['headphones', 'headset', 'earphones', 'earbuds', 'handsfree', 'airpods', 'bluetooth headphones', 'wireless earbuds', 'gaming headset', 'zero lifestyle earbuds', 'zero lifestyle', 'ronin', 'audionic', 'qcy'],
   },
   {
     store: 'Daraz',
@@ -46,7 +46,7 @@ export const CATEGORY_PAGE_CONFIG = [
     store: 'Daraz',
     title: 'Smart Watches',
     url: 'https://www.daraz.pk/smart-watches/',
-    keywords: ['smart watch', 'smartwatch', 'fitness band', 'fitness tracker', 'wearable'],
+    keywords: ['smart watch', 'smartwatch', 'fitness band', 'fitness tracker', 'wearable', 'zero lifestyle watch', 'zero lifestyle', 'ronin', 'kieslect'],
   },
   {
     store: 'Daraz',
@@ -166,13 +166,13 @@ export const CATEGORY_PAGE_CONFIG = [
     store: 'PriceOye',
     url: 'https://priceoye.pk/smart-watches',
     title: 'Smart Watches',
-    keywords: ['watch', 'smart watch', 'wearable', 'band'],
+    keywords: ['watch', 'smart watch', 'wearable', 'band', 'zero lifestyle', 'ronin', 'kieslect', 'mibro'],
   },
   {
     store: 'PriceOye',
     url: 'https://priceoye.pk/wireless-earbuds',
     title: 'Wireless Earbuds',
-    keywords: ['earbuds', 'earphones', 'headphones', 'audio'],
+    keywords: ['earbuds', 'earphones', 'headphones', 'audio', 'zero lifestyle earbuds', 'zero lifestyle', 'ronin', 'audionic', 'qcy'],
   },
   {
     store: 'PriceOye',

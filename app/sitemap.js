@@ -19,6 +19,7 @@ export default function sitemap() {
     { url: `${BASE_URL}/chargers-power-banks`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: `${BASE_URL}/gaming-accessories`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: `${BASE_URL}/mobile-accessories`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+    { url: `${BASE_URL}/fashion-clothing`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
   ];
 
   // Blog pages

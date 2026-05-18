@@ -1,9 +1,10 @@
 import CategoryClient from '../components/CategoryClient';
+import { fetchProductsForCategory } from '../../server/services/productFetcher';
 
 export const metadata = {
   title: 'Wireless Earbuds Price in Pakistan 2026 — Best Deals from 50+ Stores | Flashi',
-  description: 'Find the lowest wireless earbuds prices in Pakistan. Compare earbuds from JBL, Samsung, QCY, Audionic & more across Daraz, PriceOye & 50+ stores. Budget earbuds from Rs. 800. Free price comparison on Flashi.pk',
-  keywords: 'wireless earbuds price in pakistan, best earbuds under 2000, bluetooth earbuds pakistan, airpods price pakistan, jbl earbuds pakistan, samsung buds price pakistan, noise cancelling earbuds pakistan, gaming earbuds pakistan',
+  description: 'Find the lowest wireless earbuds prices in Pakistan. Compare earbuds from JBL, Samsung, QCY, Audionic, Zero Lifestyle, Ronin & more across Daraz, PriceOye & 50+ stores. Budget earbuds from Rs. 800. Free price comparison on Flashi.pk',
+  keywords: 'wireless earbuds price in pakistan, best earbuds under 2000, bluetooth earbuds pakistan, airpods price pakistan, jbl earbuds pakistan, samsung buds price pakistan, noise cancelling earbuds pakistan, gaming earbuds pakistan, zero lifestyle earbuds, ronin earbuds price, audionic earbuds pakistan, qcy earbuds pakistan, haylou earbuds, tws earbuds pakistan, budget earbuds pakistan',
   alternates: {
     canonical: 'https://flashi.pk/wireless-earbuds',
   },
@@ -44,10 +45,11 @@ const faqs = [
 ];
 
 const relatedCategories = [
-  { name: 'Smart Watches', href: '/smart-watches', emoji: '⌚' },
-  { name: 'Mobile Accessories', href: '/mobile-accessories', emoji: '📱' },
-  { name: 'Gaming Accessories', href: '/gaming-accessories', emoji: '🎮' },
-  { name: 'Chargers & Power Banks', href: '/chargers-power-banks', emoji: '🔌' },
+  { name: 'Smart Watches', href: '/smart-watches', emoji: '' },
+  { name: 'Mobile Accessories', href: '/mobile-accessories', emoji: '' },
+  { name: 'Gaming Accessories', href: '/gaming-accessories', emoji: '' },
+  { name: 'Chargers & Power Banks', href: '/chargers-power-banks', emoji: '' },
+  { name: 'Fashion & Clothing', href: '/fashion-clothing', emoji: '' },
 ];
 
 const breadcrumbSchema = {
@@ -69,7 +71,37 @@ const faqSchema = {
   })),
 };
 
-export default function WirelessEarbudsPage() {
+const popularBrands = [
+  'JBL', 'Samsung', 'Apple AirPods', 'QCY', 'Audionic', 'Haylou',
+  'Zero Lifestyle', 'Ronin', 'SoundPeats', 'Xiaomi', 'Baseus',
+  'Anker', 'Sony', 'Nothing', 'Realme', 'OnePlus',
+  'Edifier', 'Skullcandy', 'Lenovo', 'Havit',
+];
+
+const popularStores = [
+  'Daraz', 'PriceOye', 'Mega.pk', 'Shophive', 'Naheed',
+];
+
+const seoKeywords = [
+  'wireless earbuds price in pakistan',
+  'best earbuds under 2000',
+  'zero lifestyle earbuds price',
+  'ronin earbuds pakistan',
+  'jbl earbuds price pakistan',
+  'samsung buds price',
+  'airpods price in pakistan',
+  'noise cancelling earbuds',
+  'gaming earbuds pakistan',
+  'budget TWS earbuds pakistan',
+  'bluetooth earbuds under 3000',
+  'audionic earbuds price',
+];
+
+const seoContent = `Compare wireless earbuds prices across Pakistan's top online stores on Flashi. Whether you're looking for budget TWS earbuds under Rs. 2,000, premium noise-cancelling earbuds from JBL and Samsung, or the latest Zero Lifestyle and Ronin earbuds — Flashi compares prices from Daraz, PriceOye, Mega.pk, Shophive and 50+ Pakistani stores instantly. Find the best deals on Apple AirPods, QCY, Audionic, Haylou, SoundPeats and more. Our price comparison engine updates daily so you always get the lowest price on wireless earbuds in Pakistan.`;
+
+export default async function WirelessEarbudsPage() {
+  const initialProducts = await fetchProductsForCategory(searchQueries);
+
   return (
     <CategoryClient
       categoryName="Wireless Earbuds"
@@ -81,6 +113,11 @@ export default function WirelessEarbudsPage() {
       relatedCategories={relatedCategories}
       breadcrumbSchema={breadcrumbSchema}
       faqSchema={faqSchema}
+      popularBrands={popularBrands}
+      popularStores={popularStores}
+      seoKeywords={seoKeywords}
+      seoContent={seoContent}
+      initialProducts={initialProducts}
     />
   );
 }

@@ -19,23 +19,37 @@ export default function CategoryClient({
   relatedCategories,
   breadcrumbSchema,
   faqSchema,
+  seoKeywords = [],
+  popularBrands = [],
+  popularStores = [],
+  seoContent = '',
+  initialProducts = [],
 }) {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState(initialProducts);
+  const [loading, setLoading] = useState(initialProducts.length === 0);
   const [sortKey, setSortKey] = useState('price-asc');
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 100;
 
   useEffect(() => {
+    if (initialProducts.length > 0) return;
+
     async function loadProducts() {
       setLoading(true);
       try {
-        // Fetch products for all search queries and merge
+        // Fetch ALL search queries in PARALLEL for instant loading
+        const results = await Promise.all(
+          searchQueries.map(q =>
+            fetch(`/api/products?q=${encodeURIComponent(q)}&limit=1000`)
+              .then(res => res.json())
+              .catch(() => ({ products: [] }))
+          )
+        );
+
+        // Merge and deduplicate
         const allProducts = [];
         const seen = new Set();
-        for (const q of searchQueries) {
-          const res = await fetch(`/api/products?q=${encodeURIComponent(q)}&limit=1000`);
-          const data = await res.json();
+        for (const data of results) {
           if (data.products) {
             for (const p of data.products) {
               const key = `${p.title}-${p.store}-${p.price}`;
@@ -84,9 +98,42 @@ export default function CategoryClient({
     return { min: Math.min(...prices), max: Math.max(...prices) };
   }, [products]);
 
+  // Generate ItemList schema for SEO (shows product listings in Google)
+  const itemListSchema = useMemo(() => {
+    if (products.length === 0) return null;
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: `${categoryName} Prices in Pakistan`,
+      description: heroDescription,
+      url: `https://flashi.pk/${categorySlug}`,
+      numberOfItems: products.length,
+      itemListElement: sortedProducts.slice(0, 30).map((p, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        item: {
+          '@type': 'Product',
+          name: p.title,
+          image: p.image || undefined,
+          url: p.url,
+          offers: {
+            '@type': 'Offer',
+            price: p.price,
+            priceCurrency: 'PKR',
+            availability: p.inStock !== false ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            seller: {
+              '@type': 'Organization',
+              name: p.store,
+            },
+          },
+        },
+      })),
+    };
+  }, [products, sortedProducts, categoryName, categorySlug, heroDescription]);
+
   return (
     <>
-      {/* Breadcrumb + FAQ Schema */}
+      {/* Breadcrumb + FAQ + ItemList Schema — all rendered server-side for Google */}
       {breadcrumbSchema && (
         <script
           type="application/ld+json"
@@ -97,6 +144,12 @@ export default function CategoryClient({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
+      {itemListSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
         />
       )}
 
@@ -132,7 +185,7 @@ export default function CategoryClient({
         </div>
       </header>
 
-      {/* Breadcrumb Navigation */}
+      {/* Breadcrumb Navigation — renders instantly */}
       <nav className="category-breadcrumb" aria-label="Breadcrumb">
         <div className="container">
           <ol className="breadcrumb-list">
@@ -142,13 +195,30 @@ export default function CategoryClient({
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="category-hero">
+      {/* Hero Section — renders instantly, no API dependency */}
+      <section 
+        className="category-hero"
+        style={
+          {
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url("${
+              {
+                'wireless-earbuds': '/earbuds.jpg',
+                'smart-watches': '/smartwatch.jpg',
+                'chargers-power-banks': '/chargers and powerbanks.jpg',
+                'gaming-accessories': '/gaming accessories.jpg',
+                'mobile-accessories': '/mobile accessories.jpg',
+                'fashion-clothing': '/cloths and fashion.jpg'
+              }[categorySlug] || ''
+            }")`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }
+        }
+      >
         <div className="container">
           <div className="category-hero-content">
-            <span className="category-hero-emoji">{heroEmoji}</span>
             <h1 className="category-hero-title">{categoryName} — Best Prices in Pakistan</h1>
-            <p className="category-hero-desc">{heroDescription}</p>
             {priceStats && (
               <div className="category-price-summary">
                 <span className="category-price-tag">
@@ -160,6 +230,17 @@ export default function CategoryClient({
           </div>
         </div>
       </section>
+
+      {/* SEO Keyword Prose — renders just below hero and above products */}
+      {seoContent && (
+        <section className="category-seo-section" style={{ padding: '2rem 0 0.5rem' }}>
+          <div className="container">
+            <div className="category-seo-prose" style={{ maxWidth: '1000px', textAlign: 'center', margin: '0 auto' }}>
+              <p>{seoContent}</p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Product Grid */}
       <section className="category-products">
@@ -294,6 +375,44 @@ export default function CategoryClient({
         </div>
       </section>
 
+      {/* SEO Tags — visible to Google crawler, renders instantly at the bottom */}
+      {(popularBrands.length > 0 || popularStores.length > 0) && (
+        <section className="category-seo-section" style={{ padding: '3rem 0 1rem' }}>
+          <div className="container">
+            {popularBrands.length > 0 && (
+              <div className="category-seo-tags">
+                <h2 className="category-seo-tags-title">Popular {categoryName} Brands in Pakistan</h2>
+                <div className="category-seo-tag-list">
+                  {popularBrands.map(brand => (
+                    <span key={brand} className="category-seo-tag">{brand}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {popularStores.length > 0 && (
+              <div className="category-seo-tags" style={{ marginTop: '1rem' }}>
+                <h3 className="category-seo-tags-title">Compare {categoryName} Prices From</h3>
+                <div className="category-seo-tag-list">
+                  {popularStores.map(store => (
+                    <span key={store} className="category-seo-tag store-tag">{store}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {seoKeywords.length > 0 && (
+              <div className="category-seo-tags" style={{ marginTop: '1rem' }}>
+                <h3 className="category-seo-tags-title">Related Searches</h3>
+                <div className="category-seo-tag-list">
+                  {seoKeywords.map(kw => (
+                    <span key={kw} className="category-seo-tag keyword-tag">{kw}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* CTA Section */}
       <section className="category-cta">
         <div className="container">
@@ -324,7 +443,7 @@ export default function CategoryClient({
         </section>
       )}
 
-      {/* FAQ Section */}
+      {/* FAQ Section — renders instantly for Google */}
       {faqs && faqs.length > 0 && (
         <section className="category-faq">
           <div className="container">

@@ -1,9 +1,10 @@
 import CategoryClient from '../components/CategoryClient';
+import { fetchProductsForCategory } from '../../server/services/productFetcher';
 
 export const metadata = {
   title: 'Chargers & Power Banks Price in Pakistan — Compare Best Deals | Flashi',
   description: 'Compare fast charger & power bank prices in Pakistan from 50+ online stores. Find 20000mAh power banks, 65W chargers, wireless chargers & USB-C cables at lowest prices. Updated daily on Flashi.pk',
-  keywords: 'charger price in pakistan, power bank price pakistan, fast charger pakistan, 20000mah power bank, wireless charger pakistan, usb c cable pakistan, 65w charger price, iphone charger pakistan, samsung charger price',
+  keywords: 'charger price in pakistan, power bank price pakistan, fast charger pakistan, 20000mah power bank, wireless charger pakistan, usb c cable pakistan, 65w charger price, iphone charger pakistan, samsung charger price, anker power bank, baseus charger, xiaomi power bank',
   alternates: {
     canonical: 'https://flashi.pk/chargers-power-banks',
   },
@@ -48,6 +49,7 @@ const relatedCategories = [
   { name: 'Wireless Earbuds', href: '/wireless-earbuds', emoji: '🎧' },
   { name: 'Smart Watches', href: '/smart-watches', emoji: '⌚' },
   { name: 'Gaming Accessories', href: '/gaming-accessories', emoji: '🎮' },
+  { name: 'Fashion & Clothing', href: '/fashion-clothing', emoji: '👗' },
 ];
 
 const breadcrumbSchema = {
@@ -69,7 +71,32 @@ const faqSchema = {
   })),
 };
 
-export default function ChargersPowerBanksPage() {
+const popularBrands = [
+  'Anker', 'Baseus', 'Xiaomi', 'Romoss', 'Samsung', 'Apple',
+  'UGREEN', 'Aukey', 'Joyroom', 'Remax', 'Hoco', 'Rock',
+];
+
+const popularStores = [
+  'Daraz', 'PriceOye', 'Mega.pk', 'Shophive', 'Naheed',
+];
+
+const seoKeywords = [
+  'power bank price in pakistan',
+  'fast charger price pakistan',
+  '20000mah power bank price',
+  'wireless charger price',
+  'usb c cable pakistan',
+  'anker power bank pakistan',
+  'baseus charger price',
+  'iphone charger price pakistan',
+  '65w charger pakistan',
+  'car charger price',
+];
+
+const seoContent = `Compare charger and power bank prices across Pakistan's top online stores on Flashi. Find the lowest prices on 10000mAh and 20000mAh power banks, 65W fast chargers, wireless chargers, USB-C cables and more from Anker, Baseus, Xiaomi, Romoss and other top brands. Flashi compares prices from Daraz, PriceOye, Mega.pk, Shophive and 50+ Pakistani stores so you never overpay. Updated daily with the latest deals.`;
+
+export default async function ChargersPowerBanksPage() {
+  const initialProducts = await fetchProductsForCategory(searchQueries);
   return (
     <CategoryClient
       categoryName="Chargers & Power Banks"
@@ -81,6 +108,11 @@ export default function ChargersPowerBanksPage() {
       relatedCategories={relatedCategories}
       breadcrumbSchema={breadcrumbSchema}
       faqSchema={faqSchema}
+      popularBrands={popularBrands}
+      popularStores={popularStores}
+      seoKeywords={seoKeywords}
+      seoContent={seoContent}
+      initialProducts={initialProducts}
     />
   );
 }

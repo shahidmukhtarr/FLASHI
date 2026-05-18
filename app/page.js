@@ -747,6 +747,11 @@ export default function HomePage() {
                 <span className="category-card-name">Mobile Accessories</span>
                 <span className="category-card-desc">Covers, cables & more</span>
               </a>
+              <a href="/fashion-clothing" className="category-card">
+                <span className="category-card-emoji">👗</span>
+                <span className="category-card-name">Fashion & Clothing</span>
+                <span className="category-card-desc">Lawn, kurtas, dresses & more</span>
+              </a>
             </div>
           </div>
         </section>

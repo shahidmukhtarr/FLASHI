@@ -4260,6 +4260,68 @@ html.is-app .mobile-bottom-nav {
 .category-footer a { color: rgba(255,255,255,0.7); }
 .category-footer a:hover { color: #fff; }
 
+/* Category SEO Sections — keyword-rich content for Google */
+.category-seo-section {
+  padding: 1.5rem 0 0.5rem;
+  background: var(--primary-bg);
+}
+.category-seo-prose {
+  max-width: 800px;
+  margin: 0 auto 1.25rem;
+  text-align: center;
+  color: var(--secondary-text);
+  font-size: var(--font-size-sm);
+  line-height: 1.7;
+}
+.category-seo-tags {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.category-seo-tags-title {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--primary-text);
+  margin-bottom: 0.6rem;
+  text-align: center;
+}
+.category-seo-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
+.category-seo-tag {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  color: var(--secondary-text);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+.category-seo-tag:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(46, 125, 50, 0.06);
+}
+.category-seo-tag.store-tag {
+  background: rgba(46, 125, 50, 0.08);
+  border-color: rgba(46, 125, 50, 0.2);
+  color: var(--primary);
+  font-weight: 600;
+}
+.category-seo-tag.keyword-tag {
+  background: rgba(99, 102, 241, 0.06);
+  border-color: rgba(99, 102, 241, 0.15);
+  color: #6366f1;
+}
+@media (max-width: 768px) {
+  .category-seo-prose { font-size: var(--font-size-xs); padding: 0 0.5rem; }
+  .category-seo-tag { font-size: 11px; padding: 0.25rem 0.5rem; }
+}
+
 /* ========================================
    HOMEPAGE — Browse Categories Section
    ======================================== */
