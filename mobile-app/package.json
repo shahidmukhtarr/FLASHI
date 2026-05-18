@@ -1,7 +1,7 @@
 {
   "name": "flashi-mobile",
   "version": "1.0.0",
-  "description": "Flashi – Pakistan's First Smart Shopping App (Mobile)",
+  "description": "Flashi – Pakistan's First Price Comparison App (Mobile)",
   "main": "index.js",
   "scripts": {
     "build": "echo 'No build needed — using live website wrapper'",

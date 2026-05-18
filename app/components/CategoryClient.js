@@ -81,7 +81,7 @@ export default function CategoryClient({
     if (storeFilter !== 'all') {
       list = list.filter(p => p.store === storeFilter);
     }
-    
+
     switch (sortKey) {
       case 'price-asc':
         return list.sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity));
@@ -166,16 +166,16 @@ export default function CategoryClient({
       {/* Header with Back Button and Logo */}
       <header className="header">
         <div className="container" style={{ display: 'flex', alignItems: 'center' }}>
-          <button 
-            onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = '/'} 
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              width: '40px', 
-              height: '40px', 
-              borderRadius: '50%', 
-              background: 'rgba(46, 125, 50, 0.1)', 
+          <button
+            onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = '/'}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              background: 'rgba(46, 125, 50, 0.1)',
               color: 'var(--primary)',
               border: 'none',
               cursor: 'pointer',
@@ -214,12 +214,11 @@ export default function CategoryClient({
       </nav>
 
       {/* Hero Section — renders instantly, no API dependency */}
-      <section 
+      <section
         className="category-hero"
         style={
           {
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url("${
-              {
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url("${{
                 'wireless-earbuds': '/earbuds.jpg',
                 'smart-watches': '/smartwatch.jpg',
                 'chargers-power-banks': '/chargers and powerbanks.jpg',
@@ -227,7 +226,7 @@ export default function CategoryClient({
                 'mobile-accessories': '/mobile accessories.jpg',
                 'fashion-clothing': '/cloths and fashion.jpg'
               }[categorySlug] || ''
-            }")`,
+              }")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
@@ -280,11 +279,11 @@ export default function CategoryClient({
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <label className="sort-label">Sort by</label>
                 <select className="sort-select" value={sortKey} onChange={e => { setSortKey(e.target.value); setCurrentPage(1); }}>
-                <option value="recommended">Recommended</option>
-                <option value="price-asc">Price: Low → High</option>
-                <option value="price-desc">Price: High → Low</option>
-                <option value="rating">Best Rating</option>
-              </select>
+                  <option value="recommended">Recommended</option>
+                  <option value="price-asc">Price: Low → High</option>
+                  <option value="price-desc">Price: High → Low</option>
+                  <option value="rating">Best Rating</option>
+                </select>
               </div>
             </div>
           </div>
@@ -317,10 +316,10 @@ export default function CategoryClient({
                       )}
                     </div>
                     <div className="product-info">
-                      <a 
-                        href={product.url} 
-                        target="_blank" 
-                        rel="noreferrer" 
+                      <a
+                        href={product.url}
+                        target="_blank"
+                        rel="noreferrer"
                         className="product-title"
                         onClick={(e) => {
                           e.preventDefault();
@@ -345,10 +344,10 @@ export default function CategoryClient({
                             {product.inStock !== false ? 'In Stock' : 'Out of Stock'}
                           </span>
                         </div>
-                        <a 
-                          href={product.url} 
-                          target="_blank" 
-                          rel="noreferrer" 
+                        <a
+                          href={product.url}
+                          target="_blank"
+                          rel="noreferrer"
                           className="product-visit-btn"
                           onClick={(e) => {
                             e.preventDefault();

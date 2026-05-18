@@ -2,8 +2,8 @@ import Link from 'next/link';
 import SalesNavLink from '../components/SalesNavLink';
 
 export const metadata = {
-  title: 'Terms and Conditions - FLASHI | Pakistan\'s Smart Shopping Platform',
-  description: 'Read the Terms and Conditions for using FLASHI — Pakistan\'s smart shopping and price comparison platform. Understand your rights and responsibilities when using our service.',
+  title: 'Terms and Conditions - FLASHI | Price Comparison Platform',
+  description: 'Read the Terms and Conditions for using FLASHI — Pakistan\'s best price comparison platform. Understand your rights and responsibilities when using our service.',
   keywords: 'flashi terms and conditions, flashi terms of service, flashi legal, flashi usage policy',
   robots: 'index, follow',
   openGraph: {
@@ -30,7 +30,7 @@ These terms apply to all visitors, users, subscribers, and anyone who accesses o
   {
     id: 'services',
     title: '2. Description of Services',
-    content: `FLASHI is a price comparison and smart shopping platform designed for Pakistani consumers. Our services include:
+    content: `FLASHI is a price comparison platform designed for Pakistani consumers. Our services include:
 
 • **Price Comparison:** We aggregate product listings and pricing information from various online stores across Pakistan, including but not limited to Daraz, PriceOye, Mega.pk, Highfy, Limelight, Sapphire, and Stationers.pk.
 • **Product Search:** Users can search for products by name or by pasting a product URL to find pricing across multiple stores.

@@ -32,9 +32,9 @@ export const viewport = {
 
 export const metadata = {
   metadataBase: new URL('https://flashi.pk'),
-  title: 'FLASHI - Pakistan\'s First Smart Shopping Platform',
-  description: 'Compare prices from 50+ Pakistani stores including Daraz, PriceOye & more. Find lowest prices on earbuds, smart watches, chargers, gaming accessories & mobile gadgets. Save up to Rs. 5,000 with Flashi.pk',
-  keywords: 'compare prices pakistan, price comparison pakistan, earbuds price in pakistan, smart watch price in pakistan, charger price pakistan, gaming accessories pakistan, mobile accessories pakistan, best deals pakistan, online shopping pakistan, cheapest prices pakistan, budget electronics pakistan, gadgets pakistan',
+  title: 'FLASHI - Price Comparison Platform',
+  description: 'Pakistan\'s best Price Comparison Platform. Compare prices from 50+ stores like Daraz, PriceOye, Mega.pk, Qeemat & PriceMeter. Find lowest prices on earbuds, mobile gadgets & more.',
+  keywords: 'price comparison platform, price comparison pakistan, compare prices pakistan, pricemeter pakistan, qeemat pakistan, compareprice.pk, mega.pk, pricespy pakistan, online shopping pakistan, best deals pakistan',
   robots: 'index, follow',
   openGraph: {
     title: 'Compare Prices from 50+ Pakistani Stores — Earbuds, Smart Watches & More | Flashi',
@@ -46,7 +46,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FLASHI - Pakistan\'s First Smart Shopping Platform',
+    title: 'FLASHI - Price Comparison Platform',
     description: 'Find the lowest prices on earbuds, smart watches, chargers & gadgets. Compare across 50+ Pakistani stores.',
     images: ['/logo.png'],
   },

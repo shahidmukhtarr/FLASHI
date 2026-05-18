@@ -581,7 +581,7 @@ export default function HomePage() {
         }}>
           <img src="/logo.png" alt="FLASHI" width="80" height="80" style={{ borderRadius: '20px', marginBottom: '1.5rem', boxShadow: '0 12px 40px rgba(46, 125, 50, 0.2)', animation: 'splashLogo 0.6s cubic-bezier(0.16, 1, 0.3, 1) both' }} />
           <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--primary-text)', animation: 'splashFade 0.6s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both' }}>Welcome to FLASHI</h1>
-          <p style={{ color: 'var(--secondary-text)', marginBottom: '2.5rem', fontSize: '1.1rem', animation: 'splashFade 0.6s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both' }}>Pakistan's smartest Smart Shopping platform</p>
+          <p style={{ color: 'var(--secondary-text)', marginBottom: '2.5rem', fontSize: '1.1rem', animation: 'splashFade 0.6s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both' }}>Pakistan's smartest Price Comparison platform</p>
 
           <button
             onClick={() => { setShowMobileSplash(false); setShowLoginModal(true); setIsRegisterMode(true); }}
