@@ -255,29 +255,38 @@ export default function HomePage() {
     } else {
       // No ?q= in URL — check localStorage for last search (survives app kills)
       // This handles the case where Android kills the WebView and restarts at flashi.pk
-      try {
-        const raw = localStorage.getItem(LAST_SEARCH_KEY);
-        if (raw) {
-          const data = JSON.parse(raw);
-          // Only restore if within 30 minutes
-          if (data.q && data.ts && (Date.now() - data.ts < 30 * 60 * 1000)) {
-            setQuery(data.q);
-            // Try sessionStorage cache first for instant display
-            const cached = loadSearchCache();
-            if (cached && cached.q === data.q && cached.products?.length > 0) {
-              setProducts(cached.products);
-              setMeta(cached.meta || '');
-            } else {
-              // No session cache — fetch fresh
-              handleSearch(data.q, false);
+      const isSessionStarted = sessionStorage.getItem('flashi_session_started');
+      if (!isSessionStarted) {
+        sessionStorage.setItem('flashi_session_started', 'true');
+        try {
+          const raw = localStorage.getItem(LAST_SEARCH_KEY);
+          if (raw) {
+            const data = JSON.parse(raw);
+            // Only restore if within 30 minutes
+            if (data.q && data.ts && (Date.now() - data.ts < 30 * 60 * 1000)) {
+              setQuery(data.q);
+              // Try sessionStorage cache first for instant display
+              const cached = loadSearchCache();
+              if (cached && cached.q === data.q && cached.products?.length > 0) {
+                setProducts(cached.products);
+                setMeta(cached.meta || '');
+              } else {
+                // No session cache — fetch fresh
+                handleSearch(data.q, false);
+              }
+              // Put ?q= back in URL so bookmarking / sharing works
+              const url = new URL(window.location);
+              url.searchParams.set('q', data.q);
+              window.history.replaceState({}, '', url.toString());
             }
-            // Put ?q= back in URL so bookmarking / sharing works
-            const url = new URL(window.location);
-            url.searchParams.set('q', data.q);
-            window.history.replaceState({}, '', url.toString());
           }
-        }
-      } catch (_) {}
+        } catch (_) {}
+      } else {
+        // If session already started and there's no ?q=, it means the user explicitly navigated to Home
+        // We should clear the last search so it doesn't pop up again
+        localStorage.removeItem(LAST_SEARCH_KEY);
+        sessionStorage.removeItem(SEARCH_CACHE_KEY);
+      }
     }
 
     if (login === 'true') {
@@ -456,7 +465,9 @@ export default function HomePage() {
       setProducts([]);
       setMeta('');
       sessionStorage.removeItem(SEARCH_CACHE_KEY);
+      localStorage.removeItem(LAST_SEARCH_KEY);
       setMenuOpen(false);
+      window.history.pushState({}, '', '/');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
