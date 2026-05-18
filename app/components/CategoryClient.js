@@ -186,7 +186,11 @@ export default function CategoryClient({
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
           </button>
-          <Link href="/" className="logo">
+          <Link href="/" className="logo" onClick={() => {
+            sessionStorage.removeItem('flashi_search_cache');
+            localStorage.removeItem('flashi_last_search');
+            window.dispatchEvent(new Event('reset-home'));
+          }}>
             <span className="logo-icon">
               <img src="/logo.png" alt="FLASHI" width="32" height="32" style={{ borderRadius: '6px', objectFit: 'cover' }} />
             </span>
@@ -199,7 +203,11 @@ export default function CategoryClient({
       <nav className="category-breadcrumb" aria-label="Breadcrumb">
         <div className="container">
           <ol className="breadcrumb-list">
-            <li><Link href="/">Home</Link></li>
+            <li><Link href="/" onClick={() => {
+              sessionStorage.removeItem('flashi_search_cache');
+              localStorage.removeItem('flashi_last_search');
+              window.dispatchEvent(new Event('reset-home'));
+            }}>Home</Link></li>
             <li aria-current="page">{categoryName}</li>
           </ol>
         </div>
@@ -484,7 +492,11 @@ export default function CategoryClient({
       {/* Footer */}
       <footer className="category-footer">
         <div className="container">
-          <p>© {new Date().getFullYear()} FLASHI. All rights reserved. | <Link href="/">Home</Link> | <Link href="/privacy-policy">Privacy Policy</Link></p>
+          <p>© {new Date().getFullYear()} FLASHI. All rights reserved. | <Link href="/" onClick={() => {
+            sessionStorage.removeItem('flashi_search_cache');
+            localStorage.removeItem('flashi_last_search');
+            window.dispatchEvent(new Event('reset-home'));
+          }}>Home</Link> | <Link href="/privacy-policy">Privacy Policy</Link></p>
         </div>
       </footer>
     </>

@@ -293,7 +293,22 @@ export default function HomePage() {
       handleOpenLogin();
     }
 
-    return () => window.removeEventListener('open-login-modal', handleOpenLogin);
+    const handleHomeReset = () => {
+      setQuery('');
+      setProducts([]);
+      setMeta('');
+      sessionStorage.removeItem(SEARCH_CACHE_KEY);
+      localStorage.removeItem(LAST_SEARCH_KEY);
+      setMenuOpen(false);
+      window.history.replaceState({}, '', '/');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    window.addEventListener('reset-home', handleHomeReset);
+
+    return () => {
+      window.removeEventListener('open-login-modal', handleOpenLogin);
+      window.removeEventListener('reset-home', handleHomeReset);
+    };
   }, []);
 
   useEffect(() => {
@@ -461,14 +476,7 @@ export default function HomePage() {
   const handleHomeClick = (e) => {
     if (window.location.pathname === '/') {
       e.preventDefault();
-      setQuery('');
-      setProducts([]);
-      setMeta('');
-      sessionStorage.removeItem(SEARCH_CACHE_KEY);
-      localStorage.removeItem(LAST_SEARCH_KEY);
-      setMenuOpen(false);
-      window.history.pushState({}, '', '/');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.dispatchEvent(new Event('reset-home'));
     }
   };
 
@@ -1343,7 +1351,7 @@ export default function HomePage() {
         <div className="container">
           <div className="footer-grid">
             <div className="footer-brand">
-              <a href="/" className="logo">
+              <a href="/" className="logo" onClick={handleHomeClick}>
                 <span className="logo-icon">
                   <img src="/logo.png" alt="FLASHI" width="32" height="32" style={{ borderRadius: '6px' }} />
                 </span>
@@ -1361,7 +1369,7 @@ export default function HomePage() {
             <div className="footer-links-col">
               <h4 className="footer-title">Platform</h4>
               <ul className="footer-links">
-                <li><a href="/">Home</a></li>
+                <li><a href="/" onClick={handleHomeClick}>Home</a></li>
                 <li><a href="/special-discounts">Sale Alerts</a></li>
                 <li><a href="/subscribe">Premium</a></li>
                 <li><a href="/blog">Blog &amp; Guides</a></li>
