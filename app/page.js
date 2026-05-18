@@ -449,6 +449,18 @@ export default function HomePage() {
     }
   }
 
+  const handleHomeClick = (e) => {
+    if (window.location.pathname === '/') {
+      e.preventDefault();
+      setQuery('');
+      setProducts([]);
+      setMeta('');
+      sessionStorage.removeItem(SEARCH_CACHE_KEY);
+      setMenuOpen(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   async function handleContactSubmit(e) {
     e.preventDefault();
     if (!contactForm.name || !contactForm.email || !contactForm.message) {
@@ -580,14 +592,14 @@ export default function HomePage() {
 
       <header className="header">
         <div className="container">
-          <a href="/" className="logo">
+          <a href="/" className="logo" onClick={handleHomeClick}>
             <span className="logo-icon">
               <img src="/logo.png" alt="FLASHI" width="32" height="32" style={{ borderRadius: '6px', objectFit: 'cover' }} />
             </span>
             <span className="logo-text">FLASHI</span>
           </a>
           <nav className={`nav ${menuOpen ? 'open' : ''}`}>
-            <a href="/" className="nav-link" onClick={() => setMenuOpen(false)}>Home</a>
+            <a href="/" className="nav-link" onClick={handleHomeClick}>Home</a>
             <SalesNavLink isAnchor className="nav-link" onClick={() => setMenuOpen(false)} style={{ color: 'var(--primary)', fontWeight: 'bold' }} />
             <a href="#how-it-works" className="nav-link" onClick={() => setMenuOpen(false)}>How It Works</a>
             <a href="/subscribe" className="nav-link" onClick={() => setMenuOpen(false)} style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Premium</a>
@@ -632,14 +644,7 @@ export default function HomePage() {
                     Search
                   </button>
                 </div>
-                <div className="search-hints">
-                  <span className="search-hint-label">Popular:</span>
-                  {popularQueries.map((item) => (
-                    <button key={item} className="search-hint" type="button" onClick={() => handleHintClick(item)}>
-                      {item}
-                    </button>
-                  ))}
-                </div>
+
 
 
                 <div className="trust-section">
@@ -1360,6 +1365,7 @@ export default function HomePage() {
                 <li><a href="/chargers-power-banks">Chargers &amp; Power Banks</a></li>
                 <li><a href="/gaming-accessories">Gaming Accessories</a></li>
                 <li><a href="/mobile-accessories">Mobile Accessories</a></li>
+                <li><a href="/fashion-clothing">Fashion &amp; Clothing</a></li>
               </ul>
             </div>
             <div className="footer-links-col">

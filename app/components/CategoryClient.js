@@ -28,6 +28,7 @@ export default function CategoryClient({
   const [products, setProducts] = useState(initialProducts);
   const [loading, setLoading] = useState(initialProducts.length === 0);
   const [sortKey, setSortKey] = useState('price-asc');
+  const [storeFilter, setStoreFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 100;
 
@@ -70,8 +71,17 @@ export default function CategoryClient({
     loadProducts();
   }, [searchQueries]);
 
+  const availableStores = useMemo(() => {
+    const stores = new Set(products.map(p => p.store).filter(Boolean));
+    return Array.from(stores).sort();
+  }, [products]);
+
   const sortedProducts = useMemo(() => {
-    const list = [...products];
+    let list = [...products];
+    if (storeFilter !== 'all') {
+      list = list.filter(p => p.store === storeFilter);
+    }
+    
     switch (sortKey) {
       case 'price-asc':
         return list.sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity));
@@ -90,7 +100,7 @@ export default function CategoryClient({
           return (a.price ?? Infinity) - (b.price ?? Infinity);
         });
     }
-  }, [products, sortKey]);
+  }, [products, sortKey, storeFilter]);
 
   const priceStats = useMemo(() => {
     const prices = products.map(p => p.price).filter(v => v != null && !isNaN(Number(v)));
@@ -249,14 +259,25 @@ export default function CategoryClient({
             <div className="category-results-count">
               {loading ? 'Loading products...' : `${products.length} products from 50+ stores`}
             </div>
-            <div className="sort-group">
-              <label className="sort-label">Sort by</label>
-              <select className="sort-select" value={sortKey} onChange={e => { setSortKey(e.target.value); setCurrentPage(1); }}>
+            <div className="sort-group" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <label className="sort-label">Store</label>
+                <select className="sort-select" value={storeFilter} onChange={e => { setStoreFilter(e.target.value); setCurrentPage(1); }}>
+                  <option value="all">All Popular Stores</option>
+                  {availableStores.map(store => (
+                    <option key={store} value={store}>{store}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <label className="sort-label">Sort by</label>
+                <select className="sort-select" value={sortKey} onChange={e => { setSortKey(e.target.value); setCurrentPage(1); }}>
                 <option value="recommended">Recommended</option>
                 <option value="price-asc">Price: Low → High</option>
                 <option value="price-desc">Price: High → Low</option>
                 <option value="rating">Best Rating</option>
               </select>
+              </div>
             </div>
           </div>
 
