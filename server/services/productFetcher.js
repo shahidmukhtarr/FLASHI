@@ -13,7 +13,7 @@ export async function fetchProductsForCategory(searchQueries) {
       if (!isRelevantProduct(p.title || '', q)) continue;
 
       // Filter out >15% discounts, but exempt stores that use fake discounts as their standard pricing
-      const exemptedStores = ['zero lifestyle', 'audionic', 'saya', 'phonecase.pk', 'daraz', 'priceoye', 'mega.pk', 'shophive', 'naheed'];
+      const exemptedStores = ['zero lifestyle', 'audionic', 'phonecase.pk', 'daraz', 'priceoye', 'mega.pk', 'shophive', 'naheed'];
       const storeNameLower = String(p.store || '').toLowerCase();
 
       if (!exemptedStores.includes(storeNameLower)) {
