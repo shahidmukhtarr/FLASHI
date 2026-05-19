@@ -2,7 +2,7 @@ import CategoryClient from '../components/CategoryClient';
 import { fetchProductsForCategory } from '../../server/services/productFetcher';
 
 export const metadata = {
-  title: 'Smart Watch Price in Pakistan 2026 — Compare Lowest Prices | Flashi',
+  title: 'Smart Watches Price in Pakistan | Flashi',
   description: 'Compare smart watch prices from Daraz, PriceOye & 50+ Pakistani stores. Find the best smart watch deals starting from Rs. 1,500. Budget smart watches, fitness bands & more. Updated daily on Flashi.pk',
   keywords: 'smart watch price in pakistan, best smart watch under 5000, cheapest smart watch pakistan, fitness band price pakistan, smart watch for girls pakistan, amazfit watch price, xiaomi smart watch pakistan, zero lifestyle smart watch, ronin smart watch, apple watch pakistan, samsung galaxy watch price',
   alternates: {
@@ -79,6 +79,7 @@ const popularBrands = [
 
 const popularStores = [
   'Daraz', 'PriceOye', 'Mega.pk', 'Shophive', 'Naheed',
+  'Zero Lifestyle',
 ];
 
 const seoKeywords = [

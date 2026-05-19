@@ -32,7 +32,7 @@ export const viewport = {
 
 export const metadata = {
   metadataBase: new URL('https://flashi.pk'),
-  title: 'FLASHI - Price Comparison Platform',
+  title: "Flashi - Pakistan's #1 Price Comparison Platform",
   description: 'Pakistan\'s best Price Comparison Platform. Compare prices from 50+ stores like Daraz, PriceOye, Mega.pk, Qeemat & PriceMeter. Find lowest prices on earbuds, mobile gadgets & more.',
   keywords: 'price comparison platform, price comparison pakistan, compare prices pakistan, pricemeter pakistan, qeemat pakistan, compareprice.pk, mega.pk, pricespy pakistan, online shopping pakistan, best deals pakistan',
   robots: 'index, follow',
@@ -46,7 +46,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FLASHI - Price Comparison Platform',
+    title: "Flashi - Pakistan's #1 Price Comparison Platform",
     description: 'Find the lowest prices on earbuds, smart watches, chargers & gadgets. Compare across 50+ Pakistani stores.',
     images: ['/logo.png'],
   },

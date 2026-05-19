@@ -4,7 +4,7 @@ import SalesClient from './SalesClient';
 import UserHeaderActions from '../components/UserHeaderActions';
 
 export const metadata = {
-  title: 'Flash Sales & Special Discounts in Pakistan — Limelight, Sapphire, Khaadi, J., Daraz | Flashi',
+  title: 'Special Discounts & Flash Sales Price in Pakistan | Flashi',
   description: 'Get exclusive access to active flash sales and special discounts from Limelight, Sapphire, Khaadi, J., Uniworth, Daraz, Naheed & Highfy. Premium members get early sale alerts. Compare deals on Flashi.pk',
   keywords: 'flash sales pakistan, special discounts pakistan, limelight sale today, sapphire sale pakistan, daraz flash sale, online sale pakistan, best deals pakistan today',
   robots: 'index, follow',

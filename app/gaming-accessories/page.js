@@ -2,7 +2,7 @@ import CategoryClient from '../components/CategoryClient';
 import { fetchProductsForCategory } from '../../server/services/productFetcher';
 
 export const metadata = {
-  title: 'Gaming Accessories Price in Pakistan 2026 — Headsets, Mouse, Keyboards | Flashi',
+  title: 'Gaming Accessories Price in Pakistan | Flashi',
   description: 'Compare gaming headset, mouse & keyboard prices in Pakistan. Budget gaming gear from Rs. 1,000. Find the best deals across Daraz, PriceOye & 50+ stores on Flashi.pk',
   keywords: 'gaming headset price in pakistan, gaming mouse pakistan, gaming keyboard price pakistan, pubg controller pakistan, rgb keyboard under 5000',
   alternates: { canonical: 'https://flashi.pk/gaming-accessories' },

@@ -2,7 +2,7 @@ import CategoryClient from '../components/CategoryClient';
 import { fetchProductsForCategory } from '../../server/services/productFetcher';
 
 export const metadata = {
-  title: 'Mobile Accessories Price in Pakistan — Covers, Chargers, Cables | Flashi',
+  title: 'Mobile Accessories Price in Pakistan | Flashi',
   description: 'Find cheapest mobile accessories in Pakistan. Compare phone covers, screen protectors, cables, ring lights & more from 50+ stores. Budget accessories from Rs. 200. Updated prices daily on Flashi.pk',
   keywords: 'mobile accessories pakistan, phone cover price pakistan, screen protector pakistan, phone holder car pakistan, ring light price pakistan, mobile stand pakistan, otg cable pakistan, selfie stick pakistan, pop socket pakistan',
   alternates: { canonical: 'https://flashi.pk/mobile-accessories' },
@@ -59,7 +59,7 @@ export default async function MobileAccessoriesPage() {
       breadcrumbSchema={breadcrumbSchema}
       faqSchema={faqSchema}
       popularBrands={['Spigen', 'Nillkin', 'Baseus', 'Ugreen', 'OtterBox', 'ESR', 'Ringke', 'Joyroom', 'Remax', 'Hoco']}
-      popularStores={['Daraz', 'PriceOye', 'Mega.pk', 'Shophive', 'Naheed']}
+      popularStores={['Daraz', 'PriceOye', 'Mega.pk', 'Shophive', 'Naheed', 'PhoneCase.pk', 'Audionic']}
       seoKeywords={['phone cover price pakistan', 'screen protector price', 'ring light price pakistan', 'car phone holder', 'pop socket pakistan', 'selfie stick price', 'mobile stand pakistan', 'tempered glass price']}
       seoContent="Compare mobile accessories prices across Pakistan's top online stores on Flashi. Find the lowest prices on phone cases, screen protectors, ring lights, car holders, cables and more from top brands like Spigen, Nillkin, Baseus, Ugreen and more. Budget accessories from Rs. 200. Compare across Daraz, PriceOye, Mega.pk and 50+ stores."
     />

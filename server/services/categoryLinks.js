@@ -775,6 +775,104 @@ export const CATEGORY_PAGE_CONFIG = [
     title: 'Accessories',
     keywords: ['nishat accessories', 'nishat bag', 'nishat footwear', 'nishat khussa', 'nishat heels', 'nishat scarf'],
   },
+
+  // ───── ZERO LIFESTYLE (Shopify — earbuds & smart watches) ─────
+  {
+    store: 'Zero Lifestyle',
+    url: 'https://zerolifestyle.co/pages/earbuds-zbuds',
+    title: 'Earbuds',
+    keywords: ['earbuds', 'zero lifestyle earbuds', 'zero earbuds', 'tws', 'wireless earbuds', 'zero lifestyle'],
+  },
+  {
+    store: 'Zero Lifestyle',
+    url: 'https://zerolifestyle.co/pages/smart-watches',
+    title: 'Smart Watches',
+    keywords: ['smart watch', 'zero lifestyle watch', 'zero watch', 'fitness band', 'zero lifestyle'],
+  },
+  {
+    store: 'Zero Lifestyle',
+    url: 'https://zerolifestyle.co/collections/headphones',
+    title: 'Headphones',
+    keywords: ['headphones', 'zero lifestyle headphones', 'over ear', 'wireless headphones'],
+  },
+
+  // ───── AUDIONIC (Shopify — audio & accessories) ─────
+  {
+    store: 'Audionic',
+    url: 'https://audionic.co/collections/wireless-earbuds',
+    title: 'Wireless Earbuds',
+    keywords: ['earbuds', 'audionic earbuds', 'airbud', 'wireless earbuds', 'tws', 'audionic'],
+  },
+  {
+    store: 'Audionic',
+    url: 'https://audionic.co/collections/wireless-headphones',
+    title: 'Wireless Headphones',
+    keywords: ['headphones', 'audionic headphones', 'wireless headphones', 'over ear headphones'],
+  },
+  {
+    store: 'Audionic',
+    url: 'https://audionic.co/collections/power-bank',
+    title: 'Power Banks',
+    keywords: ['power bank', 'audionic power bank', 'portable charger', 'battery pack'],
+  },
+  {
+    store: 'Audionic',
+    url: 'https://audionic.co/collections/bluetooth-portable-speakers',
+    title: 'Bluetooth Speakers',
+    keywords: ['speaker', 'bluetooth speaker', 'portable speaker', 'audionic speaker', 'wireless speaker'],
+  },
+  {
+    store: 'Audionic',
+    url: 'https://audionic.co/collections/wired-earphones-1',
+    title: 'Wired Earphones',
+    keywords: ['earphones', 'wired earphones', 'handsfree', 'headset', 'audionic earphones'],
+  },
+  {
+    store: 'Audionic',
+    url: 'https://audionic.co/collections/mobile-phone-accessories',
+    title: 'Mobile Accessories',
+    keywords: ['mobile accessories', 'phone accessories', 'audionic accessories', 'charger', 'cable'],
+  },
+
+  // ───── SAYA (Shopify — lawn & fashion) ─────
+  {
+    store: 'Saya',
+    url: 'https://saya.pk/collections/us-3-pcs-lawn-dupatta-437033304296',
+    title: 'Unstitched 3 Piece Lawn',
+    keywords: ['lawn unstitched', 'unstitched lawn', '3 piece lawn', 'saya lawn', 'women lawn', 'lawn suit', 'saya unstitched', 'lawn dupatta'],
+  },
+  {
+    store: 'Saya',
+    url: 'https://saya.pk/collections/pret-2-pcs-s-t-437033402600',
+    title: 'Pret 2 Piece',
+    keywords: ['pret', 'ready to wear', 'saya pret', '2 piece pret', 'stitched suit', 'women pret'],
+  },
+  {
+    store: 'Saya',
+    url: 'https://saya.pk/collections/us-2-pcs-s-t-437033337064',
+    title: 'Unstitched 2 Piece',
+    keywords: ['2 piece unstitched', 'unstitched 2 piece', 'saya 2 piece', 'shirt trouser'],
+  },
+  {
+    store: 'Saya',
+    url: 'https://saya.pk/collections/us-3-pcs-others-dupatta-437033468136',
+    title: 'Unstitched 3 Piece Others',
+    keywords: ['3 piece', 'unstitched suit', 'saya suit', 'printed suit', 'embroidered'],
+  },
+  {
+    store: 'Saya',
+    url: 'https://saya.pk/collections/pret-3-pcs-437197832424',
+    title: 'Pret 3 Piece',
+    keywords: ['pret 3 piece', 'stitched 3 piece', 'saya stitched', 'ready to wear 3 piece'],
+  },
+
+  // ───── PHONECASE.PK (Shopify — phone cases & accessories) ─────
+  {
+    store: 'PhoneCase.pk',
+    url: 'https://phonecase.pk',
+    title: 'Phone Cases',
+    keywords: ['phone case', 'mobile case', 'phone cover', 'back cover', 'bumper case', 'silicone case', 'screen protector', 'tempered glass', 'phonecase'],
+  },
 ];
 
 export function getRelevantCategoryUrls(query) {

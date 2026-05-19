@@ -10,6 +10,10 @@ import * as stationers from '../scrapers/stationers.js';
 import * as outfitters from '../scrapers/outfitters.js';
 import * as stylo from '../scrapers/stylo.js';
 import * as nishatlinen from '../scrapers/nishatlinen.js';
+import * as zerolifestyle from '../scrapers/zerolifestyle.js';
+import * as audionic from '../scrapers/audionic.js';
+import * as saya from '../scrapers/saya.js';
+import * as phonecase from '../scrapers/phonecase.js';
 import { identifyStore, delay, sanitizeText, getRequestHeaders } from '../utils/helpers.js';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
@@ -29,6 +33,10 @@ const stores = [
   { adapter: outfitters, name: 'Outfitters', domain: 'outfitters.com.pk' },
   { adapter: stylo, name: 'Stylo', domain: 'stylo.pk' },
   { adapter: nishatlinen, name: 'Nishat Linen', domain: 'nishatlinen.com' },
+  { adapter: zerolifestyle, name: 'Zero Lifestyle', domain: 'zerolifestyle.co' },
+  { adapter: audionic, name: 'Audionic', domain: 'audionic.co' },
+  { adapter: saya, name: 'Saya', domain: 'saya.pk' },
+  { adapter: phonecase, name: 'PhoneCase.pk', domain: 'phonecase.pk' },
 ];
 
 const ACCESSORY_KEYWORDS = ['cover', 'case', 'protector', 'screen protector', 'tempered glass', 'cable', 'charger', 'adapter', 'strap', 'pouch', 'handsfree', 'earphone', 'skin', 'lens', 'smartwatch', 'earbuds', 'buds', 'trimmer', 'speaker', 'powerbank', 'power bank', 'holder', 'stand', 'ring light', 'selfie stick', 'hanger', 'coat hanger', 'button', 'thread', 'hook', 'pin', 'needle', 'box', 'organizer', 'rack', 'storage bag', 'shoe bag', 'dust bag', 'shoe tree', 'boot shaper', 'shoe rack', 'display stand', 'shoe horn', 'sticker', 'shoelace', 'insole'];
@@ -323,6 +331,15 @@ export async function searchAllStores(query, limit = 150) {
     { kw: 'nishatlinen.com', name: 'Nishat Linen' },
     { kw: 'nishat linen', name: 'Nishat Linen' },
     { kw: 'nishat', name: 'Nishat Linen' },
+    { kw: 'zerolifestyle.co', name: 'Zero Lifestyle' },
+    { kw: 'zero lifestyle', name: 'Zero Lifestyle' },
+    { kw: 'zero life style', name: 'Zero Lifestyle' },
+    { kw: 'audionic.co', name: 'Audionic' },
+    { kw: 'audionic', name: 'Audionic' },
+    { kw: 'saya.pk', name: 'Saya' },
+    { kw: 'saya', name: 'Saya' },
+    { kw: 'phonecase.pk', name: 'PhoneCase.pk' },
+    { kw: 'phonecase', name: 'PhoneCase.pk' },
   ];
 
   const queryLower = trimmedQuery.toLowerCase();

@@ -2,7 +2,7 @@ import CategoryClient from '../components/CategoryClient';
 import { fetchProductsForCategory } from '../../server/services/productFetcher';
 
 export const metadata = {
-  title: 'Fashion & Clothing Prices in Pakistan 2026 — Lawn, Dresses, Shirts | Flashi',
+  title: 'Fashion & Clothing Price in Pakistan | Flashi',
   description: 'Compare fashion & clothing prices from Sapphire, Limelight, Nishat Linen, Outfitters, Khaadi & 50+ Pakistani stores. Find best deals on lawn suits, unstitched fabric, stitched pret, kurtas, dresses & more. Updated daily on Flashi.pk',
   keywords: 'lawn suit price in pakistan, unstitched lawn pakistan, stitched suit price pakistan, sapphire lawn 2026, limelight sale, nishat linen pret, outfitters pakistan, khaadi lawn, women clothing pakistan, kurti price pakistan, 3 piece suit price, 2 piece lawn suit, embroidered suit pakistan, chiffon dress pakistan, ready to wear pakistan, pret wear pakistan, summer lawn collection, winter collection pakistan, formal dress pakistan, casual wear pakistan, ladies dress online pakistan, girls lawn suit, cotton suit pakistan, printed lawn suit, designer lawn pakistan, branded clothing pakistan, fashion online pakistan',
   alternates: {
@@ -95,7 +95,7 @@ const popularBrands = [
 
 const popularStores = [
   'Sapphire Online', 'Limelight', 'Nishat Linen', 'Outfitters', 'Stylo',
-  'Daraz', 'Highfy', 'Naheed',
+  'Daraz', 'Highfy', 'Naheed', 'Saya',
 ];
 
 const seoKeywords = [

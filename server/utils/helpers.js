@@ -89,6 +89,10 @@ export function identifyStore(url) {
     if (hostname.includes('outfitters.com.pk')) return 'outfitters';
     if (hostname.includes('stylo.pk')) return 'stylo';
     if (hostname.includes('nishatlinen.com')) return 'nishatlinen';
+    if (hostname.includes('zerolifestyle.co')) return 'zerolifestyle';
+    if (hostname.includes('audionic.co')) return 'audionic';
+    if (hostname.includes('saya.pk')) return 'saya';
+    if (hostname.includes('phonecase.pk')) return 'phonecase';
 
     return null;
   } catch {

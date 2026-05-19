@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
 
@@ -14,7 +15,7 @@ for (const p of pages) {
   
   if (content.includes('initialProducts')) continue;
 
-  // Add import
+  // No change
   content = content.replace(
     "import CategoryClient from '../components/CategoryClient';", 
     "import CategoryClient from '../components/CategoryClient';\nimport { fetchProductsForCategory } from '../../server/services/productFetcher';"

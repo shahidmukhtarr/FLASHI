@@ -2,7 +2,7 @@ import CategoryClient from '../components/CategoryClient';
 import { fetchProductsForCategory } from '../../server/services/productFetcher';
 
 export const metadata = {
-  title: 'Chargers & Power Banks Price in Pakistan — Compare Best Deals | Flashi',
+  title: 'Chargers & Power Banks Price in Pakistan | Flashi',
   description: 'Compare fast charger & power bank prices in Pakistan from 50+ online stores. Find 20000mAh power banks, 65W chargers, wireless chargers & USB-C cables at lowest prices. Updated daily on Flashi.pk',
   keywords: 'charger price in pakistan, power bank price pakistan, fast charger pakistan, 20000mah power bank, wireless charger pakistan, usb c cable pakistan, 65w charger price, iphone charger pakistan, samsung charger price, anker power bank, baseus charger, xiaomi power bank',
   alternates: {

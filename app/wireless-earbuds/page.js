@@ -2,7 +2,7 @@ import CategoryClient from '../components/CategoryClient';
 import { fetchProductsForCategory } from '../../server/services/productFetcher';
 
 export const metadata = {
-  title: 'Wireless Earbuds Price in Pakistan 2026 — Best Deals from 50+ Stores | Flashi',
+  title: 'Wireless Earbuds Price in Pakistan | Flashi',
   description: 'Find the lowest wireless earbuds prices in Pakistan. Compare earbuds from JBL, Samsung, QCY, Audionic, Zero Lifestyle, Ronin & more across Daraz, PriceOye & 50+ stores. Budget earbuds from Rs. 800. Free price comparison on Flashi.pk',
   keywords: 'wireless earbuds price in pakistan, best earbuds under 2000, bluetooth earbuds pakistan, airpods price pakistan, jbl earbuds pakistan, samsung buds price pakistan, noise cancelling earbuds pakistan, gaming earbuds pakistan, zero lifestyle earbuds, ronin earbuds price, audionic earbuds pakistan, qcy earbuds pakistan, haylou earbuds, tws earbuds pakistan, budget earbuds pakistan',
   alternates: {
@@ -80,6 +80,7 @@ const popularBrands = [
 
 const popularStores = [
   'Daraz', 'PriceOye', 'Mega.pk', 'Shophive', 'Naheed',
+  'Zero Lifestyle', 'Audionic',
 ];
 
 const seoKeywords = [
