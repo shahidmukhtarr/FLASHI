@@ -66,7 +66,12 @@ export async function GET(request) {
     // Step 3: Filter out sale/discounted products (>15% off) — these are premium-only
     // and should only appear in the /special-discounts Sales page for subscribers
     if (data.products) {
+      // Filter out >15% discounts, but exempt stores that use fake discounts as their standard pricing
+      const exemptedStores = ['zero lifestyle', 'audionic', 'saya', 'phonecase.pk', 'daraz', 'priceoye', 'mega.pk', 'shophive', 'naheed'];
       data.products = data.products.filter(p => {
+        const storeNameLower = String(p.store || '').toLowerCase();
+        if (exemptedStores.includes(storeNameLower)) return true;
+
         const parsePrice = (val) => {
           if (typeof val === 'number') return val;
           if (!val || typeof val !== 'string') return NaN;

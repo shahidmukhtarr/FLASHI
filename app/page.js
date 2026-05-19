@@ -136,8 +136,19 @@ export default function HomePage() {
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [loginError, setLoginError] = useState(null);
   const [showMobileSplash, setShowMobileSplash] = useState(false);
+  const [storeFilter, setStoreFilter] = useState('All Popular Stores');
 
-  const sortedProducts = useMemo(() => sortProducts(products, sortKey), [products, sortKey]);
+  const uniqueStores = useMemo(() => {
+    const stores = new Set(products.map(p => p.store).filter(Boolean));
+    return ['All Popular Stores', ...Array.from(stores).sort((a, b) => a.localeCompare(b))];
+  }, [products]);
+
+  const filteredProducts = useMemo(() => {
+    if (storeFilter === 'All Popular Stores') return products;
+    return products.filter(p => p.store === storeFilter);
+  }, [products, storeFilter]);
+
+  const sortedProducts = useMemo(() => sortProducts(filteredProducts, sortKey), [filteredProducts, sortKey]);
   const priceStats = useMemo(() => getPriceStats(sortedProducts), [sortedProducts]);
   const totalPages = Math.ceil(sortedProducts.length / PRODUCTS_PER_PAGE);
   const paginatedProducts = useMemo(
@@ -376,6 +387,7 @@ export default function HomePage() {
     setProducts([]);
     setMeta('');
     setCurrentPage(1);
+    setStoreFilter('All Popular Stores');
 
     setSearchMode(isUrl ? 'url' : 'db');
 
@@ -820,6 +832,16 @@ export default function HomePage() {
                   </p>
                 </div>
                 <div className="results-controls">
+                  {uniqueStores.length > 2 && (
+                    <div className="sort-group">
+                      <label className="sort-label">Store</label>
+                      <select className="sort-select" value={storeFilter} onChange={(event) => { setStoreFilter(event.target.value); setCurrentPage(1); }}>
+                        {uniqueStores.map(store => (
+                          <option key={store} value={store}>{store}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                   <div className="sort-group">
                     <label className="sort-label">Sort by</label>
                     <select className="sort-select" value={sortKey} onChange={(event) => setSortKey(event.target.value)}>
